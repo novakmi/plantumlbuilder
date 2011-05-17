@@ -89,6 +89,40 @@ class PlantUmlBuilder extends BuilderSupport {
             ListenerResult res = l.process(node, out, false)
             nodeProcessedByListener = (res == ListenerResult.PROCESSED)
         }
+        if (!nodeProcessedByListener) {
+            switch (node.name) {
+                case 'plant':
+                    out.printIndent()
+                    out.println(node.value)
+                    break
+                case 'title':
+                    out.printIndent()
+                    out.println("title $node.value")
+                case 'actor':
+                case 'participant':
+                    out.printIndent()
+                    out.print(node.name)
+                    if (node.attributes.text) {
+                        out.println(" $node.attributes.text as $node.value")
+                    } else {
+                        out.println(" $node.value")
+                    }
+                    break
+                case 'note':
+                    out.printIndent()
+                    def pos = node.attributes.pos?:'right'
+                    out.println("note $pos : $node.value")
+                    break
+                case 'plantuml':
+                    if (root == node) {
+                        break
+                    }
+                default:
+                    println "Unsupported node name ${node.name}"
+                    break
+            }
+        }
+        /*
         if (!nodeProcessedByListener && node.name == 'plant') {
             out.printIndent()
             out.println(node.value)
@@ -98,6 +132,7 @@ class PlantUmlBuilder extends BuilderSupport {
                 println "Unsupported node name ${node.name}"
             }
         }
+        */
         node.children.each {
             out.incrementIndent()
             printNode(it)

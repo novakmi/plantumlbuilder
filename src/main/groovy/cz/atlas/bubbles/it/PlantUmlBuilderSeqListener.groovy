@@ -28,15 +28,75 @@ class PlantUmlBuilderSeqListener implements PlantBuilderListener {
     ListenerResult process(Node node, IndentPrinter out, boolean postProcess) {
         ListenerResult retVal = ListenerResult.NOT_ACCEPTED
         switch (node.name) {
-            case 'activate':
+            case 'activatebl':
                 out.printIndent()
                 if (!postProcess) {
-                    out.print("$node.name ")
+                    out.print("activate ")
                 } else {
                     out.print('deactivate ')
                 }
                 out.println(node.value)
                 retVal = ListenerResult.PROCESSED
+                break
+            case 'callbl':
+                def from = node.attributes.from
+                def to = node.attributes.to
+                def activate = node.attributes.activate
+                if (!postProcess) {
+                    def text = node.attributes.text
+                    def type = node.attributes.type
+                    if (!type) type = '->'
+                    out.printIndent()
+                    out.println("$from $type $to${text ? " : $text" : ''}")
+                    if (activate) {
+                        out.printIndent()
+                        out.println("activate $to")
+                    }
+                } else {
+                    def rettext = node.attributes.rettext
+                    def rettype = node.attributes.rettype
+                    if (!rettype) rettype = '-->'
+                    if (!node.attributes.noret) { // return not needed, e.g. self message
+                        out.printIndent()
+                        out.println("$to $rettype $from${rettext ? " : $rettext" : ''}")
+                    }
+                    if (activate) {
+                        /*
+                        if (!node.attributes.noret) {
+                            out.printIndent()
+                        }
+                        */
+                        out.printIndent()
+                        out.println("deactivate $to")
+                    }
+
+                }
+                retVal = ListenerResult.PROCESSED
+                break
+            case 'opt':
+            case 'loop':
+            case 'alt':
+                out.printIndent()
+                if (!postProcess) {
+                    out.println("$node.name $node.value")
+                } else {
+                    out.println("end")
+                }
+                retVal = ListenerResult.PROCESSED
+                break
+            case 'else':
+                if (!postProcess) {
+                    out.printIndent()
+                    out.println("else $node.value")
+                    retVal = ListenerResult.PROCESSED
+                }
+                break
+            case 'divider':
+                if (!postProcess) {
+                    out.printIndent()
+                    out.println("== $node.value ==")
+                    retVal = ListenerResult.PROCESSED
+                }
                 break
         }
         return retVal

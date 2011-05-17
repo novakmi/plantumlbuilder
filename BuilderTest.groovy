@@ -30,22 +30,49 @@ import cz.atlas.bubbles.it.PlantUmlBuilder
 import cz.atlas.bubbles.it.PlantUmlBuilderSeqListener
 import net.sourceforge.plantuml.SourceStringReader
 
+
+def callFunction(builder) {
+    builder.plant('B->C')
+    builder.activatebl('C') {
+        plant('C-->B')
+    }
+}
+
 def builder = new PlantUmlBuilder()
 builder.addListener(new PlantUmlBuilderSeqListener()) // add extra support for Seq. diagrams
+
+
 builder.plantuml {
-    plant("A->B") // this just copies text to the output, this allows any PlantUML expression
-    activate('B') { // customized builder command activate (see  PlantUmlBuilderSeqListener)
-        plant('B->C')
-        activate('C') {
-            plant('C-->B')
-        }
+    def clsr = {
         plant('A-->B')
+    }
+    plant("A->B") // this just copies text to the output, this allows any PlantUML expression
+    activatebl('B') { // customized builder command activate (see  PlantUmlBuilderSeqListener)
+        callFunction(builder)
+//        plant('B->C')
+//        activatebl('C') {
+//            plant('C-->B')
+//        }
+        clsr()
     } // deactivate added automatically
 }
 println builder.getText()
-
 SourceStringReader s = new SourceStringReader(builder.getText())
 FileOutputStream file = new FileOutputStream("./plantUmlBuilderTest.png")
 s.generateImage(file);
-println s.toString()
+file.close()
+println ''
+builder = new PlantUmlBuilder() // new instance
+builder.addListener(new PlantUmlBuilderSeqListener()) // add extra support for Seq. diagrams
+builder.plantuml {
+    callbl(from: 'A', to: 'B', activate: true) {
+        callbl(from: 'B', to: 'C', activate: true, type: "->>", rettype: "--\\") {
+            plant('C->D')
+        }
+    }
+}
+println builder.getText()
+s = new SourceStringReader(builder.getText())
+file = new FileOutputStream("./plantUmlBuilderTest2.png")
+s.generateImage(file);
 file.close()
