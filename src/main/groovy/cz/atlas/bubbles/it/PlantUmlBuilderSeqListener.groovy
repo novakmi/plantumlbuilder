@@ -61,11 +61,6 @@ class PlantUmlBuilderSeqListener implements PlantBuilderListener {
                         out.println("$to $rettype $from${rettext ? " : $rettext" : ''}")
                     }
                     if (activate) {
-                        /*
-                        if (!node.attributes.noret) {
-                            out.printIndent()
-                        }
-                        */
                         out.printIndent()
                         out.println("deactivate $to")
                     }
@@ -76,6 +71,7 @@ class PlantUmlBuilderSeqListener implements PlantBuilderListener {
             case 'opt':
             case 'loop':
             case 'alt':
+            case 'group':
                 out.printIndent()
                 if (!postProcess) {
                     out.println("$node.name $node.value")
