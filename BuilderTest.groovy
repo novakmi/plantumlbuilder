@@ -49,14 +49,15 @@ builder.plantuml {
     plant("A->B") // this just copies text to the output, this allows any PlantUML expression
     activatebl('B') { // customized builder command activate (see  PlantUmlBuilderSeqListener)
         callFunction(builder)
-//        plant('B->C')
-//        activatebl('C') {
-//            plant('C-->B')
-//        }
         clsr()
     } // deactivate added automatically
 }
+
 println builder.getText()
+println ''
+println 'Without start/end'
+println builder.getText(false)
+
 SourceStringReader s = new SourceStringReader(builder.getText())
 FileOutputStream file = new FileOutputStream("./plantUmlBuilderTest.png")
 s.generateImage(file);

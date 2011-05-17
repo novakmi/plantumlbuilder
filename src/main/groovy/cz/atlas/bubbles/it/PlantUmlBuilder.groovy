@@ -55,6 +55,7 @@ class PlantUmlBuilder extends BuilderSupport {
         stringWriter = new StringWriter()
         writer = new PrintWriter(stringWriter)
         out = new IndentPrinter(writer)
+        out.decrementIndent() // to start from beg. of line
     }
 
     @Override protected void setParent(Object parent, Object child) {
@@ -122,17 +123,6 @@ class PlantUmlBuilder extends BuilderSupport {
                     break
             }
         }
-        /*
-        if (!nodeProcessedByListener && node.name == 'plant') {
-            out.printIndent()
-            out.println(node.value)
-        } else {
-            if (root == node && node.name == 'plantuml' || nodeProcessedByListener) { // allow dummy top element plantuml
-            } else {
-                println "Unsupported node name ${node.name}"
-            }
-        }
-        */
         node.children.each {
             out.incrementIndent()
             printNode(it)
@@ -146,14 +136,22 @@ class PlantUmlBuilder extends BuilderSupport {
         }
     }
 
-    public String getText() {
+    public String getText(embedStartEnd = true) {
         StringBuffer buffer = stringWriter.getBuffer()
         buffer.delete(0, buffer.length()) // clear buffer
         stringWriter.flush()
         if (root) {
             printNode(root)
         }
-        return "@startuml\n" + buffer.toString() + "@enduml"
+        def retVal = ''
+        if (embedStartEnd) {
+            retVal+= "@startuml\n"
+        }
+        retVal += buffer.toString()
+        if (embedStartEnd) {
+            retVal+= "@enduml"
+        }
+        return retVal
     }
 
 }
