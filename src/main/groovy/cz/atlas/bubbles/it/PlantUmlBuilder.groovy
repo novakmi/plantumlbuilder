@@ -99,6 +99,7 @@ class PlantUmlBuilder extends BuilderSupport {
                 case 'title':
                     out.printIndent()
                     out.println("title $node.value")
+                    break
                 case 'actor':
                 case 'participant':
                     out.printIndent()

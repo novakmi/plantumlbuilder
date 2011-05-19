@@ -80,6 +80,14 @@ class PlantUmlBuilderSeqListener implements PlantBuilderListener {
                 }
                 retVal = ListenerResult.PROCESSED
                 break
+             case 'ref':
+                 if (!postProcess) {
+                     // in attribute 'over' expect list of over elements
+                     out.printIndent()
+                     out.println("$node.name over ${node.attributes.over.join(',')} : $node.value")
+                     retVal = ListenerResult.PROCESSED
+                 }
+                break
             case 'else':
                 if (!postProcess) {
                     out.printIndent()
