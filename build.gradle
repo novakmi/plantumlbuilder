@@ -1,0 +1,112 @@
+// For running Gradle, add GRADLE_HOME/bin to PATH, NCS_DIR has to be defined
+// Tip: Use Intellij Idea community edition to work with gradle (GradelGUI plugin)
+// run 'gradle tasks' to see available tasks
+
+import com.tailf.gradle.*
+import com.tailf.juni.gradle.*
+
+version = '0.0.2'
+sourceCompatibility = '1.6'
+tailfPackage = "cz.atlas.bubbles.it"
+
+if (!System.getenv()['PLANTUML_DIR']) {
+    logger.error("PLANTUML_DIR is not defined!")
+}
+assert (System.getenv()['PLANTUML_DIR']) // end with error if NCS_DIR not defined
+
+
+apply plugin: 'groovy'
+apply plugin: 'maven' // to use maven repository
+apply plugin: 'idea' // to generate project+module files for Intellij Idea
+ ideaModule {
+    downloadJavadoc = true
+}
+
+
+ideaModule {
+    downloadJavadoc = true
+}
+
+repositories {
+    mavenCentral() // standard maven repository
+    flatDir name: 'localPantUmlRepository', dirs: 'jar' // create repository for NCS
+    localPantUmlRepository { //configure NCS repository
+        addArtifactPattern(file("${System.getenv()['PLANTUML_DIR']}/").absolutePath + '/plantuml.[ext]') // plantuml does not have version
+    }
+}
+
+// Define dependencies
+dependencies {
+    compile group: '', name: 'plantuml' // plantuml jar is automatically resolved from localPantUmlRepository
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.1'
+    groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '1.8.0'
+    testCompile group: 'org.testng', name: 'testng', version: '5.12.1'
+    testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.24'
+    //testCompile 'org.uncommons:reportng:1.1.1'
+    testCompile group: 'janino', name: 'janino', version: '2.5.10'
+}
+
+
+jar {
+    manifest {
+        attributes(
+            'Implementation-Title': project.name,
+            'Implementation-Version': version,
+            'Specification-Vendor': 'bubbles.way',
+            'Built-By': 'bubbles.way',
+            'Specification-Title': project.name,
+            'Extension-Name': project.name,
+            'Specification-Version': version
+        )
+    }
+}
+
+clean << {  //add to clean task
+    //installDir.deleteDir()
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from "${project.projectDir}/src/main"
+}
+
+task groovydocJar(type: Jar, dependsOn: groovydoc) {
+    classifier = 'groovydoc'
+    from groovydoc.destinationDir
+}
+
+test {
+    useTestNG() {
+        suiteXmlBuilder().suite(name: 'Test Plantuml groovy builder') {
+            test(name: 'plantuml'/*, annotations: 'JDK', verbose: '1'*/) {
+                groups {
+                    run {
+                        include(name: "basic")
+                    }
+                }
+                classes([:]) {
+                    'class'(name: "cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBasicTest")
+                }
+            }
+        }
+    }
+//    options {
+//        listeners << 'org.uncommons.reportng.HTMLReporter'
+//        listeners << 'org.uncommons.reportng.JUnitXMLReporter'
+//    }
+}
+
+/*
+task prepareInstall(type: Copy, dependsOn: [jar, sourcesJar, javadocJar]) {
+    installDir.mkdirs()
+    //logger.quiet("externalJars {}", externalJars)
+    from configurations['compile']?.files/ *?.findAll { it.absolutePath.indexOf('unspecified') < 0 }* /
+    from "${project.projectDir}/build/libs"
+    into installDir
+}
+
+// zip into build/distributions
+task zipInstall(type: Zip, dependsOn: prepareInstall) {
+    from installDir.toString()
+}
+*/

@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cz.atlas.bubbles.it
+package cz.atlas.bubbles.it.plantumlbuilder
 
 //Builder model node
 private class Node {

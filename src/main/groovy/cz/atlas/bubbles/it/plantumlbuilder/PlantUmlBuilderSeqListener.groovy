@@ -21,7 +21,11 @@ THE SOFTWARE.
 */
 
 
-package cz.atlas.bubbles.it
+package cz.atlas.bubbles.it.plantumlbuilder
+
+import cz.atlas.bubbles.it.plantumlbuilder.ListenerResult
+import cz.atlas.bubbles.it.plantumlbuilder.PlantBuilderListener
+import cz.atlas.bubbles.it.plantumlbuilder.Node
 
 class PlantUmlBuilderSeqListener implements PlantBuilderListener {
 
