@@ -38,7 +38,7 @@ enum ListenerResult {
     FAILED,
 }
 
-interface PlantBuilderListener {
+interface PlantUmlBuilderListener {
     ListenerResult process(final Node node, IndentPrinter out, boolean postProcess)
 }
 
@@ -49,7 +49,9 @@ class PlantUmlBuilder extends BuilderSupport {
     private StringWriter stringWriter
     private Node root = null //root node of the model
 
-    private List listeners = []
+    //see http://groovy.codehaus.org/gapi/groovy/beans/ListenerList.html
+    @groovy.beans.ListenerList
+    private List<PlantUmlBuilderListener> listeners = []
 
     public PlantUmlBuilder() {
         stringWriter = new StringWriter()
@@ -80,15 +82,21 @@ class PlantUmlBuilder extends BuilderSupport {
         return new Node(name: name, value: value, attributes: attributes)
     }
 
-    def addListener(final PlantBuilderListener listener) {
+    /*
+    // not needed anymore because of   @groovy.beans.ListenerList, use  addPlantUmlBuilderListener
+    def addListener(final PlantUmlBuilderListener listener) {
         listeners += listener
     }
+    */
 
     def private printNode(node) {
         boolean nodeProcessedByListener = false
         for (l in listeners) {
             ListenerResult res = l.process(node, out, false)
             nodeProcessedByListener = (res == ListenerResult.PROCESSED)
+            if (nodeProcessedByListener) {
+                break
+            }
         }
         if (!nodeProcessedByListener) {
             switch (node.name) {
@@ -112,7 +120,7 @@ class PlantUmlBuilder extends BuilderSupport {
                     break
                 case 'note':
                     out.printIndent()
-                    def pos = node.attributes.pos?:'right'
+                    def pos = node.attributes.pos ?: 'right'
                     out.println("note $pos : $node.value")
                     break
                 case 'plantuml':
@@ -133,6 +141,9 @@ class PlantUmlBuilder extends BuilderSupport {
             for (l in listeners) {
                 ListenerResult res = l.process(node, out, true)
                 nodeProcessedByListener = (res == ListenerResult.PROCESSED)
+                if (nodeProcessedByListener) {
+                    break
+                }
             }
         }
     }
@@ -146,13 +157,17 @@ class PlantUmlBuilder extends BuilderSupport {
         }
         def retVal = ''
         if (embedStartEnd) {
-            retVal+= "@startuml\n"
+            retVal += "@startuml\n"
         }
         retVal += buffer.toString()
         if (embedStartEnd) {
-            retVal+= "@enduml"
+            retVal += "@enduml"
         }
         return retVal
+    }
+
+    public void reset() {
+        root = null
     }
 
 }

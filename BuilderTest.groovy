@@ -39,7 +39,7 @@ def callFunction(builder) {
 }
 
 def builder = new PlantUmlBuilder()
-builder.addListener(new PlantUmlBuilderSeqListener()) // add extra support for Seq. diagrams
+builder.addPlantUmlBuilderListener(new PlantUmlBuilderSeqListener()) // add extra support for Seq. diagrams
 
 
 builder.plantuml {
@@ -63,8 +63,8 @@ FileOutputStream file = new FileOutputStream("./plantUmlBuilderTest.png")
 s.generateImage(file);
 file.close()
 println ''
-builder = new PlantUmlBuilder() // new instance
-builder.addListener(new PlantUmlBuilderSeqListener()) // add extra support for Seq. diagrams
+
+builder.reset()
 builder.plantuml {
     callbl(from: 'A', to: 'B', activate: true) {
         callbl(from: 'B', to: 'C', activate: true, type: "->>", rettype: "--\\") {

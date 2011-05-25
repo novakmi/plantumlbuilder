@@ -23,11 +23,7 @@ THE SOFTWARE.
 
 package cz.atlas.bubbles.it.plantumlbuilder
 
-import cz.atlas.bubbles.it.plantumlbuilder.ListenerResult
-import cz.atlas.bubbles.it.plantumlbuilder.PlantBuilderListener
-import cz.atlas.bubbles.it.plantumlbuilder.Node
-
-class PlantUmlBuilderSeqListener implements PlantBuilderListener {
+class PlantUmlBuilderSeqListener implements PlantUmlBuilderListener {
 
     ListenerResult process(Node node, IndentPrinter out, boolean postProcess) {
         ListenerResult retVal = ListenerResult.NOT_ACCEPTED
