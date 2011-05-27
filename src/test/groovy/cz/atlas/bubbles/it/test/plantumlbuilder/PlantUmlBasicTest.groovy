@@ -1,3 +1,25 @@
+/*
+Copyright (c) 2011 bubbles.way@gmail.com
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
 package cz.atlas.bubbles.it.test.plantumlbuilder
 
 import org.testng.annotations.Test
@@ -7,9 +29,44 @@ import org.slf4j.LoggerFactory
 import org.slf4j.Logger
 
 class PlantUmlBasicTest {
+
+    /**
+     * Helper method to create basic indented seq. diagram.
+     * @param builder
+     */
+    private def _buildSeq(builder) {
+        builder.plant('A->B')
+        builder.plant('activate B') {
+            plant('B->C')
+            plant('activate C')
+            plant('C-->B')
+            plant('deactivate C')
+        }
+        builder.plant('A-->B')
+        builder.plant('deactivate B')
+    }
+
+    /**
+     * Helper string constatnt to verify basic indented diagram.
+     * @see _buildSeq
+     */
+    private final def _seqString = '''
+A->B
+activate B
+  B->C
+  activate C
+  C-->B
+  deactivate C
+A-->B
+deactivate B
+'''
+
+    /**
+     * Basic test to create non indented sequence diagram.
+     */
     @Test(groups = ["basic"])
-    public void plantPlainTest() {
-        logger.trace("==> plantPlainTest")
+    public void plantPlainSeqTest() {
+        logger.trace("==> plantPlainSeqTest")
         def builder = new PlantUmlBuilder() // new instance
         builder.plantuml {
             plant('A->B')
@@ -33,40 +90,44 @@ deactivate C
 A-->B
 deactivate B
 @enduml''')
-        logger.trace("<== plantPlainTest")
+        logger.trace("<== plantPlainSeqTest")
     }
 
-
+    /**
+     * Basic test to create indented sequence diagram.
+     */
     @Test(groups = ["basic"])
-    public void plantPlainIndentTest() {
-        logger.trace("==> plantPlainIndentTest")
+    public void plantPlainSeqIndentTest() {
+        logger.trace("==> plantPlainSeqIndentTest")
         def builder = new PlantUmlBuilder() // new instance
         builder.plantuml {
-            plant('A->B')
-            plant('activate B') {
-                plant('B->C')
-                plant('activate C')
-                plant('C-->B')
-                plant('deactivate C')
-            }
-            plant('A-->B')
-            plant('deactivate B')
-
+            _buildSeq(builder)
         }
-        Assert.assertEquals(builder.getText(),
-            '''@startuml
-A->B
-activate B
-  B->C
-  activate C
-  C-->B
-  deactivate C
-A-->B
-deactivate B
-@enduml''')
-        logger.trace("<== plantPlainIndentTest")
+        Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
+        logger.trace("<== plantPlainSeqIndentTest")
     }
-    /** Initialize logging                                                                        */
+
+    /**
+     * Basic test to test builder reset fucntion.
+     */
+    @Test(groups = ["basic"])
+    public void plantPlainResetTest() {
+        logger.trace("==> plantPlainResetTest")
+        def builder = new PlantUmlBuilder() // new instance
+
+        builder.plantuml {
+            _buildSeq(builder)
+        }
+        Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
+        builder.reset()
+        Assert.assertEquals(builder.getText(), '@startuml\n@enduml')
+        builder.plantuml {
+            _buildSeq(builder)
+        }
+        Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
+        logger.trace("<== plantPlainResetTest")
+    }
+    /** Initialize logging                                                                              */
     private static final Logger logger = LoggerFactory.getLogger(PlantUmlBasicTest.class);
 
 }
