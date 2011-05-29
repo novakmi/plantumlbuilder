@@ -148,7 +148,7 @@ class PlantUmlBuilder extends BuilderSupport {
         }
     }
 
-    public String getText(embedStartEnd = true) {
+    public String getText(params) {
         StringBuffer buffer = stringWriter.getBuffer()
         buffer.delete(0, buffer.length()) // clear buffer
         stringWriter.flush()
@@ -156,11 +156,11 @@ class PlantUmlBuilder extends BuilderSupport {
             printNode(root)
         }
         def retVal = ''
-        if (embedStartEnd) {
+        if (!params?.plainPlantUml) {
             retVal += "@startuml\n"
         }
         retVal += buffer.toString()
-        if (embedStartEnd) {
+        if (!params?.plainPlantUml) {
             retVal += "@enduml"
         }
         return retVal

@@ -34,7 +34,7 @@ class PlantUmlBasicTest {
      * Helper method to create basic indented seq. diagram.
      * @param builder
      */
-    private def _buildSeq(builder) {
+    private static def _buildSeq(builder) {
         builder.plant('A->B')
         builder.plant('activate B') {
             plant('B->C')
@@ -48,19 +48,18 @@ class PlantUmlBasicTest {
 
     /**
      * Helper string constatnt to verify basic indented diagram.
-     * @see _buildSeq
+     * @see PlantUmlBasicTest._buildSeq
      */
-    private final def _seqString = '''
-A->B
+    private final def _seqStringNoNL = '''A->B
 activate B
   B->C
   activate C
   C-->B
   deactivate C
 A-->B
-deactivate B
-'''
+deactivate B'''
 
+    private final def _seqString = "\n${_seqStringNoNL}\n"
     /**
      * Basic test to create non indented sequence diagram.
      */
@@ -77,10 +76,9 @@ deactivate B
             plant('deactivate C')
             plant('A-->B')
             plant('deactivate B')
-
         }
         Assert.assertEquals(builder.getText(),
-            '''@startuml
+                '''@startuml
 A->B
 activate B
 B->C
@@ -127,7 +125,48 @@ deactivate B
         Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
         logger.trace("<== plantPlainResetTest")
     }
-    /** Initialize logging                                                                              */
+
+
+    @Test(groups = ["basic"])
+    public void plantPlainGetTextParamsTest() {
+        logger.trace("==> plantPlainGetTextParamsTest")
+        def builder = new PlantUmlBuilder() // new instance
+
+        builder.plantuml {
+            _buildSeq(builder)
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true), "${_seqStringNoNL}\n")
+        builder.reset()
+        builder.plantuml {
+            _buildSeq(builder)
+        }
+        Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
+        logger.trace("<== plantPlainGetTextParamsTest")
+    }
+    /**
+     * Basic test to test builder reset fucntion.
+     */
+    @Test(groups = ["basic"])
+    public void plantPlainKeywordsTest() {
+        logger.trace("==> plantPlainKeywordsTest")
+        def builder = new PlantUmlBuilder() // new instance
+        builder.plantuml {
+            title('Test title')
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true), 'title Test title\n')
+        builder.reset()
+        builder.plantuml {
+            actor('MyActor')
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true), 'actor MyActor\n')
+        builder.reset()
+        builder.plantuml {
+            actor('MyActor', text: 'My actor\\n(system)')
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true), 'actor My actor\\n(system) as MyActor\n')
+        logger.trace("<== plantPlainKeywordsTest")
+    }
+    /** Initialize logging                                                                                   */
     private static final Logger logger = LoggerFactory.getLogger(PlantUmlBasicTest.class);
 
 }
