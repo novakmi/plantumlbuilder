@@ -27,13 +27,28 @@ import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
 import org.testng.Assert
 import org.slf4j.LoggerFactory
 import org.slf4j.Logger
+import net.sourceforge.plantuml.SourceStringReader
 
 class PlantUmlBasicTest {
 
-    /**
-     * Helper method to create basic indented seq. diagram.
-     * @param builder
-     */
+    def final static makePlantFile = true
+
+    static def assertPlantFile(builder) {
+        logger.trace("==> assertPlantFile")
+        if (makePlantFile) {
+            def s = new SourceStringReader(builder.getText())
+            logger.trace(builder.getText())
+            def file = new FileOutputStream("./plantTestNg.png")
+            s.generateImage(file);
+            file.close()
+        }
+        logger.trace("<== assertPlantFile")
+    }
+
+/**
+ * Helper method to create basic indented seq. diagram.
+ * @param builder
+ */
     private static def _buildSeq(builder) {
         builder.plant('A->B')
         builder.plant('activate B') {
@@ -46,10 +61,10 @@ class PlantUmlBasicTest {
         builder.plant('deactivate B')
     }
 
-    /**
-     * Helper string constatnt to verify basic indented diagram.
-     * @see PlantUmlBasicTest._buildSeq
-     */
+/**
+ * Helper string constatnt to verify basic indented diagram.
+ * @see PlantUmlBasicTest._buildSeq
+ */
     private final def _seqStringNoNL = '''A->B
 activate B
   B->C
@@ -60,9 +75,9 @@ A-->B
 deactivate B'''
 
     private final def _seqString = "\n${_seqStringNoNL}\n"
-    /**
-     * Basic test to create non indented sequence diagram.
-     */
+/**
+ * Basic test to create non indented sequence diagram.
+ */
     @Test(groups = ["basic"])
     public void plantPlainSeqTest() {
         logger.trace("==> plantPlainSeqTest")
@@ -78,7 +93,7 @@ deactivate B'''
             plant('deactivate B')
         }
         Assert.assertEquals(builder.getText(),
-                '''@startuml
+            '''@startuml
 A->B
 activate B
 B->C
@@ -88,12 +103,13 @@ deactivate C
 A-->B
 deactivate B
 @enduml''')
+        assertPlantFile(builder)
         logger.trace("<== plantPlainSeqTest")
     }
 
-    /**
-     * Basic test to create indented sequence diagram.
-     */
+/**
+ * Basic test to create indented sequence diagram.
+ */
     @Test(groups = ["basic"])
     public void plantPlainSeqIndentTest() {
         logger.trace("==> plantPlainSeqIndentTest")
@@ -102,12 +118,13 @@ deactivate B
             _buildSeq(builder)
         }
         Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
+        assertPlantFile(builder)
         logger.trace("<== plantPlainSeqIndentTest")
     }
 
-    /**
-     * Basic test to test builder reset fucntion.
-     */
+/**
+ * Basic test to test builder reset fucntion.
+ */
     @Test(groups = ["basic"])
     public void plantPlainResetTest() {
         logger.trace("==> plantPlainResetTest")
@@ -143,30 +160,106 @@ deactivate B
         Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
         logger.trace("<== plantPlainGetTextParamsTest")
     }
-    /**
-     * Basic test to test builder reset fucntion.
-     */
+/**
+ * Basic test to test builder reset fucntion.
+ */
     @Test(groups = ["basic"])
     public void plantPlainKeywordsTest() {
         logger.trace("==> plantPlainKeywordsTest")
         def builder = new PlantUmlBuilder() // new instance
+
+        // test 'title' keyword
         builder.plantuml {
             title('Test title')
+            participant('A')
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), 'title Test title\n')
+        Assert.assertEquals(builder.getText(plainPlantUml: true), 'title Test title\nparticipant A\n')
+        assertPlantFile(builder)
+
+        // test 'actor' keyword
         builder.reset()
         builder.plantuml {
             actor('MyActor')
         }
         Assert.assertEquals(builder.getText(plainPlantUml: true), 'actor MyActor\n')
+        assertPlantFile(builder)
+
         builder.reset()
         builder.plantuml {
-            actor('MyActor', text: 'My actor\\n(system)')
+            actor('MyActor', text: '"My actor\\n(system)"')
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), 'actor My actor\\n(system) as MyActor\n')
+        Assert.assertEquals(builder.getText(plainPlantUml: true), 'actor "My actor\\n(system)" as MyActor\n')
+        assertPlantFile(builder)
+
+        // test 'participant'
+        builder.reset()
+        builder.plantuml {
+            participant('MyParticipant')
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant MyParticipant\n')
+        assertPlantFile(builder)
+        builder.reset()
+        builder.plantuml {
+            participant('MyParticipant', text: '"My participant\\n(system)"')
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant "My participant\\n(system)" as MyParticipant\n')
+        assertPlantFile(builder)
+
+        // test 'note' keyword
+        builder.reset()
+        builder.plantuml {
+            participant('A')
+            note('My note')
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant A\nnote right : My note\n')
+        assertPlantFile(builder)
+        ['right', 'left'].each {nt ->
+            builder.reset()
+            builder.plantuml {
+                participant('A')
+                note("My note $nt", pos: nt)
+            }
+            Assert.assertEquals(builder.getText(plainPlantUml: true), "participant A\nnote $nt : My note $nt\n")
+            assertPlantFile(builder)
+        }
+        ['left', 'right', 'over', 'top', 'bottom'].each {nt ->
+            builder.reset()
+            builder.plantuml {
+                participant('A')
+                note("My note $nt A", pos: "$nt of A")
+            }
+            Assert.assertEquals(builder.getText(plainPlantUml: true), "participant A\nnote $nt of A : My note $nt A\n")
+            assertPlantFile(builder)
+        }
+        // test note as
+        builder.reset()
+        builder.plantuml {
+            note("This is my note", as: "N1")
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true), "note This is my note as N1\n")
+        assertPlantFile(builder)
+        // test note on multiple lines
+        builder.reset()
+        builder.plantuml {
+            participant('A')
+            plant('note left') // for multiple line note use 'plant' keyword
+            plant('a note')
+            plant('can also be defined')
+            plant('on several lines')
+            plant('end note')
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true),
+            """participant A
+note left
+a note
+can also be defined
+on several lines
+end note
+""")
+        assertPlantFile(builder)
         logger.trace("<== plantPlainKeywordsTest")
     }
-    /** Initialize logging                                                                                   */
+/** Initialize logging                                                                                                      */
     private static final Logger logger = LoggerFactory.getLogger(PlantUmlBasicTest.class);
 
 }
