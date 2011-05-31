@@ -120,8 +120,12 @@ class PlantUmlBuilder extends BuilderSupport {
                     break
                 case 'note':
                     out.printIndent()
+                    if (node.attributes.as) {
+                        out.println("note $node.value as $node.attributes.as")
+                    } else {
                     def pos = node.attributes.pos ?: 'right'
                     out.println("note $pos : $node.value")
+                    }
                     break
                 case 'plantuml':
                     if (root == node) {
