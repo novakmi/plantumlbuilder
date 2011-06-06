@@ -20,16 +20,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import static ch.qos.logback.classic.Level.*
+import ch.qos.logback.classic.boolex.JaninoEventEvaluator
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
+import ch.qos.logback.classic.filter.LevelFilter
 import ch.qos.logback.core.ConsoleAppender
 import ch.qos.logback.core.FileAppender
-import ch.qos.logback.classic.filter.LevelFilter
-import static ch.qos.logback.core.spi.FilterReply.NEUTRAL
-import static ch.qos.logback.core.spi.FilterReply.DENY
-import static ch.qos.logback.core.spi.FilterReply.ACCEPT
 import ch.qos.logback.core.filter.EvaluatorFilter
-import ch.qos.logback.classic.boolex.JaninoEventEvaluator
+import static ch.qos.logback.classic.Level.ERROR
+import static ch.qos.logback.classic.Level.TRACE
+import static ch.qos.logback.core.spi.FilterReply.*
 
 appender("FILE_LOG", FileAppender) {
         append = false

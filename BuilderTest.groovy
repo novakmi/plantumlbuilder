@@ -27,8 +27,9 @@ groovy -cp ~/sw/PlantUml/plantuml.jar:src/main/groovy/ BuilderTest.groovy
 */
 
 import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
-import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderSeqListener
+import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderSeqPlugin
 import net.sourceforge.plantuml.SourceStringReader
+import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderSeqPlugin
 
 
 def callFunction(builder) {
@@ -39,7 +40,7 @@ def callFunction(builder) {
 }
 
 def builder = new PlantUmlBuilder()
-builder.addPlantUmlBuilderListener(new PlantUmlBuilderSeqListener()) // add extra support for Seq. diagrams
+builder.addPlantUmlBuilderPluginListener(new PlantUmlBuilderSeqPlugin()) // add extra support for Seq. diagrams
 
 
 builder.plantuml {
@@ -47,7 +48,7 @@ builder.plantuml {
         plant('A-->B')
     }
     plant("A->B") // this just copies text to the output, this allows any PlantUML expression
-    activatebl('B') { // customized builder command activate (see  PlantUmlBuilderSeqListener)
+    activatebl('B') { // customized builder command activate (see  PlantUmlBuilderSeqPlugin)
         callFunction(builder)
         clsr()
     } // deactivate added automatically
@@ -56,7 +57,7 @@ builder.plantuml {
 println builder.getText()
 println ''
 println 'Without start/end'
-println builder.getText(false)
+println builder.getText(plainPlantUml: true)
 
 SourceStringReader s = new SourceStringReader(builder.getText())
 FileOutputStream file = new FileOutputStream("./plantUmlBuilderTest.png")

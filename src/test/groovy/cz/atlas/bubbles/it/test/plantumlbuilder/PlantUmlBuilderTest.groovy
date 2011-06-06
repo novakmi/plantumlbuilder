@@ -22,14 +22,14 @@ THE SOFTWARE.
 
 package cz.atlas.bubbles.it.test.plantumlbuilder
 
-import org.testng.annotations.Test
 import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
-import org.testng.Assert
-import org.slf4j.LoggerFactory
-import org.slf4j.Logger
 import net.sourceforge.plantuml.SourceStringReader
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.testng.Assert
+import org.testng.annotations.Test
 
-class PlantUmlBasicTest {
+class PlantUmlBuilderTest {
 
     def final static makePlantFile = true
 
@@ -63,7 +63,7 @@ class PlantUmlBasicTest {
 
 /**
  * Helper string constatnt to verify basic indented diagram.
- * @see PlantUmlBasicTest._buildSeq
+ * @see PlantUmlBuilderTest._buildSeq
  */
     private final def _seqStringNoNL = '''A->B
 activate B
@@ -259,8 +259,8 @@ end note
         assertPlantFile(builder)
         logger.trace("<== plantPlainKeywordsTest")
     }
-/** Initialize logging                                                                                                      */
-    private static final Logger logger = LoggerFactory.getLogger(PlantUmlBasicTest.class);
 
+    //Initialize logging
+    private static final Logger logger = LoggerFactory.getLogger(PlantUmlBuilderTest.class);
 }
 

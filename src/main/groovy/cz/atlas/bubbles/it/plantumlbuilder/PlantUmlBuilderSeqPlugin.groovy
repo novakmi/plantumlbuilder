@@ -23,10 +23,10 @@ THE SOFTWARE.
 
 package cz.atlas.bubbles.it.plantumlbuilder
 
-class PlantUmlBuilderSeqListener implements PlantUmlBuilderListener {
+class PlantUmlBuilderSeqPlugin implements PlantUmlBuilderPluginListener {
 
-    ListenerResult process(Node node, IndentPrinter out, boolean postProcess) {
-        ListenerResult retVal = ListenerResult.NOT_ACCEPTED
+    PluginListenerResult process(Node node, IndentPrinter out, boolean postProcess) {
+        PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
         switch (node.name) {
             case 'activatebl':
                 out.printIndent()
@@ -36,7 +36,7 @@ class PlantUmlBuilderSeqListener implements PlantUmlBuilderListener {
                     out.print('deactivate ')
                 }
                 out.println(node.value)
-                retVal = ListenerResult.PROCESSED
+                retVal = PluginListenerResult.PROCESSED_STOP
                 break
             case 'callbl':
                 def from = node.attributes.from
@@ -66,7 +66,7 @@ class PlantUmlBuilderSeqListener implements PlantUmlBuilderListener {
                     }
 
                 }
-                retVal = ListenerResult.PROCESSED
+                retVal = PluginListenerResult.PROCESSED_STOP
                 break
             case 'opt':
             case 'loop':
@@ -78,28 +78,28 @@ class PlantUmlBuilderSeqListener implements PlantUmlBuilderListener {
                 } else {
                     out.println("end")
                 }
-                retVal = ListenerResult.PROCESSED
+                retVal = PluginListenerResult.PROCESSED_STOP
                 break
              case 'ref':
                  if (!postProcess) {
                      // in attribute 'over' expect list of over elements
                      out.printIndent()
                      out.println("$node.name over ${node.attributes.over.join(',')} : $node.value")
-                     retVal = ListenerResult.PROCESSED
+                     retVal = PluginListenerResult.PROCESSED_STOP
                  }
                 break
             case 'else':
                 if (!postProcess) {
                     out.printIndent()
                     out.println("else $node.value")
-                    retVal = ListenerResult.PROCESSED
+                    retVal = PluginListenerResult.PROCESSED_STOP
                 }
                 break
             case 'divider':
                 if (!postProcess) {
                     out.printIndent()
                     out.println("== $node.value ==")
-                    retVal = ListenerResult.PROCESSED
+                    retVal = PluginListenerResult.PROCESSED_STOP
                 }
                 break
         }

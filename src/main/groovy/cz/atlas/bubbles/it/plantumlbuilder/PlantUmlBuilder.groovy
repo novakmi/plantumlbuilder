@@ -32,14 +32,15 @@ private class Node {
 }
 
 //Listener interface  for node or attributes
-enum ListenerResult {
+enum PluginListenerResult {
     NOT_ACCEPTED,
-    PROCESSED,
+    PROCESSED_STOP,
+    PROCESSED_CONTINUE,
     FAILED,
 }
 
-interface PlantUmlBuilderListener {
-    ListenerResult process(final Node node, IndentPrinter out, boolean postProcess)
+interface PlantUmlBuilderPluginListener {
+    PluginListenerResult process(final Node node, IndentPrinter out, boolean postProcess)
 }
 
 // Builder class
@@ -51,7 +52,7 @@ class PlantUmlBuilder extends BuilderSupport {
 
     //see http://groovy.codehaus.org/gapi/groovy/beans/ListenerList.html
     @groovy.beans.ListenerList
-    private List<PlantUmlBuilderListener> listeners = []
+    private List<PlantUmlBuilderPluginListener> pluginListeners = []
 
     public PlantUmlBuilder() {
         stringWriter = new StringWriter()
@@ -84,21 +85,26 @@ class PlantUmlBuilder extends BuilderSupport {
 
     /*
     // not needed anymore because of   @groovy.beans.ListenerList, use  addPlantUmlBuilderListener
-    def addListener(final PlantUmlBuilderListener listener) {
-        listeners += listener
+    def addListener(final PlantUmlBuilderPluginListener listener) {
+        pluginListeners += listener
     }
     */
 
     def private printNode(node) {
         boolean nodeProcessedByListener = false
-        for (l in listeners) {
-            ListenerResult res = l.process(node, out, false)
-            nodeProcessedByListener = (res == ListenerResult.PROCESSED)
-            if (nodeProcessedByListener) {
+        boolean failed = false
+        for (l in pluginListeners) {
+            PluginListenerResult res = l.process(node, out, false)
+            if (res == PluginListenerResult.FAILED) {
+                failed = true
+                break
+            }
+            nodeProcessedByListener = (res == PluginListenerResult.PROCESSED_STOP || res == PluginListenerResult.PROCESSED_CONTINUE)
+            if (res == PluginListenerResult.PROCESSED_STOP) {
                 break
             }
         }
-        if (!nodeProcessedByListener) {
+        if (!nodeProcessedByListener && !failed) {
             switch (node.name) {
                 case 'plant':
                     out.printIndent()
@@ -123,8 +129,8 @@ class PlantUmlBuilder extends BuilderSupport {
                     if (node.attributes.as) {
                         out.println("note $node.value as $node.attributes.as")
                     } else {
-                    def pos = node.attributes.pos ?: 'right'
-                    out.println("note $pos : $node.value")
+                        def pos = node.attributes.pos ?: 'right'
+                        out.println("note $pos : $node.value")
                     }
                     break
                 case 'plantuml':
@@ -133,6 +139,7 @@ class PlantUmlBuilder extends BuilderSupport {
                     }
                 default:
                     println "Unsupported node name ${node.name}"
+                    failed = true
                     break
             }
         }
@@ -141,11 +148,14 @@ class PlantUmlBuilder extends BuilderSupport {
             printNode(it)
             out.decrementIndent()
         }
-        if (nodeProcessedByListener) {
-            for (l in listeners) {
-                ListenerResult res = l.process(node, out, true)
-                nodeProcessedByListener = (res == ListenerResult.PROCESSED)
-                if (nodeProcessedByListener) {
+        if (nodeProcessedByListener && !failed) {
+            for (l in pluginListeners) {
+                PluginListenerResult res = l.process(node, out, true)
+                if (res == PluginListenerResult.FAILED) {
+                    failed = true
+                    break
+                }
+                if (res == PluginListenerResult.PROCESSED_STOP) {
                     break
                 }
             }

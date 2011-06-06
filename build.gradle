@@ -34,7 +34,7 @@ tailfPackage = "cz.atlas.bubbles.it"
 if (!System.getenv()['PLANTUML_DIR']) {
     logger.error("PLANTUML_DIR is not defined!")
 }
-assert (System.getenv()['PLANTUML_DIR']) // end with error if NCS_DIR not defined
+assert (System.getenv()['PLANTUML_DIR']) // end with error if PLANTUML_DIR not defined
 
 
 apply plugin: 'groovy'
@@ -107,7 +107,8 @@ test {
                     }
                 }
                 classes([:]) {
-                    'class'(name: "cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBasicTest")
+                    'class'(name: "cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBuilderTest")
+                    'class'(name: "cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBuilderClassPluginTest")
                 }
             }
         }
