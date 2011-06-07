@@ -34,7 +34,7 @@ class PlantUmlBuilderClassPlugin implements PlantUmlBuilderPluginListener {
                         out.println("}")
                     }
                 } else {
-                    def name = node.name.replace('plant','')
+                    def name = node.name.replace('plant', '')
                     out.println("$name ${node.value}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}${node.attributes?.members ? " {" : ""}")
                     if (node.attributes?.members) {
                         node.attributes?.members.each {
@@ -44,6 +44,13 @@ class PlantUmlBuilderClassPlugin implements PlantUmlBuilderPluginListener {
                             out.decrementIndent()
                         }
                     }
+                }
+                retVal = PluginListenerResult.PROCESSED_STOP
+                break
+            case 'relation':
+                if (!postProcess) {
+                    out.printIndent()
+                    out.println("${node.value} ${node.attributes.rel} ${node.attributes.to}")
                 }
                 retVal = PluginListenerResult.PROCESSED_STOP
                 break
