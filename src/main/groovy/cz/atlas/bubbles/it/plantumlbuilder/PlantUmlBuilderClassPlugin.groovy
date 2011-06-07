@@ -27,6 +27,7 @@ class PlantUmlBuilderClassPlugin implements PlantUmlBuilderPluginListener {
         PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
         switch (node.name) {
             case 'plantclass':
+            case 'plantinterface':
             case 'plantenum':
                 out.printIndent()
                 if (postProcess) {
