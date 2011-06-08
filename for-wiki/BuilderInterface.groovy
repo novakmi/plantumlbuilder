@@ -39,6 +39,7 @@ import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
 import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderClassPlugin
 import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderPluginListener
 import cz.atlas.bubbles.it.plantumlbuilder.PluginListenerResult
+import cz.atlas.bubbles.it.plantumlbuilder.Node
 
 // create new builder
 def builder = new PlantUmlBuilder()
@@ -61,6 +62,15 @@ builder.plantuml {
         PluginListenerResult.PROCESSED_CONTINUE,
         PluginListenerResult.FAILED,
     ])
+    relation(PlantUmlBuilder.class.name, rel: '*-- "0..*"', to: PlantUmlBuilderPluginListener.class.name)
+    def nodeMembers = [
+        "+name // name of node",
+        "+parent // parent node",
+        "+attributes = [:]",
+        "+value",
+        "+children = [] //children nodes",
+    ]
+    plantclass(Node.class.name, members: nodeMembers)
 }
 
 // use plantUML to create png file from plantuml text

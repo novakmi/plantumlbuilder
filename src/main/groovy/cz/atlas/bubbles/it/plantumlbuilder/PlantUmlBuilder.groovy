@@ -22,24 +22,34 @@ THE SOFTWARE.
 
 package cz.atlas.bubbles.it.plantumlbuilder
 
-//Builder model node
+/**
+ * Builder node
+ */
 private class Node {
-    def name = ''
-    def parent = null; // parent (or null if this is root node)
-    def attributes = [:] //attributes
-    def value = null //value
+    def name = ''   // name of node (e.g. plant('text, at:'attrib') - name is plant)
+    def parent = null // parent node (or null if this is root node)
+    def attributes = [:] //attributes (e.g. plant('text, at:'atrib') - attributes.at == 'attrib')
+    def value = null //value of node (e.g. plant('text, at:'attrib') - value is text)
     def children = [] //children nodes
 }
 
 //Listener interface  for node or attributes
 enum PluginListenerResult {
-    NOT_ACCEPTED,
-    PROCESSED_STOP,
-    PROCESSED_CONTINUE,
-    FAILED,
+    NOT_ACCEPTED, // node not accepted by plagin
+    PROCESSED_STOP, // node processed by plugin, do not process node with other plugins
+    PROCESSED_CONTINUE, // node processed by plugin, process node with other plugins as well
+    FAILED, // node processing failed
 }
 
 interface PlantUmlBuilderPluginListener {
+    /**
+     * Process given node in plugin before and after plantuml builder
+     * @param node builder node to process (
+     * @param out IndentPrinter to print PlantUML text
+     * @param postProcess if false, it is pre processing time, if true, it is post processing time
+     * @return result
+     * $see PluginListenerResult, Node
+     */
     PluginListenerResult process(final Node node, IndentPrinter out, boolean postProcess)
 }
 
@@ -118,19 +128,19 @@ class PlantUmlBuilder extends BuilderSupport {
                 case 'participant':
                     out.printIndent()
                     out.print(node.name)
-                    if (node.attributes.text) {
-                        out.println(" $node.attributes.text as $node.value")
+                    if (node.attributes.as) {
+                        out.println(" $node.value as $node.attributes.as")
                     } else {
                         out.println(" $node.value")
                     }
                     break
                 case 'note':
                     out.printIndent()
+                    out.print(node.name)
                     if (node.attributes.as) {
-                        out.println("note $node.value as $node.attributes.as")
+                        out.println(" $node.value as $node.attributes.as")
                     } else {
-                        def pos = node.attributes.pos ?: 'right'
-                        out.println("note $pos : $node.value")
+                        out.println(" ${node.attributes.pos ? "${node.attributes.pos} : " : ''}$node.value")
                     }
                     break
                 case 'plantuml':
@@ -162,6 +172,14 @@ class PlantUmlBuilder extends BuilderSupport {
         }
     }
 
+    /**
+     * Get PlantUML text build by the builder
+     * @param params map with optional name params.
+     *         Currently supported 'plainPlantUml' - do not add '@startuml/@enduml' to the returned PlantUML text
+     *         getText()
+     *         getText(plainPlantUml: true)
+     * @return build text
+     */
     public String getText(params) {
         StringBuffer buffer = stringWriter.getBuffer()
         buffer.delete(0, buffer.length()) // clear buffer
@@ -180,6 +198,10 @@ class PlantUmlBuilder extends BuilderSupport {
         return retVal
     }
 
+    /**
+     * Reset root element of the builder.
+     * Use this method to start building PlantUML text from the beginning.
+     */
     public void reset() {
         root = null
     }

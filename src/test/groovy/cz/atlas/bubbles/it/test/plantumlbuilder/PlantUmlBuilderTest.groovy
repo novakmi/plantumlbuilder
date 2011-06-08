@@ -186,7 +186,7 @@ deactivate B
 
         builder.reset()
         builder.plantuml {
-            actor('MyActor', text: '"My actor\\n(system)"')
+            actor('"My actor\\n(system)"', as: 'MyActor')
         }
         Assert.assertEquals(builder.getText(plainPlantUml: true), 'actor "My actor\\n(system)" as MyActor\n')
         assertPlantFile(builder)
@@ -200,7 +200,7 @@ deactivate B
         assertPlantFile(builder)
         builder.reset()
         builder.plantuml {
-            participant('MyParticipant', text: '"My participant\\n(system)"')
+            participant('"My participant\\n(system)"', as: 'MyParticipant')
         }
         Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant "My participant\\n(system)" as MyParticipant\n')
         assertPlantFile(builder)
@@ -211,7 +211,7 @@ deactivate B
             participant('A')
             note('My note')
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant A\nnote right : My note\n')
+        Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant A\nnote My note\n')
         assertPlantFile(builder)
         ['right', 'left'].each {nt ->
             builder.reset()

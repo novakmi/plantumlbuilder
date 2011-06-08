@@ -68,11 +68,11 @@ def builder = new PlantUmlBuilder()
 builder.plantuml {
     title('Plantumlbuilder example - scan')
     //create actors and participants
-    actor(User1, text: 'Joe')
-    actor(User2, text: 'Sally')
-    participant(scanSoftware, text: 'xsane')
+    actor('Joe', as: User1)
+    actor('Sally', as: User2)
+    participant('xsane' , as: scanSoftware)
     participant(scanner)
-    participant(storage, text: '"Hard\\ndisk"')
+    participant('"Hard\\ndisk"', as: storage)
     scan(builder, User1, [paper, photo]) //call function - reuse for User1
     scan(builder, User2, [paper, paper]) //call function - reuse for user2
 }
