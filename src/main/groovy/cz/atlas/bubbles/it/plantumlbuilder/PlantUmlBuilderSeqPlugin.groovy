@@ -27,46 +27,74 @@ class PlantUmlBuilderSeqPlugin implements PlantUmlBuilderPluginListener {
 
     PluginListenerResult process(Node node, IndentPrinter out, boolean postProcess) {
         PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
-        switch (node.name) {
-            case 'activatebl':
-                out.printIndent()
-                if (!postProcess) {
-                    out.print("activate ")
-                } else {
-                    out.print('deactivate ')
+        def processClose = {to ->
+            if (node.attributes.close) {
+                switch (node.attributes.close) {
+                    case 'deactivate':
+                    case 'destroy':
+                        out.printIndent()
+                        out.println("${node.attributes.close} $to")
+                        break
+                    default:
+                        out.println("**** close can be only 'deactivate' or 'destroy', not ${node.attributes.close} ***")
+                        retVal = PluginListenerResult.FAILED
+                        break
                 }
-                out.println(node.value)
+            }
+        }
+
+        def process = {val ->
+            if (!postProcess) {
+                out.printIndent()
+                out.println(val)
                 retVal = PluginListenerResult.PROCESSED_STOP
+            }
+        }
+
+        switch (node.name) {
+            case 'activate':
+                if (!postProcess) {
+                    out.printIndent()
+                    out.print("activate ")
+                    out.println(node.value)
+                } else {
+                    processClose(node.value) // sets retVal to FAILED
+                }
+                if (retVal != PluginListenerResult.FAILED) {
+                    retVal = PluginListenerResult.PROCESSED_STOP
+                }
                 break
-            case 'callbl':
-                def from = node.attributes.from
+            case 'msg': // 'msg' is alias for message
                 def to = node.attributes.to
-                def activate = node.attributes.activate
+                def noReturn = node.attributes.noReturn
+                if (!to) { // self message
+                    to = node.value
+                    noReturn = true
+                }
+                def activate = node.attributes.activate || node.attributes.close  // close implies activate
                 if (!postProcess) {
                     def text = node.attributes.text
                     def type = node.attributes.type
                     if (!type) type = '->'
                     out.printIndent()
-                    out.println("$from $type $to${text ? " : $text" : ''}")
+                    out.println("$node.value $type $to${text ? " : $text" : ''}")
                     if (activate) {
                         out.printIndent()
                         out.println("activate $to")
                     }
                 } else {
-                    def rettext = node.attributes.rettext
-                    def rettype = node.attributes.rettype
-                    if (!rettype) rettype = '-->'
-                    if (!node.attributes.noret) { // return not needed, e.g. self message
+                    if (node.attributes.returnText || node.attributes.returnType || !noReturn ) {
+                        def returnText = node.attributes.returnText
+                        def returnType = node.attributes.returnType
+                        if (!returnType) returnType = '-->'
                         out.printIndent()
-                        out.println("$to $rettype $from${rettext ? " : $rettext" : ''}")
+                        out.println("$to $returnType ${node.value}${returnText ? " : $returnText" : ''}")
                     }
-                    if (activate) {
-                        out.printIndent()
-                        out.println("deactivate $to")
-                    }
-
+                    processClose(to)  // sets retVal to FAILED
                 }
-                retVal = PluginListenerResult.PROCESSED_STOP
+                if (retVal != PluginListenerResult.FAILED) {
+                    retVal = PluginListenerResult.PROCESSED_STOP
+                }
                 break
             case 'opt':
             case 'loop':
@@ -80,29 +108,34 @@ class PlantUmlBuilderSeqPlugin implements PlantUmlBuilderPluginListener {
                 }
                 retVal = PluginListenerResult.PROCESSED_STOP
                 break
-             case 'ref':
-                 if (!postProcess) {
-                     // in attribute 'over' expect list of over elements
-                     out.printIndent()
-                     out.println("$node.name over ${node.attributes.over.join(',')} : $node.value")
-                     retVal = PluginListenerResult.PROCESSED_STOP
-                 }
+            case 'ref':
+                if (!node.attributes.over) {
+                    out.println("***** 'ref' requires 'over' attribute ****")
+                    retVal = PluginListenerResult.FAILED
+                } else {
+                    process("$node.name over ${node.attributes.over.join(',')} : $node.value")
+                    retVal = PluginListenerResult.PROCESSED_STOP
+                }
                 break
             case 'else':
-                if (!postProcess) {
-                    out.printIndent()
-                    out.println("else $node.value")
-                    retVal = PluginListenerResult.PROCESSED_STOP
-                }
+                process("else $node.value")
+                retVal = PluginListenerResult.PROCESSED_STOP
                 break
             case 'divider':
-                if (!postProcess) {
-                    out.printIndent()
-                    out.println("== $node.value ==")
-                    retVal = PluginListenerResult.PROCESSED_STOP
-                }
+                process("== $node.value ==")
+                retVal = PluginListenerResult.PROCESSED_STOP
+                break
+            case 'delay':
+                process("...$node.value...")
+                retVal = PluginListenerResult.PROCESSED_STOP
+                break
+            case 'deactivate':
+            case 'destroy':
+                process("$node.name $node.value")
+                retVal = PluginListenerResult.PROCESSED_STOP
                 break
         }
+
         return retVal
     }
 }

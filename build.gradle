@@ -109,6 +109,7 @@ test {
                 classes([:]) {
                     'class'(name: "cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBuilderTest")
                     'class'(name: "cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBuilderClassPluginTest")
+                    'class'(name: "cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBuilderSeqPluginTest")
                 }
             }
         }

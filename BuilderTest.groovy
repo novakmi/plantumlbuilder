@@ -34,7 +34,7 @@ import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderSeqPlugin
 
 def callFunction(builder) {
     builder.plant('B->C')
-    builder.activatebl('C') {
+    builder.activate('C', close: 'deactivate') {
         plant('C-->B')
     }
 }
@@ -48,7 +48,7 @@ builder.plantuml {
         plant('A-->B')
     }
     plant("A->B") // this just copies text to the output, this allows any PlantUML expression
-    activatebl('B') { // customized builder command activate (see  PlantUmlBuilderSeqPlugin)
+    activate('B', close: 'destroy') { // customized builder command activate (see  PlantUmlBuilderSeqPlugin)
         callFunction(builder)
         clsr()
     } // deactivate added automatically
@@ -67,8 +67,8 @@ println ''
 
 builder.reset()
 builder.plantuml {
-    callbl(from: 'A', to: 'B', activate: true) {
-        callbl(from: 'B', to: 'C', activate: true, type: "->>", rettype: "--\\") {
+    msg('A', to: 'B', close: 'deactivate') {
+        msg('B', to: 'C', type: "->>", returnType: "--\\", close: 'deactivate') {
             plant('C->D')
         }
     }

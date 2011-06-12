@@ -23,135 +23,118 @@ THE SOFTWARE.
 package cz.atlas.bubbles.it.test.plantumlbuilder
 
 import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
-import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderClassPlugin
+import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderSeqPlugin
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.testng.Assert
 import org.testng.annotations.Test
+import org.testng.Assert
 
-class PlantUmlBuilderClassPluginTest {
+class PlantUmlBuilderSeqPluginTest {
+
     @Test(groups = ["basic"])
-    public void plantClassTest() {
-        logger.trace("==> plantClassTest")
+    public void plantSeqDividerDelayTest() {
+        logger.trace("==> plantSeqDividerDelayTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addPlantUmlBuilderPluginListener(new PlantUmlBuilderClassPlugin())
+        builder.addPlantUmlBuilderPluginListener(new PlantUmlBuilderSeqPlugin())
 
         builder.plantuml {
-            pclass('MyClass')
+            actor('A')
+            divider('my divider')
         }
         Assert.assertEquals(builder.getText(),
             '''@startuml
-class MyClass
+actor A
+== my divider ==
 @enduml''')
         PlantUmlBuilderTest.assertPlantFile(builder)
 
         builder.reset()
-
         builder.plantuml {
-            pclass('MyClass', stereotype: 'union')
+            actor('A')
+            delay('wait 5 minutes')
         }
         Assert.assertEquals(builder.getText(),
             '''@startuml
-class MyClass << union >>
+actor A
+...wait 5 minutes...
 @enduml''')
+
         PlantUmlBuilderTest.assertPlantFile(builder)
-        logger.trace("<== plantClassTest")
-    }
-
-
-    @Test(groups = ["basic"])
-    public void plantClassMemberTest() {
-        logger.trace("==> plantClassMemberTest")
-        def builder = new PlantUmlBuilder() // new instance
-        builder.addPlantUmlBuilderPluginListener(new PlantUmlBuilderClassPlugin())
-
-        builder.plantuml {
-            pclass('MyClass', members: ['aaa', 'getAaa()', 'ccc'])
-        }
-        Assert.assertEquals(builder.getText(),
-            '''@startuml
-class MyClass {
-  aaa
-  getAaa()
-  ccc
-}
-@enduml''')
-        PlantUmlBuilderTest.assertPlantFile(builder)
-
-        builder.reset()
-
-        builder.plantuml {
-            pclass('MyClass', stereotype: 'project object', members: ['aaa', 'getAaa()', 'ccc'])
-        }
-        Assert.assertEquals(builder.getText(),
-            '''@startuml
-class MyClass << project object >> {
-  aaa
-  getAaa()
-  ccc
-}
-@enduml''')
-        PlantUmlBuilderTest.assertPlantFile(builder)
-
-        logger.trace("<== plantClassMemberTest")
+        logger.trace("<== plantSeqDividerDelayTest")
     }
 
     @Test(groups = ["basic"])
-    public void plantEnumTest() {
-        logger.trace("==> plantEnumTest")
+    public void plantSeqActivateTest() {
+        logger.trace("==> plantSeqActivateTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addPlantUmlBuilderPluginListener(new PlantUmlBuilderClassPlugin())
-
+        builder.addPlantUmlBuilderPluginListener(new PlantUmlBuilderSeqPlugin())
         builder.plantuml {
-            penum('MyEnum')
+            actor('A')
+            activate('A')
         }
         Assert.assertEquals(builder.getText(),
             '''@startuml
-enum MyEnum
+actor A
+activate A
 @enduml''')
         PlantUmlBuilderTest.assertPlantFile(builder)
 
         builder.reset()
-
         builder.plantuml {
-            penum('MyEnum', stereotype: 'enum')
+            actor('A')
+            activate('A')
+            deactivate('A')
         }
         Assert.assertEquals(builder.getText(),
             '''@startuml
-enum MyEnum << enum >>
-@enduml''')
-        PlantUmlBuilderTest.assertPlantFile(builder)
-        logger.trace("<== plantEnumTest")
-    }
-
-     @Test(groups = ["basic"])
-    public void plantInterfaceTest() {
-        logger.trace("==> plantInterfaceTest")
-        def builder = new PlantUmlBuilder() // new instance
-        builder.addPlantUmlBuilderPluginListener(new PlantUmlBuilderClassPlugin())
-
-        builder.plantuml {
-            pinterface('MyInterface')
-        }
-        Assert.assertEquals(builder.getText(),
-            '''@startuml
-interface MyInterface
+actor A
+activate A
+deactivate A
 @enduml''')
         PlantUmlBuilderTest.assertPlantFile(builder)
 
         builder.reset()
-
         builder.plantuml {
-            pinterface('MyInterface', stereotype: 'interface')
+            actor('A')
+            activate('A')
+            destroy('A')
         }
         Assert.assertEquals(builder.getText(),
             '''@startuml
-interface MyInterface << interface >>
+actor A
+activate A
+destroy A
 @enduml''')
         PlantUmlBuilderTest.assertPlantFile(builder)
-        logger.trace("<== plantInterfaceTest")
-    }
 
+        builder.reset()
+        builder.plantuml {
+            actor('A')
+            activate('A', close: 'deactivate')
+        }
+        Assert.assertEquals(builder.getText(),
+            '''@startuml
+actor A
+activate A
+deactivate A
+@enduml''')
+        PlantUmlBuilderTest.assertPlantFile(builder)
+
+        builder.reset()
+        builder.plantuml {
+            actor('A')
+            activate('A', close: 'destroy')
+        }
+        Assert.assertEquals(builder.getText(),
+            '''@startuml
+actor A
+activate A
+destroy A
+@enduml''')
+        PlantUmlBuilderTest.assertPlantFile(builder)
+
+        logger.trace("<== plantSeqActivateTest")
+    }
     //Initialize logging
-    private static final Logger logger = LoggerFactory.getLogger(PlantUmlBuilderClassPluginTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(PlantUmlBuilderSeqPluginTest.class);
 }

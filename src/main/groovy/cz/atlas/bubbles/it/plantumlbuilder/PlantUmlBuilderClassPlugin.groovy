@@ -26,16 +26,16 @@ class PlantUmlBuilderClassPlugin implements PlantUmlBuilderPluginListener {
     PluginListenerResult process(Node node, IndentPrinter out, boolean postProcess) {
         PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
         switch (node.name) {
-            case 'plantclass':
-            case 'plantinterface':
-            case 'plantenum':
+            case 'pclass':
+            case 'pinterface':
+            case 'penum':
                 out.printIndent()
                 if (postProcess) {
                     if (node.attributes?.members) {
                         out.println("}")
                     }
                 } else {
-                    def name = node.name.replace('plant', '')
+                    def name = node.name[1..-1] //skip startin 'p'
                     out.println("$name ${node.value}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}${node.attributes?.members ? " {" : ""}")
                     if (node.attributes?.members) {
                         node.attributes?.members.each {
