@@ -119,11 +119,17 @@ deactivate B
         }
         Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
         assertPlantFile(builder)
+        builder.reset()
+        builder.plantuml('img/myseq.png') {
+            _buildSeq(builder)
+        }
+        Assert.assertEquals(builder.getText(), "@startuml img/myseq.png${_seqString}@enduml")
+        //assertPlantFile(builder)
         logger.trace("<== plantPlainSeqIndentTest")
     }
 
 /**
- * Basic test to test builder reset fucntion.
+ * Basic test to test builder reset function.
  */
     @Test(groups = ["basic"])
     public void plantPlainResetTest() {

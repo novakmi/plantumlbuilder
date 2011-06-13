@@ -184,12 +184,16 @@ class PlantUmlBuilder extends BuilderSupport {
         StringBuffer buffer = stringWriter.getBuffer()
         buffer.delete(0, buffer.length()) // clear buffer
         stringWriter.flush()
+        def umlval = ''
         if (root) {
             printNode(root)
+            if (root.value) {
+                umlval = " $root.value"
+            }
         }
         def retVal = ''
         if (!params?.plainPlantUml) {
-            retVal += "@startuml\n"
+            retVal += "@startuml${umlval}\n"
         }
         retVal += buffer.toString()
         if (!params?.plainPlantUml) {

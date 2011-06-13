@@ -83,7 +83,7 @@ class PlantUmlBuilderSeqPlugin implements PlantUmlBuilderPluginListener {
                         out.println("activate $to")
                     }
                 } else {
-                    if (node.attributes.returnText || node.attributes.returnType || !noReturn ) {
+                    if (node.attributes.returnText || node.attributes.returnType || !noReturn) {
                         def returnText = node.attributes.returnText
                         def returnType = node.attributes.returnType
                         if (!returnType) returnType = '-->'
@@ -100,6 +100,9 @@ class PlantUmlBuilderSeqPlugin implements PlantUmlBuilderPluginListener {
             case 'loop':
             case 'alt':
             case 'group':
+            case 'par':
+            case 'break':
+            case 'critical':
                 out.printIndent()
                 if (!postProcess) {
                     out.println("$node.name $node.value")
