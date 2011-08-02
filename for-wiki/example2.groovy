@@ -40,9 +40,9 @@ paper = 'paper'
 photo = 'photo'
 
 
-def scan(builder, user, scanList) {
-    scanList.each {it ->
-        builder.plant("$user -> $scanner: Insert $it into $scanner") {
+def scan(builder, user, mediaList) {
+    mediaList.each {media ->
+        builder.plant("$user -> $scanner: Insert $media into $scanner") {
             def scan = { // reuse via closure
                 plant("$user -> $scanSoftware: Press 'Scan' button")
                 plant("$scanSoftware -> $scanner: scan")
@@ -51,7 +51,7 @@ def scan(builder, user, scanList) {
                 plant("$scanSoftware -> $storage: Create image file")
             }
 
-            if (it == paper) {  // programming can be used
+            if (media == paper) {  // programming can be used
                 plant("$user -> $scanSoftware: Set B/W 300 DPI")
                 scan() // perform closure - reuse
             } else {
@@ -59,7 +59,7 @@ def scan(builder, user, scanList) {
                 scan() // perform closure - reuse
             }
         }
-        builder.plant("$user -> $scanner: Remove $it from $scanner")
+        builder.plant("$user -> $scanner: Remove $media from $scanner")
     }
 }
 // create new builder

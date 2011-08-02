@@ -33,7 +33,7 @@ import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
 def builder = new PlantUmlBuilder()
 // plantuml element is a root element of PlantUML
 builder.plantuml {
-            plant('A->B') // plant element only puts text to the oputput
+            plant('A->B') // plant element only puts text to the output
             plant('activate B')
             plant('B->C')
             plant('activate C')
