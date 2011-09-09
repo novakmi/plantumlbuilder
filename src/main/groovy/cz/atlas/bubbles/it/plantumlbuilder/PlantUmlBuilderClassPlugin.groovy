@@ -51,10 +51,20 @@ class PlantUmlBuilderClassPlugin implements PlantUmlBuilderPluginListener {
             case 'relation':
                 if (!postProcess) {
                     out.printIndent()
-                    out.println("${node.value} ${node.attributes.rel} ${node.attributes.to}")
+                    out.println("${node.value} ${node.attributes.rel} ${node.attributes.to}${node.attributes.text ? " :${node.attributes.text}" : ""}")
                 }
                 retVal = PluginListenerResult.PROCESSED_STOP
                 break
+            case 'ppackage':
+                if (!postProcess) {
+                    out.printIndent()
+                    out.println("package ${node.value}")
+                } else {
+                    out.printIndent()
+                    out.println("end package")
+                }
+                retVal = PluginListenerResult.PROCESSED_STOP
+                break;
         }
         return retVal
     }
