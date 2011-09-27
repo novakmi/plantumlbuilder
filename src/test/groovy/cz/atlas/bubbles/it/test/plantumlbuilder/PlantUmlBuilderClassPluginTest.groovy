@@ -97,6 +97,67 @@ class MyClass << project object >> {
     }
 
     @Test(groups = ["basic"])
+    public void plantAsTest() {
+        logger.trace("==> plantAsTest")
+        def builder = new PlantUmlBuilder() // new instance
+        builder.addPlantUmlBuilderPluginListener(new PlantUmlBuilderClassPlugin())
+
+        builder.plantuml {
+            pclass('MyClass', as: 'My Class')
+        }
+        Assert.assertEquals(builder.getText(),
+            '''@startuml
+class MyClass as "My Class"
+@enduml''')
+        PlantUmlBuilderTest.assertPlantFile(builder)
+
+        builder.reset()
+        builder.plantuml {
+            penum('MyEnum', as: 'My Enum')
+        }
+        Assert.assertEquals(builder.getText(),
+            '''@startuml
+enum MyEnum as "My Enum"
+@enduml''')
+        PlantUmlBuilderTest.assertPlantFile(builder)
+
+        builder.reset()
+        builder.plantuml {
+            penum('MyEnum', as: 'MyEnum2')
+        }
+        Assert.assertEquals(builder.getText(),
+            '''@startuml
+enum MyEnum as "MyEnum2"
+@enduml''')
+        PlantUmlBuilderTest.assertPlantFile(builder)
+
+        builder.reset()
+        builder.plantuml {
+            pinterface('MyInterface', as: 'My Interface')
+        }
+        Assert.assertEquals(builder.getText(),
+            '''@startuml
+interface MyInterface as "My Interface"
+@enduml''')
+        PlantUmlBuilderTest.assertPlantFile(builder, 'as4')
+
+        /*
+        builder.reset()
+
+        builder.plantuml {
+            pclass('MyClass', stereotype: 'union')
+        }
+        Assert.assertEquals(builder.getText(),
+            '''@startuml
+class MyClass << union >>
+@enduml''')
+        PlantUmlBuilderTest.assertPlantFile(builder)
+        */
+        logger.trace("<== plantAsTest")
+    }
+
+
+    @Test(groups = ["basic"])
     public void plantEnumTest() {
         logger.trace("==> plantEnumTest")
         def builder = new PlantUmlBuilder() // new instance
@@ -124,7 +185,7 @@ enum MyEnum << enum >>
         logger.trace("<== plantEnumTest")
     }
 
-     @Test(groups = ["basic"])
+    @Test(groups = ["basic"])
     public void plantInterfaceTest() {
         logger.trace("==> plantInterfaceTest")
         def builder = new PlantUmlBuilder() // new instance
@@ -150,6 +211,40 @@ interface MyInterface << interface >>
 @enduml''')
         PlantUmlBuilderTest.assertPlantFile(builder)
         logger.trace("<== plantInterfaceTest")
+    }
+
+    @Test(groups = ["basic"])
+    public void plantPackageTest() {
+        logger.trace("==> plantPackageTest")
+        def builder = new PlantUmlBuilder() // new instance
+        builder.addPlantUmlBuilderPluginListener(new PlantUmlBuilderClassPlugin())
+
+        builder.plantuml {
+            ppackage('MyPackage')
+        }
+        Assert.assertEquals(builder.getText(),
+            '''@startuml
+package MyPackage
+end package
+@enduml''')
+        PlantUmlBuilderTest.assertPlantFile(builder)
+
+        builder.reset()
+        builder.plantuml {
+            ppackage('MyPackage') {
+                pclass('PackageClass') {}
+            }
+        }
+        Assert.assertEquals(builder.getText(),
+            '''@startuml
+package MyPackage
+  class PackageClass
+end package
+@enduml''')
+        PlantUmlBuilderTest.assertPlantFile(builder)
+
+
+        logger.trace("<== plantPackageTest")
     }
 
     //Initialize logging

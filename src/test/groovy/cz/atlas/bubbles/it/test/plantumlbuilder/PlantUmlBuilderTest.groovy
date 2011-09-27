@@ -33,12 +33,12 @@ class PlantUmlBuilderTest {
 
     def final static makePlantFile = true
 
-    static def assertPlantFile(builder) {
+    static def assertPlantFile(builder, prefix = '') {
         logger.trace("==> assertPlantFile")
         if (makePlantFile) {
             def s = new SourceStringReader(builder.getText())
             logger.trace(builder.getText())
-            def file = new FileOutputStream("./plantTestNg.png")
+            def file = new FileOutputStream("./${prefix}_plantTestNg.png")
             s.generateImage(file);
             file.close()
         }
