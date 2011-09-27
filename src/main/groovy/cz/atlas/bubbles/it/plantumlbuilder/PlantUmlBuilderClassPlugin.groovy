@@ -29,21 +29,23 @@ class PlantUmlBuilderClassPlugin implements PlantUmlBuilderPluginListener {
             case 'pclass':
             case 'pinterface':
             case 'penum':
-                out.printIndent()
                 if (postProcess) {
                     if (node.attributes?.members) {
+                        out.printIndent()
                         out.println("}")
                     }
                 } else {
+                    out.printIndent()
                     def name = node.name[1..-1] //skip startin 'p'
-                    out.println("$name ${node.value}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}${node.attributes?.members ? " {" : ""}")
+                    def asText = node.attributes?.as ? " as \"${node.attributes.as}\"" : ""
+                    out.println("$name ${node.value}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}${asText}${node.attributes?.members ? " {" : ""}")
                     if (node.attributes?.members) {
+                        out.incrementIndent()
                         node.attributes?.members.each {
-                            out.incrementIndent()
                             out.printIndent()
                             out.println("$it")
-                            out.decrementIndent()
                         }
+                        out.decrementIndent()
                     }
                 }
                 retVal = PluginListenerResult.PROCESSED_STOP
@@ -56,11 +58,10 @@ class PlantUmlBuilderClassPlugin implements PlantUmlBuilderPluginListener {
                 retVal = PluginListenerResult.PROCESSED_STOP
                 break
             case 'ppackage':
+                out.printIndent()
                 if (!postProcess) {
-                    out.printIndent()
                     out.println("package ${node.value}")
                 } else {
-                    out.printIndent()
                     out.println("end package")
                 }
                 retVal = PluginListenerResult.PROCESSED_STOP
