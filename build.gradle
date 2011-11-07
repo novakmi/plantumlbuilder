@@ -46,10 +46,10 @@ idea {
 
 repositories {
     mavenCentral() // standard maven repository
-    flatDir name: 'localPantUmlRepository', dirs: 'jar' // create repository for NCS
-    localPantUmlRepository { //configure NCS repository
-        addArtifactPattern(file("${System.getenv()['PLANTUML_DIR']}/").absolutePath + '/plantuml.[ext]') // plantuml does not have version
-    }
+    flatDir name: 'localPantUmlRepository', dirs: file(System.getenv()['PLANTUML_DIR']).absolutePath // create repository for NCS
+//    localPantUmlRepository { //configure NCS repository   - not supported by gradel 1.0 m5 and above
+//        addArtifactPattern(file("${System.getenv()['PLANTUML_DIR']}/").absolutePath + '/plantuml.[ext]') // plantuml does not have version
+//    }
 }
 
 // Define dependencies
