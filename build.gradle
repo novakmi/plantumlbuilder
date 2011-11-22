@@ -24,9 +24,10 @@ THE SOFTWARE.
 // Tip: Use Intellij Idea community edition to work with gradle (GradelGUI plugin)
 // run 'gradle tasks' to see available tasks
 
-version = '0.0.2'
+version = '0.0.3'
 sourceCompatibility = '1.6'
 tailfPackage = "cz.atlas.bubbles.it"
+installDir = file('./install')
 
 if (!System.getenv()['PLANTUML_DIR']) {
     logger.error("PLANTUML_DIR is not defined!")
@@ -46,17 +47,17 @@ idea {
 
 repositories {
     mavenCentral() // standard maven repository
-    // create repository for NCS, PLANTUML_DIR env. variable must point to directory where plantum.jar is located
+    // create repository for PLANTUML_DIR env. variable must point to directory where plantum.jar is located
     flatDir name: 'localPantUmlRepository', dirs: file(System.getenv()['PLANTUML_DIR']).absolutePath
 }
 
 // Define dependencies
 dependencies {
     compile group: '', name: 'plantuml' // plantuml jar is automatically resolved from localPlantUmlRepository
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.2'
-    groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '1.8.2'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.4'
+    groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '1.8.4'
     testCompile group: 'org.testng', name: 'testng', version: '6.2.1'
-    testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.30'
+    testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.0'
     //testCompile 'org.uncommons:reportng:1.1.1'
     testCompile group: 'janino', name: 'janino', version: '2.5.10'
 }
@@ -77,7 +78,7 @@ jar {
 }
 
 clean << {  //add to clean task
-    //installDir.deleteDir()
+    installDir.deleteDir()
 }
 
 task sourcesJar(type: Jar) {
@@ -113,11 +114,11 @@ test {
     //    }
 }
 
-/*
-task prepareInstall(type: Copy, dependsOn: [jar, sourcesJar, javadocJar]) {
+
+task prepareInstall(type: Copy, dependsOn: [jar, sourcesJar, groovydocJar]) {
     installDir.mkdirs()
     //logger.quiet("externalJars {}", externalJars)
-    from configurations['compile']?.files/ *?.findAll { it.absolutePath.indexOf('unspecified') < 0 }* /
+    from configurations['compile']?.files/*?.findAll { it.absolutePath.indexOf('unspecified') < 0 }*/
     from "${project.projectDir}/build/libs"
     into installDir
 }
@@ -126,7 +127,6 @@ task prepareInstall(type: Copy, dependsOn: [jar, sourcesJar, javadocJar]) {
 task zipInstall(type: Zip, dependsOn: prepareInstall) {
     from installDir.toString()
 }
-*/
 
 // http://daniel.gredler.net/2011/08/08/gradle-keeping-libraries-up-to-date/
 // Find any 3rd party libraries which have released new versions
