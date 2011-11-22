@@ -59,6 +59,7 @@ class PlantUmlBuilder extends BuilderSupport {
     private PrintWriter writer
     private StringWriter stringWriter
     private Node root = null //root node of the model
+    private String builderText = null
 
     //see http://groovy.codehaus.org/gapi/groovy/beans/ListenerList.html
     @groovy.beans.ListenerList
@@ -181,21 +182,24 @@ class PlantUmlBuilder extends BuilderSupport {
      * @return build text
      */
     public String getText(params) {
-        StringBuffer buffer = stringWriter.getBuffer()
-        buffer.delete(0, buffer.length()) // clear buffer
-        stringWriter.flush()
         def umlval = ''
-        if (root) {
-            printNode(root)
-            if (root.value) {
-                umlval = " $root.value"
+        if (!builderText) {  // reuse from previous run?
+            StringBuffer buffer = stringWriter.getBuffer()
+            buffer.delete(0, buffer.length()) // clear buffer
+            stringWriter.flush()
+            if (root) {
+                printNode(root)
             }
+            builderText = buffer.toString()
+        }
+        if (root?.value) {
+            umlval = " $root.value"
         }
         def retVal = ''
         if (!params?.plainPlantUml) {
             retVal += "@startuml${umlval}\n"
         }
-        retVal += buffer.toString()
+        retVal += builderText
         if (!params?.plainPlantUml) {
             retVal += "@enduml"
         }
@@ -208,6 +212,7 @@ class PlantUmlBuilder extends BuilderSupport {
      */
     public void reset() {
         root = null
+        builderText = null
     }
 
 }
