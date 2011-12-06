@@ -23,9 +23,11 @@ THE SOFTWARE.
 
 package cz.atlas.bubbles.it.plantumlbuilder
 
+import cz.atlas.bubbles.it.nodebuilder.SimpleNode
+
 class PlantUmlBuilderSeqPlugin implements PlantUmlBuilderPluginListener {
 
-    PluginListenerResult process(Node node, IndentPrinter out, boolean postProcess) {
+    PluginListenerResult process(SimpleNode node, IndentPrinter out, boolean postProcess) {
         PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
         def processClose = {to ->
             if (node.attributes.close) {

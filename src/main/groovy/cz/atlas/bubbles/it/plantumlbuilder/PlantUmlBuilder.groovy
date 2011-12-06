@@ -22,20 +22,12 @@ THE SOFTWARE.
 
 package cz.atlas.bubbles.it.plantumlbuilder
 
-/**
- * Builder node
- */
-private class Node {
-    def name = ''   // name of node (e.g. plant('text, at:'attrib') - name is plant)
-    def parent = null // parent node (or null if this is root node)
-    def attributes = [:] //attributes (e.g. plant('text, at:'atrib') - attributes.at == 'attrib')
-    def value = null //value of node (e.g. plant('text, at:'attrib') - value is text)
-    def children = [] //children nodes
-}
+import cz.atlas.bubbles.it.nodebuilder.SimpleNode
+import cz.atlas.bubbles.it.nodebuilder.SimpleNodeBuilder
 
 //Listener interface  for node or attributes
 enum PluginListenerResult {
-    NOT_ACCEPTED, // node not accepted by plagin
+    NOT_ACCEPTED, // node not accepted by plugin
     PROCESSED_STOP, // node processed by plugin, do not process node with other plugins
     PROCESSED_CONTINUE, // node processed by plugin, process node with other plugins as well
     FAILED, // node processing failed
@@ -48,17 +40,17 @@ interface PlantUmlBuilderPluginListener {
      * @param out IndentPrinter to print PlantUML text
      * @param postProcess if false, it is pre processing time, if true, it is post processing time
      * @return result
-     * $see PluginListenerResult, Node
+     * $see PluginListenerResult, SimpleNode
      */
-    PluginListenerResult process(final Node node, IndentPrinter out, boolean postProcess)
+    PluginListenerResult process(final SimpleNode node, IndentPrinter out, boolean postProcess)
 }
 
 // Builder class
-class PlantUmlBuilder extends BuilderSupport {
+class PlantUmlBuilder extends SimpleNodeBuilder {
     private IndentPrinter out
     private PrintWriter writer
     private StringWriter stringWriter
-    private Node root = null //root node of the model
+    //private SimpleNode root = null //root node of the model
     private String builderText = null
 
     //see http://groovy.codehaus.org/gapi/groovy/beans/ListenerList.html
@@ -70,28 +62,6 @@ class PlantUmlBuilder extends BuilderSupport {
         writer = new PrintWriter(stringWriter)
         out = new IndentPrinter(writer)
         out.decrementIndent() // to start from beg. of line
-    }
-
-    @Override protected void setParent(Object parent, Object child) {
-        ((Node) parent).children.add(child)
-        ((Node) child).parent = parent
-        if (!root) root = parent
-    }
-
-    @Override protected Object createNode(Object name) {
-        return new Node(name: name)
-    }
-
-    @Override protected Object createNode(Object name, Object value) {
-        return new Node(name: name, value: value)
-    }
-
-    @Override protected Object createNode(Object name, Map attributes) {
-        return new Node(name: name, attributes: attributes)
-    }
-
-    @Override protected Object createNode(Object name, Map attributes, Object value) {
-        return new Node(name: name, value: value, attributes: attributes)
     }
 
     /*
@@ -154,11 +124,12 @@ class PlantUmlBuilder extends BuilderSupport {
                     break
             }
         }
+        out.incrementIndent()
         node.children.each {
-            out.incrementIndent()
             printNode(it)
-            out.decrementIndent()
+
         }
+        out.decrementIndent()
         if (nodeProcessedByListener && !failed) {
             for (l in pluginListeners) {
                 PluginListenerResult res = l.process(node, out, true)

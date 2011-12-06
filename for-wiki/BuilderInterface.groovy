@@ -55,7 +55,7 @@ builder.plantuml {
     ]
     plantclass(PlantUmlBuilder.class.name, members: builderMembers)
     note('See @groovy.beans.ListenerList', pos: "top of ${PlantUmlBuilder.class.name}")
-    plantinterface(PlantUmlBuilderPluginListener.class.name, members: ['+PluginListenerResult process(final Node node, IndentPrinter out, boolean postProcess)'])
+    plantinterface(PlantUmlBuilderPluginListener.class.name, members: ['+PluginListenerResult process(final SimpleNode node, IndentPrinter out, boolean postProcess)'])
     plantenum(PluginListenerResult.class.name, members: [
         PluginListenerResult.NOT_ACCEPTED,
         PluginListenerResult.PROCESSED_STOP,
