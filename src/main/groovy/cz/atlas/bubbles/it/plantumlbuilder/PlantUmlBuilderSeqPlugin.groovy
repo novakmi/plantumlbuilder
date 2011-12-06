@@ -27,120 +27,121 @@ import cz.atlas.bubbles.it.nodebuilder.SimpleNode
 
 class PlantUmlBuilderSeqPlugin implements PlantUmlBuilderPluginListener {
 
-    PluginListenerResult process(SimpleNode node, IndentPrinter out, boolean postProcess) {
-        PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
-        def processClose = {to ->
-            if (node.attributes.close) {
-                switch (node.attributes.close) {
-                    case 'deactivate':
-                    case 'destroy':
-                        out.printIndent()
-                        out.println("${node.attributes.close} $to")
-                        break
-                    default:
-                        out.println("**** close can be only 'deactivate' or 'destroy', not ${node.attributes.close} ***")
-                        retVal = PluginListenerResult.FAILED
-                        break
+        PluginListenerResult process(SimpleNode node, boolean postProcess, Object opaque) {
+                PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
+                IndentPrinter out = (IndentPrinter) opaque
+                def processClose = {to ->
+                        if (node.attributes.close) {
+                                switch (node.attributes.close) {
+                                        case 'deactivate':
+                                        case 'destroy':
+                                                out.printIndent()
+                                                out.println("${node.attributes.close} $to")
+                                                break
+                                        default:
+                                                out.println("**** close can be only 'deactivate' or 'destroy', not ${node.attributes.close} ***")
+                                                retVal = PluginListenerResult.FAILED
+                                                break
+                                }
+                        }
                 }
-            }
-        }
 
-        def process = {val ->
-            if (!postProcess) {
-                out.printIndent()
-                out.println(val)
-                retVal = PluginListenerResult.PROCESSED_STOP
-            }
-        }
+                def process = {val ->
+                        if (!postProcess) {
+                                out.printIndent()
+                                out.println(val)
+                                retVal = PluginListenerResult.PROCESSED_STOP
+                        }
+                }
 
-        switch (node.name) {
-            case 'activate':
-                if (!postProcess) {
-                    out.printIndent()
-                    out.print("activate ")
-                    out.println(node.value)
-                } else {
-                    processClose(node.value) // sets retVal to FAILED
+                switch (node.name) {
+                        case 'activate':
+                                if (!postProcess) {
+                                        out.printIndent()
+                                        out.print("activate ")
+                                        out.println(node.value)
+                                } else {
+                                        processClose(node.value) // sets retVal to FAILED
+                                }
+                                if (retVal != PluginListenerResult.FAILED) {
+                                        retVal = PluginListenerResult.PROCESSED_STOP
+                                }
+                                break
+                        case 'msg': // 'msg' is alias for message
+                                def to = node.attributes.to
+                                def noReturn = node.attributes.noReturn
+                                if (!to) { // self message
+                                        to = node.value
+                                        noReturn = true
+                                }
+                                def activate = node.attributes.activate || node.attributes.close  // close implies activate
+                                if (!postProcess) {
+                                        def text = node.attributes.text
+                                        def type = node.attributes.type
+                                        if (!type) type = '->'
+                                        out.printIndent()
+                                        out.println("$node.value $type $to${text ? " : $text" : ''}")
+                                        if (activate) {
+                                                out.printIndent()
+                                                out.println("activate $to")
+                                        }
+                                } else {
+                                        if (node.attributes.returnText || node.attributes.returnType || !noReturn) {
+                                                def returnText = node.attributes.returnText
+                                                def returnType = node.attributes.returnType
+                                                if (!returnType) returnType = '-->'
+                                                out.printIndent()
+                                                out.println("$to $returnType ${node.value}${returnText ? " : $returnText" : ''}")
+                                        }
+                                        processClose(to)  // sets retVal to FAILED
+                                }
+                                if (retVal != PluginListenerResult.FAILED) {
+                                        retVal = PluginListenerResult.PROCESSED_STOP
+                                }
+                                break
+                        case 'opt':
+                        case 'loop':
+                        case 'alt':
+                        case 'group':
+                        case 'par':
+                        case 'break':
+                        case 'critical':
+                                out.printIndent()
+                                if (!postProcess) {
+                                        out.println("$node.name $node.value")
+                                } else {
+                                        out.println("end")
+                                }
+                                retVal = PluginListenerResult.PROCESSED_STOP
+                                break
+                        case 'ref':
+                                if (!node.attributes.over) {
+                                        out.println("***** 'ref' requires 'over' attribute ****")
+                                        retVal = PluginListenerResult.FAILED
+                                } else {
+                                        process("$node.name over ${node.attributes.over.join(',')} : $node.value")
+                                        retVal = PluginListenerResult.PROCESSED_STOP
+                                }
+                                break
+                        case 'else':
+                                process("else $node.value")
+                                retVal = PluginListenerResult.PROCESSED_STOP
+                                break
+                        case 'divider':
+                                process("== $node.value ==")
+                                retVal = PluginListenerResult.PROCESSED_STOP
+                                break
+                        case 'delay':
+                                process("...$node.value...")
+                                retVal = PluginListenerResult.PROCESSED_STOP
+                                break
+                        case 'deactivate':
+                        case 'destroy':
+                                process("$node.name $node.value")
+                                retVal = PluginListenerResult.PROCESSED_STOP
+                                break
                 }
-                if (retVal != PluginListenerResult.FAILED) {
-                    retVal = PluginListenerResult.PROCESSED_STOP
-                }
-                break
-            case 'msg': // 'msg' is alias for message
-                def to = node.attributes.to
-                def noReturn = node.attributes.noReturn
-                if (!to) { // self message
-                    to = node.value
-                    noReturn = true
-                }
-                def activate = node.attributes.activate || node.attributes.close  // close implies activate
-                if (!postProcess) {
-                    def text = node.attributes.text
-                    def type = node.attributes.type
-                    if (!type) type = '->'
-                    out.printIndent()
-                    out.println("$node.value $type $to${text ? " : $text" : ''}")
-                    if (activate) {
-                        out.printIndent()
-                        out.println("activate $to")
-                    }
-                } else {
-                    if (node.attributes.returnText || node.attributes.returnType || !noReturn) {
-                        def returnText = node.attributes.returnText
-                        def returnType = node.attributes.returnType
-                        if (!returnType) returnType = '-->'
-                        out.printIndent()
-                        out.println("$to $returnType ${node.value}${returnText ? " : $returnText" : ''}")
-                    }
-                    processClose(to)  // sets retVal to FAILED
-                }
-                if (retVal != PluginListenerResult.FAILED) {
-                    retVal = PluginListenerResult.PROCESSED_STOP
-                }
-                break
-            case 'opt':
-            case 'loop':
-            case 'alt':
-            case 'group':
-            case 'par':
-            case 'break':
-            case 'critical':
-                out.printIndent()
-                if (!postProcess) {
-                    out.println("$node.name $node.value")
-                } else {
-                    out.println("end")
-                }
-                retVal = PluginListenerResult.PROCESSED_STOP
-                break
-            case 'ref':
-                if (!node.attributes.over) {
-                    out.println("***** 'ref' requires 'over' attribute ****")
-                    retVal = PluginListenerResult.FAILED
-                } else {
-                    process("$node.name over ${node.attributes.over.join(',')} : $node.value")
-                    retVal = PluginListenerResult.PROCESSED_STOP
-                }
-                break
-            case 'else':
-                process("else $node.value")
-                retVal = PluginListenerResult.PROCESSED_STOP
-                break
-            case 'divider':
-                process("== $node.value ==")
-                retVal = PluginListenerResult.PROCESSED_STOP
-                break
-            case 'delay':
-                process("...$node.value...")
-                retVal = PluginListenerResult.PROCESSED_STOP
-                break
-            case 'deactivate':
-            case 'destroy':
-                process("$node.name $node.value")
-                retVal = PluginListenerResult.PROCESSED_STOP
-                break
-        }
 
-        return retVal
-    }
+                return retVal
+        }
 }

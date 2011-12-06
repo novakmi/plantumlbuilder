@@ -25,50 +25,51 @@ package cz.atlas.bubbles.it.plantumlbuilder
 import cz.atlas.bubbles.it.nodebuilder.SimpleNode
 
 class PlantUmlBuilderClassPlugin implements PlantUmlBuilderPluginListener {
-    PluginListenerResult process(SimpleNode node, IndentPrinter out, boolean postProcess) {
-        PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
-        switch (node.name) {
-            case 'pclass':
-            case 'pinterface':
-            case 'penum':
-                if (postProcess) {
-                    if (node.attributes?.members) {
-                        out.printIndent()
-                        out.println("}")
-                    }
-                } else {
-                    out.printIndent()
-                    def name = node.name[1..-1] //skip starting 'p'
-                    def asText = node.attributes?.as ? " as \"${node.attributes.as}\"" : ""
-                    out.println("$name ${node.value}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}${asText}${node.attributes?.members ? " {" : ""}")
-                    if (node.attributes?.members) {
-                        out.incrementIndent()
-                        node.attributes?.members.each {
-                            out.printIndent()
-                            out.println("$it")
-                        }
-                        out.decrementIndent()
-                    }
+        PluginListenerResult process(SimpleNode node, boolean postProcess, Object opaque) {
+                PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
+                IndentPrinter out = (IndentPrinter) opaque
+                switch (node.name) {
+                        case 'pclass':
+                        case 'pinterface':
+                        case 'penum':
+                                if (postProcess) {
+                                        if (node.attributes?.members) {
+                                                out.printIndent()
+                                                out.println("}")
+                                        }
+                                } else {
+                                        out.printIndent()
+                                        def name = node.name[1..-1] //skip starting 'p'
+                                        def asText = node.attributes?.as ? " as \"${node.attributes.as}\"" : ""
+                                        out.println("$name ${node.value}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}${asText}${node.attributes?.members ? " {" : ""}")
+                                        if (node.attributes?.members) {
+                                                out.incrementIndent()
+                                                node.attributes?.members.each {
+                                                        out.printIndent()
+                                                        out.println("$it")
+                                                }
+                                                out.decrementIndent()
+                                        }
+                                }
+                                retVal = PluginListenerResult.PROCESSED_STOP
+                                break
+                        case 'relation':
+                                if (!postProcess) {
+                                        out.printIndent()
+                                        out.println("${node.value} ${node.attributes.rel} ${node.attributes.to}${node.attributes.text ? " :${node.attributes.text}" : ""}")
+                                }
+                                retVal = PluginListenerResult.PROCESSED_STOP
+                                break
+                        case 'ppackage':
+                                out.printIndent()
+                                if (!postProcess) {
+                                        out.println("package ${node.value}")
+                                } else {
+                                        out.println("end package")
+                                }
+                                retVal = PluginListenerResult.PROCESSED_STOP
+                                break;
                 }
-                retVal = PluginListenerResult.PROCESSED_STOP
-                break
-            case 'relation':
-                if (!postProcess) {
-                    out.printIndent()
-                    out.println("${node.value} ${node.attributes.rel} ${node.attributes.to}${node.attributes.text ? " :${node.attributes.text}" : ""}")
-                }
-                retVal = PluginListenerResult.PROCESSED_STOP
-                break
-            case 'ppackage':
-                out.printIndent()
-                if (!postProcess) {
-                    out.println("package ${node.value}")
-                } else {
-                    out.println("end package")
-                }
-                retVal = PluginListenerResult.PROCESSED_STOP
-                break;
+                return retVal
         }
-        return retVal
-    }
 }
