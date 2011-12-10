@@ -71,11 +71,62 @@ class PlantUmlBuilder extends SimpleNodeBuilder {
         }
         */
 
-        def private printNode(node, opaque) {
+        @Override
+        protected void processNode(SimpleNode node, Object opaque) {
+                switch (node.name) {
+                        case 'plant':
+                                opaque.printIndent()
+                                opaque.println(node.value)
+                                break
+                        case 'title':
+                                opaque.printIndent()
+                                opaque.println("title $node.value")
+                                break
+                        case 'actor':
+                        case 'participant':
+                                opaque.printIndent()
+                                opaque.print(node.name)
+                                if (node.attributes.as) {
+                                        opaque.println(" $node.value as $node.attributes.as")
+                                } else {
+                                        opaque.println(" $node.value")
+                                }
+                                break
+                        case 'note':
+                                opaque.printIndent()
+                                opaque.print(node.name)
+                                if (node.attributes.as) {
+                                        opaque.println(" $node.value as $node.attributes.as")
+                                } else {
+                                        opaque.println(" ${node.attributes.pos ? "${node.attributes.pos} : " : ''}$node.value")
+                                }
+                                break
+                        case 'plantuml':
+                                if (root == node) {
+                                        break
+                                }
+                        default:
+                                println "Unsupported node name ${node.name}"
+                                failed = true
+                                break
+                }
+        }
+
+        @Override
+        protected void processNodeAfterChildrend(SimpleNode node, Object opaque) {
+                opaque.decrementIndent()  
+        }
+
+        @Override
+        protected void processNodeBeforeChildrend(SimpleNode node, Object opaque) {
+                opaque.incrementIndent()
+        }
+
+        @Override protected processTree(rootNode, opaque) {
                 boolean nodeProcessedByListener = false
                 boolean failed = false
                 for (l in pluginListeners) {
-                        PluginListenerResult res = l.process(node, false, opaque)
+                        PluginListenerResult res = l.process(rootNode, false, opaque)
                         if (res == PluginListenerResult.FAILED) {
                                 failed = true
                                 break
@@ -86,53 +137,20 @@ class PlantUmlBuilder extends SimpleNodeBuilder {
                         }
                 }
                 if (!nodeProcessedByListener && !failed) {
-                        switch (node.name) {
-                                case 'plant':
-                                        opaque.printIndent()
-                                        opaque.println(node.value)
-                                        break
-                                case 'title':
-                                        opaque.printIndent()
-                                        opaque.println("title $node.value")
-                                        break
-                                case 'actor':
-                                case 'participant':
-                                        opaque.printIndent()
-                                        opaque.print(node.name)
-                                        if (node.attributes.as) {
-                                                opaque.println(" $node.value as $node.attributes.as")
-                                        } else {
-                                                opaque.println(" $node.value")
-                                        }
-                                        break
-                                case 'note':
-                                        opaque.printIndent()
-                                        opaque.print(node.name)
-                                        if (node.attributes.as) {
-                                                opaque.println(" $node.value as $node.attributes.as")
-                                        } else {
-                                                opaque.println(" ${node.attributes.pos ? "${node.attributes.pos} : " : ''}$node.value")
-                                        }
-                                        break
-                                case 'plantuml':
-                                        if (root == node) {
-                                                break
-                                        }
-                                default:
-                                        println "Unsupported node name ${node.name}"
-                                        failed = true
-                                        break
-                        }
+                      processNode(rootNode, opaque)
                 }
-                opaque.incrementIndent()
-                node.children.each {
-                        printNode(it, opaque)
 
+                if (rootNode.children.size()) {
+                        processNodeBeforeChildrend(rootNode, opaque)
+                        rootNode.children.each {
+                                processTree(it, opaque)
+
+                        }
+                        processNodeAfterChildrend(rootNode, opaque)
                 }
-                opaque.decrementIndent()
                 if (nodeProcessedByListener && !failed) {
                         for (l in pluginListeners) {
-                                PluginListenerResult res = l.process(node, true, opaque)
+                                PluginListenerResult res = l.process(rootNode, true, opaque)
                                 if (res == PluginListenerResult.FAILED) {
                                         failed = true
                                         break
@@ -159,7 +177,7 @@ class PlantUmlBuilder extends SimpleNodeBuilder {
                         buffer.delete(0, buffer.length()) // clear buffer
                         stringWriter.flush()
                         if (root) {
-                                printNode(root, out)
+                                processTree(root, out)
                         }
                         builderText = buffer.toString()
                 }
@@ -181,9 +199,9 @@ class PlantUmlBuilder extends SimpleNodeBuilder {
          * Reset root element of the builder.
          * Use this method to start building PlantUML text from the beginning.
          */
-        public void reset() {
+        @Override public void reset() {
                 root = null
                 builderText = null
         }
-
+       
 }

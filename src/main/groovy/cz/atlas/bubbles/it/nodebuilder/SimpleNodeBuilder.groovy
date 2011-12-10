@@ -22,6 +22,8 @@ THE SOFTWARE.
 
 package cz.atlas.bubbles.it.nodebuilder
 
+import sun.java2d.pipe.SpanShapeRenderer.Simple
+
 /**
  * Builder node
  */
@@ -33,7 +35,7 @@ class SimpleNode {
         def children = [] //children nodes
 }
 
-class SimpleNodeBuilder extends BuilderSupport {
+abstract class SimpleNodeBuilder extends BuilderSupport {
 
         SimpleNode root = null //root node of the model
 
@@ -57,5 +59,14 @@ class SimpleNodeBuilder extends BuilderSupport {
 
         @Override protected Object createNode(Object name, Map attributes, Object value) {
                 return new SimpleNode(name: name, value: value, attributes: attributes)
+        }
+
+        abstract protected void processNode(SimpleNode node, opaque)
+        abstract protected void processNodeAfterChildrend(SimpleNode node, opaque)
+        abstract protected void processNodeBeforeChildrend(SimpleNode node, opaque)
+        abstract protected processTree(rootNode, opaque)
+
+        public void reset() {
+                root = null
         }
 }
