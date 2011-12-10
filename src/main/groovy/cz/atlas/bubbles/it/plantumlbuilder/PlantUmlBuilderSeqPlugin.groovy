@@ -24,10 +24,12 @@ THE SOFTWARE.
 package cz.atlas.bubbles.it.plantumlbuilder
 
 import cz.atlas.bubbles.it.nodebuilder.SimpleNode
+import cz.atlas.bubbles.it.nodebuilder.PluginSimpleNodeBuilderListener
+import cz.atlas.bubbles.it.nodebuilder.PluginListenerResult
 
-class PlantUmlBuilderSeqPlugin implements PlantUmlBuilderPluginListener {
+class PlantUmlBuilderSeqPlugin extends PluginSimpleNodeBuilderListener {
 
-        PluginListenerResult process(SimpleNode node, boolean postProcess, Object opaque) {
+        @Override PluginListenerResult process(SimpleNode node, boolean postProcess, Object opaque) {
                 PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
                 IndentPrinter out = (IndentPrinter) opaque
                 def processClose = {to ->

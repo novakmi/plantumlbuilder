@@ -34,35 +34,35 @@ Classpath to PlantUMLBuilder and plantuml.jar has to be set, e.g.:
 groovy -cp ~/sw/PlantUml/plantuml.jar:../src/main/groovy/ example1.groovy
 */
 
-import net.sourceforge.plantuml.SourceStringReader
 import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
 import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderClassPlugin
-import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderPluginListener
-import cz.atlas.bubbles.it.plantumlbuilder.PluginListenerResult
-import cz.atlas.bubbles.it.plantumlbuilder.Node
+import net.sourceforge.plantuml.SourceStringReader
+import cz.atlas.bubbles.it.nodebuilder.PluginSimpleNodeBuilderListener
+import cz.atlas.bubbles.it.nodebuilder.PluginListenerResult
+import cz.atlas.bubbles.it.nodebuilder.SimpleNode
 
 // create new builder
 def builder = new PlantUmlBuilder()
-builder.addPlantUmlBuilderPluginListener(new PlantUmlBuilderClassPlugin())
+builder.addListener(new PlantUmlBuilderClassPlugin())
 // plantuml element is a root element of PlantUML
 builder.plantuml {
     def builderMembers = [
-        '-@groovy.beans.ListenerList\\nList<PlantUmlBuilderPluginListener> pluginListeners',
+        '-@groovy.beans.ListenerList\\nList<PluginSimpleNodeBuilderListener> pluginListeners',
         '+String getText(params)',
         '+void reset()',
-        '+void addPlantUmlBuilderPluginListener(PlantUmlBuilderPluginListener listener)',
-        '+void removePlantUmlBuilderPluginListener(PlantUmlBuilderPluginListener listener)',
+        '+void addPlantUmlBuilderPluginListener(PluginSimpleNodeBuilderListener listener)',
+        '+void removePlantUmlBuilderPluginListener(PluginSimpleNodeBuilderListener listener)',
     ]
-    plantclass(PlantUmlBuilder.class.name, members: builderMembers)
+    pclass(PlantUmlBuilder.class.name, members: builderMembers)
     note('See @groovy.beans.ListenerList', pos: "top of ${PlantUmlBuilder.class.name}")
-    plantinterface(PlantUmlBuilderPluginListener.class.name, members: ['+PluginListenerResult process(final SimpleNode node, IndentPrinter out, boolean postProcess)'])
-    plantenum(PluginListenerResult.class.name, members: [
+    pinterface(PluginSimpleNodeBuilderListener.class.name, members: ['+PluginListenerResult process(final SimpleNode node, IndentPrinter out, boolean postProcess)'])
+    penum(PluginListenerResult.class.name, members: [
         PluginListenerResult.NOT_ACCEPTED,
         PluginListenerResult.PROCESSED_STOP,
         PluginListenerResult.PROCESSED_CONTINUE,
         PluginListenerResult.FAILED,
     ])
-    relation(PlantUmlBuilder.class.name, rel: '*-- "0..*"', to: PlantUmlBuilderPluginListener.class.name)
+    relation(PlantUmlBuilder.class.name, rel: '*-- "0..*"', to: PluginSimpleNodeBuilderListener.class.name)
     def nodeMembers = [
         "+name // name of node",
         "+parent // parent node",
@@ -70,7 +70,7 @@ builder.plantuml {
         "+value",
         "+children = [] //children nodes",
     ]
-    plantclass(Node.class.name, members: nodeMembers)
+    pclass(SimpleNode.class.name, members: nodeMembers)
 }
 
 // use plantUML to create png file from plantuml text

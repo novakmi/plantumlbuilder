@@ -61,11 +61,34 @@ abstract class SimpleNodeBuilder extends BuilderSupport {
                 return new SimpleNode(name: name, value: value, attributes: attributes)
         }
 
-        abstract protected void processNode(SimpleNode node, opaque)
-        abstract protected void processNodeAfterChildrend(SimpleNode node, opaque)
-        abstract protected void processNodeBeforeChildrend(SimpleNode node, opaque)
-        abstract protected processTree(rootNode, opaque)
+        abstract protected boolean processNode(SimpleNode node, opaque)
+        abstract protected boolean processNodeAfterChildrend(SimpleNode node, opaque)
+        abstract protected boolean processNodeBeforeChildrend(SimpleNode node, opaque)
 
+        protected boolean processTree(rootNode, opaque) {
+                boolean retVal = true
+                retVal = processNode(rootNode, opaque)
+                if (retVal && rootNode.children.size()) {
+                        retVal = processNodeBeforeChildrend(rootNode, opaque)
+                        if (retVal) {
+                                for (it in rootNode.children) {
+                                        retVal = processTree(it, opaque)
+                                        if (!retVal) {
+                                                break
+                                        }
+
+                                }
+                                if (retVal) {
+                                        retVal = processNodeAfterChildrend(rootNode, opaque)
+                                }
+                        }
+                }
+                return retVal
+        }
+
+        /**
+         * Reset root element of the builder.
+         */
         public void reset() {
                 root = null
         }

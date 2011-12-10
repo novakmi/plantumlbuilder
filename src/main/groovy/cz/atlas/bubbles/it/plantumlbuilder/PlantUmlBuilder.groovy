@@ -22,40 +22,15 @@ THE SOFTWARE.
 
 package cz.atlas.bubbles.it.plantumlbuilder
 
+import cz.atlas.bubbles.it.nodebuilder.PluginSimpleNodeBuilder
 import cz.atlas.bubbles.it.nodebuilder.SimpleNode
-import cz.atlas.bubbles.it.nodebuilder.SimpleNodeBuilder
-
-//Listener interface  for node or attributes
-enum PluginListenerResult {
-        NOT_ACCEPTED, // node not accepted by plugin
-        PROCESSED_STOP, // node processed by plugin, do not process node with other plugins
-        PROCESSED_CONTINUE, // node processed by plugin, process node with other plugins as well
-        FAILED, // node processing failed
-}
-
-interface PlantUmlBuilderPluginListener {
-        /**
-         * Process given node in plugin before and after plantuml builder
-         * @param node builder node to process (
-         * @param postProcess if false, it is pre processing time, if true, it is post processing time
-         * @param opaque object to be passed from application using builder to plugin (can be null)
-         * @return result
-         * $see PluginListenerResult, SimpleNode
-         */
-        PluginListenerResult process(final SimpleNode node, boolean postProcess, Object opaque)
-}
 
 // Builder class
-class PlantUmlBuilder extends SimpleNodeBuilder {
+class PlantUmlBuilder extends PluginSimpleNodeBuilder {
         private IndentPrinter out
         private PrintWriter writer
         private StringWriter stringWriter
-        //private SimpleNode root = null //root node of the model
         private String builderText = null
-
-        //see http://groovy.codehaus.org/gapi/groovy/beans/ListenerList.html
-        @groovy.beans.ListenerList
-        private List<PlantUmlBuilderPluginListener> pluginListeners = []
 
         public PlantUmlBuilder() {
                 stringWriter = new StringWriter()
@@ -64,15 +39,9 @@ class PlantUmlBuilder extends SimpleNodeBuilder {
                 out.decrementIndent() // to start from beg. of line
         }
 
-        /*
-        // not needed anymore because of   @groovy.beans.ListenerList, use  addPlantUmlBuilderListener
-        def addListener(final PlantUmlBuilderPluginListener listener) {
-            pluginListeners += listener
-        }
-        */
-
         @Override
-        protected void processNode(SimpleNode node, Object opaque) {
+        protected boolean processNode(SimpleNode node, Object opaque) {
+                def retVal = true
                 switch (node.name) {
                         case 'plant':
                                 opaque.printIndent()
@@ -107,59 +76,22 @@ class PlantUmlBuilder extends SimpleNodeBuilder {
                                 }
                         default:
                                 println "Unsupported node name ${node.name}"
-                                failed = true
+                                retVal = false
                                 break
                 }
+                return retVal
         }
 
         @Override
-        protected void processNodeAfterChildrend(SimpleNode node, Object opaque) {
-                opaque.decrementIndent()  
+        protected boolean processNodeAfterChildrend(SimpleNode node, Object opaque) {
+                opaque.decrementIndent()
+                return true
         }
 
         @Override
-        protected void processNodeBeforeChildrend(SimpleNode node, Object opaque) {
+        protected boolean processNodeBeforeChildrend(SimpleNode node, Object opaque) {
                 opaque.incrementIndent()
-        }
-
-        @Override protected processTree(rootNode, opaque) {
-                boolean nodeProcessedByListener = false
-                boolean failed = false
-                for (l in pluginListeners) {
-                        PluginListenerResult res = l.process(rootNode, false, opaque)
-                        if (res == PluginListenerResult.FAILED) {
-                                failed = true
-                                break
-                        }
-                        nodeProcessedByListener = (res == PluginListenerResult.PROCESSED_STOP || res == PluginListenerResult.PROCESSED_CONTINUE)
-                        if (res == PluginListenerResult.PROCESSED_STOP) {
-                                break
-                        }
-                }
-                if (!nodeProcessedByListener && !failed) {
-                      processNode(rootNode, opaque)
-                }
-
-                if (rootNode.children.size()) {
-                        processNodeBeforeChildrend(rootNode, opaque)
-                        rootNode.children.each {
-                                processTree(it, opaque)
-
-                        }
-                        processNodeAfterChildrend(rootNode, opaque)
-                }
-                if (nodeProcessedByListener && !failed) {
-                        for (l in pluginListeners) {
-                                PluginListenerResult res = l.process(rootNode, true, opaque)
-                                if (res == PluginListenerResult.FAILED) {
-                                        failed = true
-                                        break
-                                }
-                                if (res == PluginListenerResult.PROCESSED_STOP) {
-                                        break
-                                }
-                        }
-                }
+                return true
         }
 
         /**
@@ -200,7 +132,7 @@ class PlantUmlBuilder extends SimpleNodeBuilder {
          * Use this method to start building PlantUML text from the beginning.
          */
         @Override public void reset() {
-                root = null
+                super.reset()
                 builderText = null
         }
        
