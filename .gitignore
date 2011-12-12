@@ -1,0 +1,9 @@
+*~
+*.iml
+*.err
+*.log
+*.testng
+*.png
+.gradle
+build
+install
