@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 bubbles.way@gmail.com
+Copyright (c) 2011 Michal Novak (bubbles.way@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,10 +22,10 @@ THE SOFTWARE.
 
 package cz.atlas.bubbles.it.plantumlbuilder
 
-import cz.atlas.bubbles.it.nodebuilder.SimpleNode
+import org.bitbucket.novakmi.nodebuilder.SimpleNode
 
-import cz.atlas.bubbles.it.nodebuilder.PluginResult
-import cz.atlas.bubbles.it.nodebuilder.NodeBuilderPlugin
+import org.bitbucket.novakmi.nodebuilder.PluginResult
+import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
 
 class PlantUmlBuilderClassPlugin extends NodeBuilderPlugin {
         @Override

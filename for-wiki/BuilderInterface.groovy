@@ -37,11 +37,11 @@ groovy -cp ~/sw/PlantUml/plantuml.jar:../src/main/groovy/ example1.groovy
 import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
 import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderClassPlugin
 import net.sourceforge.plantuml.SourceStringReader
-import cz.atlas.bubbles.it.nodebuilder.NodeBuilderPlugin
-import cz.atlas.bubbles.it.nodebuilder.PluginResult
-import cz.atlas.bubbles.it.nodebuilder.SimpleNode
-import cz.atlas.bubbles.it.nodebuilder.PluginResult
-import cz.atlas.bubbles.it.nodebuilder.NodeBuilderPlugin
+import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
+import org.bitbucket.novakmi.nodebuilder.PluginResult
+import org.bitbucket.novakmi.nodebuilder.SimpleNode
+import org.bitbucket.novakmi.nodebuilder.PluginResult
+import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
 
 // create new builder
 def builder = new PlantUmlBuilder()
