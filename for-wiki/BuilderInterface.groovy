@@ -37,32 +37,34 @@ groovy -cp ~/sw/PlantUml/plantuml.jar:../src/main/groovy/ example1.groovy
 import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
 import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderClassPlugin
 import net.sourceforge.plantuml.SourceStringReader
-import cz.atlas.bubbles.it.nodebuilder.PluginSimpleNodeBuilderListener
-import cz.atlas.bubbles.it.nodebuilder.PluginListenerResult
+import cz.atlas.bubbles.it.nodebuilder.NodeBuilderPlugin
+import cz.atlas.bubbles.it.nodebuilder.PluginResult
 import cz.atlas.bubbles.it.nodebuilder.SimpleNode
+import cz.atlas.bubbles.it.nodebuilder.PluginResult
+import cz.atlas.bubbles.it.nodebuilder.NodeBuilderPlugin
 
 // create new builder
 def builder = new PlantUmlBuilder()
-builder.addListener(new PlantUmlBuilderClassPlugin())
+builder.addPlugin(new PlantUmlBuilderClassPlugin())
 // plantuml element is a root element of PlantUML
 builder.plantuml {
     def builderMembers = [
-        '-@groovy.beans.ListenerList\\nList<PluginSimpleNodeBuilderListener> pluginListeners',
+        '-@groovy.beans.ListenerList\\nList<NodeBuilderPlugin> pluginListeners',
         '+String getText(params)',
         '+void reset()',
-        '+void addPlantUmlBuilderPluginListener(PluginSimpleNodeBuilderListener listener)',
-        '+void removePlantUmlBuilderPluginListener(PluginSimpleNodeBuilderListener listener)',
+        '+void addPlantUmlBuilderPluginListener(NodeBuilderPlugin listener)',
+        '+void removePlantUmlBuilderPluginListener(NodeBuilderPlugin listener)',
     ]
     pclass(PlantUmlBuilder.class.name, members: builderMembers)
     note('See @groovy.beans.ListenerList', pos: "top of ${PlantUmlBuilder.class.name}")
-    pinterface(PluginSimpleNodeBuilderListener.class.name, members: ['+PluginListenerResult process(final SimpleNode node, IndentPrinter out, boolean postProcess)'])
-    penum(PluginListenerResult.class.name, members: [
-        PluginListenerResult.NOT_ACCEPTED,
-        PluginListenerResult.PROCESSED_STOP,
-        PluginListenerResult.PROCESSED_CONTINUE,
-        PluginListenerResult.FAILED,
+    pinterface(NodeBuilderPlugin.class.name, members: ['+PluginResult processNodeBefore(final SimpleNode node, IndentPrinter out, boolean postProcess)'])
+    penum(PluginResult.class.name, members: [
+        PluginResult.NOT_ACCEPTED,
+        PluginResult.PROCESSED_STOP,
+        PluginResult.PROCESSED,
+        PluginResult.FAILED,
     ])
-    relation(PlantUmlBuilder.class.name, rel: '*-- "0..*"', to: PluginSimpleNodeBuilderListener.class.name)
+    relation(PlantUmlBuilder.class.name, rel: '*-- "0..*"', to: NodeBuilderPlugin.class.name)
     def nodeMembers = [
         "+name // name of node",
         "+parent // parent node",

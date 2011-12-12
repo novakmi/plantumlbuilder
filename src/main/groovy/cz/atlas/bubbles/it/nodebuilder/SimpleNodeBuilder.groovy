@@ -22,16 +22,14 @@ THE SOFTWARE.
 
 package cz.atlas.bubbles.it.nodebuilder
 
-import sun.java2d.pipe.SpanShapeRenderer.Simple
-
 /**
- * Builder node
+ * Builder SimpleNode
  */
 class SimpleNode {
-        def name = ''   // name of node (e.g leaf('text, at:'attrib') - name is 'leaf')
+        def name = ''   // name of the node (e.g myNode('text, at:'attrib') - name is 'myNode')
         def parent = null // parent node (or null if this is root node)
-        def attributes = [:] //attributes map (e.g. leaf('text, at:'atrib') - attributes.at == 'attrib')
-        def value = null //value of node (e.g. leaf('text, at:'attrib') - value is text)
+        def attributes = [:] //attributes map (e.g. myNode('text, at:'atrib') - attributes.at == 'attrib')
+        def value = null //value of node (e.g. myNode('text, at:'attrib') - value is text)
         def children = [] //children nodes
 }
 
@@ -61,27 +59,87 @@ abstract class SimpleNodeBuilder extends BuilderSupport {
                 return new SimpleNode(name: name, value: value, attributes: attributes)
         }
 
-        abstract protected boolean processNode(SimpleNode node, opaque)
-        abstract protected boolean processNodeAfterChildrend(SimpleNode node, opaque)
-        abstract protected boolean processNodeBeforeChildrend(SimpleNode node, opaque)
+        /**
+         * Process node.
+         * Default implementation does not do anything.
+         * This method can be overridden in derived implementation.
+         * @param node to be processed
+         * @param opaque opaque object to be passed for node processing
+         * @return true ... ok, false .. failure
+         */
+        protected boolean processNode(SimpleNode node, Object opaque) {
+                return true
+        }
 
-        protected boolean processTree(rootNode, opaque) {
+        /**
+         * Process node before children nodes are processed.
+         * Method is called after 'processNode' and only if node has children nodes. It can be used to
+         * indent output, add opening bracket, etc.
+         * Default implementation does not do anything.
+         * This method can be overridden in derived implementation.
+         * @param node to be processed
+         * @param opaque opaque object to be passed for node processing
+         * @return true ... ok, false .. failure
+         */
+        protected boolean processNodeBeforeChildrend(SimpleNode node, Object opaque) {
+                return true
+        }
+
+        /**
+         * Process node after children nodes are processed.
+         * Method is called after 'processNode' and only if node has children nodes. It can be used to
+         * indent output, add closing bracket, etc.
+         * Default implementation does not do anything.
+         * This method can be overridden in derived implementation.
+         * @param node to be processed
+         * @param opaque opaque object to be passed for node processing
+         * @return true ... ok, false .. failure
+         */
+        protected boolean processNodeAfterChildrend(SimpleNode node, Object opaque) {
+                return true
+        }
+
+        /**
+         * Process node and its children.
+         * This method can be overridden in derived implementation.
+         * @param node node to be processed
+         * @param node opaque object to be passed for node processing
+         * @param tree opaque object to be passed for tree processing (recursion)
+         * @return true ... ok, false .. failure
+         */
+        protected boolean processNodeWithChildren(SimpleNode node, Object nodeOpaque = null, Object treeOpaque = null) {
                 boolean retVal = true
-                retVal = processNode(rootNode, opaque)
-                if (retVal && rootNode.children.size()) {
-                        retVal = processNodeBeforeChildrend(rootNode, opaque)
+                if (retVal && node.children.size()) {
+                        retVal = processNodeBeforeChildrend(node, nodeOpaque)
                         if (retVal) {
-                                for (it in rootNode.children) {
-                                        retVal = processTree(it, opaque)
+                                for (it in node.children) {
+                                        retVal = processTree(it, nodeOpaque, treeOpaque)
                                         if (!retVal) {
                                                 break
                                         }
 
                                 }
                                 if (retVal) {
-                                        retVal = processNodeAfterChildrend(rootNode, opaque)
+                                        retVal = processNodeAfterChildrend(node, nodeOpaque)
                                 }
                         }
+                }
+                return retVal
+        }
+
+        /**
+         * Process tree of nodes
+         * This method can be overridden in derived implementation.
+         * @param rootNode root node of the tree (can be also leaf)
+         * @param node opaque object to be passed for node processing
+         * @param tree opaque object to be passed for tree processing (recursion)
+         * @return true ... ok, false .. failure
+         */
+        protected boolean processTree(SimpleNode rootNode, Object nodeOpaque = null, Object treeOpaque = null) {
+                boolean retVal = true
+                retVal = processNode(rootNode, nodeOpaque)
+                if (retVal) {
+                        retVal = processNodeWithChildren(rootNode, nodeOpaque, treeOpaque)
                 }
                 return retVal
         }

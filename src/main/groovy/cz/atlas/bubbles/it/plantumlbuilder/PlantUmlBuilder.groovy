@@ -74,10 +74,6 @@ class PlantUmlBuilder extends PluginSimpleNodeBuilder {
                                 if (root == node) {
                                         break
                                 }
-                        default:
-                                println "Unsupported node name ${node.name}"
-                                retVal = false
-                                break
                 }
                 return retVal
         }

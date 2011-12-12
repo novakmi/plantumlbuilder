@@ -24,13 +24,25 @@ THE SOFTWARE.
 package cz.atlas.bubbles.it.plantumlbuilder
 
 import cz.atlas.bubbles.it.nodebuilder.SimpleNode
-import cz.atlas.bubbles.it.nodebuilder.PluginSimpleNodeBuilderListener
-import cz.atlas.bubbles.it.nodebuilder.PluginListenerResult
+import cz.atlas.bubbles.it.nodebuilder.NodeBuilderPlugin
+import cz.atlas.bubbles.it.nodebuilder.PluginResult
 
-class PlantUmlBuilderSeqPlugin extends PluginSimpleNodeBuilderListener {
+class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
 
-        @Override PluginListenerResult process(SimpleNode node, boolean postProcess, Object opaque) {
-                PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
+        @Override
+        protected PluginResult processNodeBefore(SimpleNode node, Object opaque, Map pluginOpaque) {
+                PluginResult retVal = process(node, false, opaque)
+                return retVal
+        }
+
+        @Override
+        protected PluginResult processNodeAfter(SimpleNode node, Object opaque, Map pluginOpaque) {
+                PluginResult retVal = process(node, true, opaque)
+                return retVal
+        }
+
+        private PluginResult process(SimpleNode node, boolean postProcess, Object opaque) {
+                PluginResult retVal = PluginResult.NOT_ACCEPTED
                 IndentPrinter out = (IndentPrinter) opaque
                 def processClose = {to ->
                         if (node.attributes.close) {
@@ -42,7 +54,7 @@ class PlantUmlBuilderSeqPlugin extends PluginSimpleNodeBuilderListener {
                                                 break
                                         default:
                                                 out.println("**** close can be only 'deactivate' or 'destroy', not ${node.attributes.close} ***")
-                                                retVal = PluginListenerResult.FAILED
+                                                retVal = PluginResult.FAILED
                                                 break
                                 }
                         }
@@ -52,7 +64,7 @@ class PlantUmlBuilderSeqPlugin extends PluginSimpleNodeBuilderListener {
                         if (!postProcess) {
                                 out.printIndent()
                                 out.println(val)
-                                retVal = PluginListenerResult.PROCESSED_STOP
+                                retVal = PluginResult.PROCESSED
                         }
                 }
 
@@ -65,8 +77,8 @@ class PlantUmlBuilderSeqPlugin extends PluginSimpleNodeBuilderListener {
                                 } else {
                                         processClose(node.value) // sets retVal to FAILED
                                 }
-                                if (retVal != PluginListenerResult.FAILED) {
-                                        retVal = PluginListenerResult.PROCESSED_STOP
+                                if (retVal != PluginResult.FAILED) {
+                                        retVal = PluginResult.PROCESSED
                                 }
                                 break
                         case 'msg': // 'msg' is alias for message
@@ -97,8 +109,8 @@ class PlantUmlBuilderSeqPlugin extends PluginSimpleNodeBuilderListener {
                                         }
                                         processClose(to)  // sets retVal to FAILED
                                 }
-                                if (retVal != PluginListenerResult.FAILED) {
-                                        retVal = PluginListenerResult.PROCESSED_STOP
+                                if (retVal != PluginResult.FAILED) {
+                                        retVal = PluginResult.PROCESSED
                                 }
                                 break
                         case 'opt':
@@ -114,33 +126,33 @@ class PlantUmlBuilderSeqPlugin extends PluginSimpleNodeBuilderListener {
                                 } else {
                                         out.println("end")
                                 }
-                                retVal = PluginListenerResult.PROCESSED_STOP
+                                retVal = PluginResult.PROCESSED
                                 break
                         case 'ref':
                                 if (!node.attributes.over) {
                                         out.println("***** 'ref' requires 'over' attribute ****")
-                                        retVal = PluginListenerResult.FAILED
+                                        retVal = PluginResult.FAILED
                                 } else {
                                         process("$node.name over ${node.attributes.over.join(',')} : $node.value")
-                                        retVal = PluginListenerResult.PROCESSED_STOP
+                                        retVal = PluginResult.PROCESSED
                                 }
                                 break
                         case 'else':
                                 process("else $node.value")
-                                retVal = PluginListenerResult.PROCESSED_STOP
+                                retVal = PluginResult.PROCESSED
                                 break
                         case 'divider':
                                 process("== $node.value ==")
-                                retVal = PluginListenerResult.PROCESSED_STOP
+                                retVal = PluginResult.PROCESSED
                                 break
                         case 'delay':
                                 process("...$node.value...")
-                                retVal = PluginListenerResult.PROCESSED_STOP
+                                retVal = PluginResult.PROCESSED
                                 break
                         case 'deactivate':
                         case 'destroy':
                                 process("$node.name $node.value")
-                                retVal = PluginListenerResult.PROCESSED_STOP
+                                retVal = PluginResult.PROCESSED
                                 break
                 }
 

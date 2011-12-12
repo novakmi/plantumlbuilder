@@ -23,12 +23,25 @@ THE SOFTWARE.
 package cz.atlas.bubbles.it.plantumlbuilder
 
 import cz.atlas.bubbles.it.nodebuilder.SimpleNode
-import cz.atlas.bubbles.it.nodebuilder.PluginSimpleNodeBuilderListener
-import cz.atlas.bubbles.it.nodebuilder.PluginListenerResult
 
-class PlantUmlBuilderClassPlugin extends PluginSimpleNodeBuilderListener {
-        @Override PluginListenerResult process(SimpleNode node, boolean postProcess, Object opaque) {
-                PluginListenerResult retVal = PluginListenerResult.NOT_ACCEPTED
+import cz.atlas.bubbles.it.nodebuilder.PluginResult
+import cz.atlas.bubbles.it.nodebuilder.NodeBuilderPlugin
+
+class PlantUmlBuilderClassPlugin extends NodeBuilderPlugin {
+        @Override
+        protected PluginResult processNodeBefore(SimpleNode node, Object opaque, Map pluginOpaque) {
+                PluginResult retVal = process(node, false, opaque)
+                return retVal
+        }
+
+        @Override
+        protected PluginResult processNodeAfter(SimpleNode node, Object opaque, Map pluginOpaque) {
+                PluginResult retVal = process(node, true, opaque)
+                return retVal
+        }
+
+        private PluginResult process(SimpleNode node, boolean postProcess, Object opaque) {
+                PluginResult retVal = PluginResult.NOT_ACCEPTED
                 IndentPrinter out = (IndentPrinter) opaque
                 switch (node.name) {
                         case 'pclass':
@@ -53,14 +66,14 @@ class PlantUmlBuilderClassPlugin extends PluginSimpleNodeBuilderListener {
                                                 out.decrementIndent()
                                         }
                                 }
-                                retVal = PluginListenerResult.PROCESSED_STOP
+                                retVal = PluginResult.PROCESSED
                                 break
                         case 'relation':
                                 if (!postProcess) {
                                         out.printIndent()
                                         out.println("${node.value} ${node.attributes.rel} ${node.attributes.to}${node.attributes.text ? " :${node.attributes.text}" : ""}")
                                 }
-                                retVal = PluginListenerResult.PROCESSED_STOP
+                                retVal = PluginResult.PROCESSED
                                 break
                         case 'ppackage':
                                 out.printIndent()
@@ -69,7 +82,7 @@ class PlantUmlBuilderClassPlugin extends PluginSimpleNodeBuilderListener {
                                 } else {
                                         out.println("end package")
                                 }
-                                retVal = PluginListenerResult.PROCESSED_STOP
+                                retVal = PluginResult.PROCESSED
                                 break;
                 }
                 return retVal

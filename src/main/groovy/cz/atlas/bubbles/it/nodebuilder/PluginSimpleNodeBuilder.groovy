@@ -22,79 +22,101 @@ THE SOFTWARE.
 
 package cz.atlas.bubbles.it.nodebuilder
 
- //Listener interface  for node or attributes
-enum PluginListenerResult {
-        NOT_ACCEPTED, // node not accepted by plugin
-        PROCESSED_STOP, // node processed by plugin, do not process node with other plugins
-        PROCESSED_CONTINUE, // node processed by plugin, process node with other plugins as well
-        FAILED, // node processing failed
+/**
+ * Enumeration to be returned as result from plugin processing
+ */
+enum PluginResult {
+        NOT_ACCEPTED, // node not accepted by the plugin (the plugin does not recognize this node)
+        PROCESSED, // node processed by the plugin
+        FAILED, // node processing failed (the plugin recognizes the node, but processing failed)
 }
 
-abstract class PluginSimpleNodeBuilderListener {
+abstract class NodeBuilderPlugin {
+
         /**
-         * Process given node in plugin before and after plantuml builder
-         * @param node builder node to process (
-         * @param postProcess if false, it is pre processing time, if true, it is post processing time
-         * @param opaque object to be passed from application using builder to plugin (can be null)
-         * @return result
-         * $see PluginListenerResult, SimpleNode
+         * Process given node by the plugin before node (and its children) is processed by the builder
+         * Override this method in Plugin implementation, if needed.
+         * @param node to process by the plugin
+         * @param opaque object to be passed during processing of nodes
+         * @param pluginMap plugin Map  (passed between all plugin processing - plugin can use it to store information,
+         *                      to communicate with other plugins)
+         * @return PluginResult
+         * @see PluginResult , SimpleNode
          */
-        PluginListenerResult process(final SimpleNode node, boolean postProcess, Object opaque) {
-                return PluginListenerResult.NOT_ACCEPTED
+        protected PluginResult processNodeBefore(SimpleNode node, Object opaque, Map pluginMap) {
+                return PluginResult.NOT_ACCEPTED
         }
+
+        /**
+         * Process given node by the plugin after node (and its children) is processed by the builder
+         * Override this method in Plugin implementation, if needed.
+         * @param node to process by the plugin
+         * @param opaque object to be passed during processing of nodes
+         * @param pluginMap plugin Map  (passed between to all plugin processing - plugin can use it to store information,
+         *                      to communicate with other plugins)
+         * @return PluginResult
+         * @see PluginResult , SimpleNode
+         */
+        protected PluginResult processNodeAfter(SimpleNode node, Object opaque, Map pluginMap) {
+                return PluginResult.NOT_ACCEPTED
+        }
+
 }
 
 abstract class PluginSimpleNodeBuilder extends SimpleNodeBuilder {
 
-        private List<PluginSimpleNodeBuilderListener> pluginListeners = []
+        private List<NodeBuilderPlugin> plugins = []
 
-        def addListener(final PluginSimpleNodeBuilderListener listener) {
-                pluginListeners += listener
+        /**
+         * Add plugin to the builder.
+         * @param plugin
+         */
+        public void addPlugin(final NodeBuilderPlugin plugin) {
+                plugins += plugin
         }
 
-        @Override protected boolean processTree(rootNode, opaque) {
-                boolean nodeProcessedByListener = false
+        /**
+         * Private helper method to call method on plugin
+         * @param method method name as string
+         * @param node to process by the plugin
+         * @param object to be passed during processing of nodes
+         * @param pluginMap plugin Map  (passed between to all plugin processing - plugin can use it to store information,
+         *                      to communicate with other plugins)
+         * @return true ... ok, false ... error
+         */
+        private boolean processPlugins(String method, SimpleNode node, Object opaque, Map pluginMap) {
                 boolean retVal = true
-                for (l in pluginListeners) {
-                        PluginListenerResult res = l.process(rootNode, false, opaque)
-                        if (res == PluginListenerResult.FAILED) {
+                for (l in plugins) {
+                        PluginResult res = l."$method"(node, opaque, pluginMap)
+                        if (res == PluginResult.FAILED) {
                                 retVal = false
                                 break
                         }
-                        nodeProcessedByListener = (res == PluginListenerResult.PROCESSED_STOP || res == PluginListenerResult.PROCESSED_CONTINUE)
-                        if (res == PluginListenerResult.PROCESSED_STOP) {
-                                break
-                        }
                 }
-                if (retVal && !nodeProcessedByListener) {
-                        retVal = processNode(rootNode, opaque)
-                }
-                if (retVal && rootNode.children.size()) {
-                        retVal = processNodeBeforeChildrend(rootNode, opaque)
-                        if (retVal) {
-                                for (it in rootNode.children) {
-                                        retVal = processTree(it, opaque)
-                                        if (!retVal) {
-                                                break
-                                        }
+                return retVal
+        }
 
-                                }
-                                if (retVal) {
-                                        retVal = processNodeAfterChildrend(rootNode, opaque)
-                                }
-                        }
+        /**
+         * Process tree of nodes
+         * This method can be overridden in derived implementation.
+         * @param rootNode root node of the tree (can be also leaf)
+         * @param node opaque object to be passed for node processing
+         * @param pluginMap to be passed between tree and plugin processing, if null - empty map is created and passed
+         * @return true ... ok, false .. failure
+         */
+        @Override protected boolean processTree(SimpleNode rootNode, Object opaque, Map pluginMap = null) {
+                boolean retVal = true
+                if (!pluginMap) {
+                        pluginMap = [:]
                 }
-                if (retVal && nodeProcessedByListener) {
-                        for (l in pluginListeners) {
-                                PluginListenerResult res = l.process(rootNode, true, opaque)
-                                if (res == PluginListenerResult.FAILED) {
-                                        retVal = false
-                                        break
-                                }
-                                if (res == PluginListenerResult.PROCESSED_STOP) {
-                                        break
-                                }
-                        }
+                // process all plugins  processNodeBefore
+                retVal = processPlugins('processNodeBefore', rootNode, opaque, pluginMap)
+                if (retVal) {
+                        retVal = super.processTree(rootNode, opaque, pluginMap) // this will call our process tree recursively
+                }
+                // process all plugins  processNodeAfter
+                if (retVal) {
+                        retVal = processPlugins('processNodeAfter', rootNode, opaque, pluginMap)
                 }
                 return retVal
         }

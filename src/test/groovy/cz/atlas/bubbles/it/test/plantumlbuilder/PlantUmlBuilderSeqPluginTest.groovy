@@ -28,7 +28,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testng.annotations.Test
 import org.testng.Assert
-import java.nio.channels.ClosedByInterruptException
 
 class PlantUmlBuilderSeqPluginTest {
 
@@ -36,7 +35,7 @@ class PlantUmlBuilderSeqPluginTest {
     public void plantSeqDividerDelayTest() {
         logger.trace("==> plantSeqDividerDelayTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addListener(new PlantUmlBuilderSeqPlugin())
+        builder.addPlugin(new PlantUmlBuilderSeqPlugin())
 
         builder.plantuml {
             actor('A')
@@ -68,7 +67,7 @@ actor A
     public void plantSeqActivateTest() {
         logger.trace("==> plantSeqActivateTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addListener(new PlantUmlBuilderSeqPlugin())
+        builder.addPlugin(new PlantUmlBuilderSeqPlugin())
         builder.plantuml {
             actor('A')
             activate('A')
@@ -155,7 +154,7 @@ activate A
     public void plantSeqMsgTest() {
         logger.trace("==> plantSeqMsgTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addListener(new PlantUmlBuilderSeqPlugin())
+        builder.addPlugin(new PlantUmlBuilderSeqPlugin())
         def a = 'A'
         def b = 'B'
         def makeParticipants = {
@@ -259,7 +258,7 @@ activate B
     public void plantSeqMsgNestingTest() {
         logger.trace("==> plantSeqMsgNestingTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addListener(new PlantUmlBuilderSeqPlugin())
+        builder.addPlugin(new PlantUmlBuilderSeqPlugin())
         def a = 'A'
         def b = 'B'
         def c = 'C'
@@ -301,7 +300,7 @@ deactivate B
     public void plantSeqGroupTest() {
         logger.trace("==> plantSeqGroupTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addListener(new PlantUmlBuilderSeqPlugin())
+        builder.addPlugin(new PlantUmlBuilderSeqPlugin())
         def a = 'A'
         def b = 'B'
         ['group', 'critical', 'opt', 'loop', 'par', 'break'].each { gr ->
@@ -333,7 +332,7 @@ end
     public void plantSeqAltTest() {
         logger.trace("==> plantSeqAltTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addListener(new PlantUmlBuilderSeqPlugin())
+        builder.addPlugin(new PlantUmlBuilderSeqPlugin())
         def a = 'A'
         def b = 'B'
         builder.plantuml {
@@ -370,7 +369,7 @@ end
     public void plantSeqRefTest() {
         logger.trace("==> plantSeqRefTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addListener(new PlantUmlBuilderSeqPlugin())
+        builder.addPlugin(new PlantUmlBuilderSeqPlugin())
         def a = 'A'
         def b = 'B'
         builder.plantuml {
