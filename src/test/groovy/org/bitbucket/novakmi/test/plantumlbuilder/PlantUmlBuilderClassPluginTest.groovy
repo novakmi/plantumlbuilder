@@ -60,9 +60,7 @@ class MyClass << union >>
 
 
     @Test(groups = ["basic"])
-    public void plantClassMemberTest() {                *.err
-*.log
-*.testng
+    public void plantClassMemberTest() {
         logger.trace("==> plantClassMemberTest")
         def builder = new PlantUmlBuilder() // new instance
         builder.addPlugin(new PlantUmlBuilderClassPlugin())
