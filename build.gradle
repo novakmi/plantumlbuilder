@@ -26,14 +26,8 @@ THE SOFTWARE.
 
 version = '0.1.0'
 sourceCompatibility = '1.6'
-productPackage = "org.bitbucket.novakmi"
+groupId = "org.bitbucket.novakmi"
 installDir = file('./install')
-
-if (!System.getenv()['PLANTUML_DIR']) {
-        logger.error("PLANTUML_DIR is not defined!")
-}
-assert (System.getenv()['PLANTUML_DIR']) // end with error if PLANTUML_DIR not defined
-
 
 apply plugin: 'groovy'
 apply plugin: 'maven' // to use maven repository
@@ -48,20 +42,21 @@ idea {
 repositories {
         mavenCentral() // standard maven repository
         // create repository for PLANTUML_DIR env. variable must point to directory where plantum.jar is located
-        flatDir name: 'localPantUmlRepository', dirs: file(System.getenv()['PLANTUML_DIR']).absolutePath
-        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+        //flatDir name: 'localPantUmlRepository', dirs: file(System.getenv()['PLANTUML_DIR']).absolutePath
+        /*add(new org.apache.ivy.plugins.resolver.URLResolver()) {
                 name = 'bubbleswayrepo'
                 addArtifactPattern('http://cloud.github.com/downloads/bubblesway/bubbleswayrepo/[artifact]-[revision](-[classifier])(.[ext])')
-        }
+        }*/
+        mavenRepo(name:'bubbleswayrepo', url: 'https://github.com/bubblesway/bubbleswayrepo/raw/master/releases')
 }
 
 // Define dependencies
 dependencies {
         groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '1.8.4'
-        compile group: '', name: 'plantuml' // plantuml jar is automatically resolved from localPlantUmlRepository
+        compile group: 'net.sourceforge.plantuml', name: 'plantuml', version: '7497' // plantuml jar is automatically resolved from localPlantUmlRepository
         compile group: 'org.bitbucket.novakmi', name: 'nodebuilder', version: '0.0.1'
         // dependecies for tests
-        compile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.4'
+        testCompile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.4'
         testCompile group: 'org.testng', name: 'testng', version: '6.2.1'
         testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.0'
         //testCompile 'org.uncommons:reportng:1.1.1'
@@ -132,6 +127,26 @@ task prepareInstall(type: Copy, dependsOn: [jar, sourcesJar, groovydocJar]) {
 // zip into build/distributions
 task zipInstall(type: Zip, dependsOn: prepareInstall) {
         from installDir.toString()
+}
+
+artifacts { // upload also sources and groovydoc
+        archives sourcesJar
+        archives groovydocJar
+}
+
+uploadArchives { // support to upload to github emulated maven repository
+        def localMavenDir = System.getenv()['LOCAL_MAVEN_DIR']
+        if (!localMavenDir) {
+                logger.error("LOCAL_MAVEN_DIR is not defined! Artifacts will not be exported!")
+        } else {
+                repositories {
+                        mavenDeployer {
+                                repository(url: "file://localhost/${localMavenDir}/releases")
+                                pom.version = version
+                                pom.groupId = groupId
+                        }
+                }
+        }
 }
 
 // http://daniel.gredler.net/2011/08/08/gradle-keeping-libraries-up-to-date/
