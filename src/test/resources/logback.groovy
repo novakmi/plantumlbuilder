@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 bubbles.way@gmail.com
+Copyright (c) 2011 Michal Novak (bubbles.way@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

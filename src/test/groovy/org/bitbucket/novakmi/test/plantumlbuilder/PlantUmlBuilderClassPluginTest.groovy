@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 bubbles.way@gmail.com
+Copyright (c) 2011 Michal Novak (bubbles.way@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cz.atlas.bubbles.it.test.plantumlbuilder
+package org.bitbucket.novakmi.test.plantumlbuilder
 
-import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
-import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderClassPlugin
+import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilder
+import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderClassPlugin
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testng.Assert
@@ -60,7 +60,9 @@ class MyClass << union >>
 
 
     @Test(groups = ["basic"])
-    public void plantClassMemberTest() {
+    public void plantClassMemberTest() {                *.err
+*.log
+*.testng
         logger.trace("==> plantClassMemberTest")
         def builder = new PlantUmlBuilder() // new instance
         builder.addPlugin(new PlantUmlBuilderClassPlugin())

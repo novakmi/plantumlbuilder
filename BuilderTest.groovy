@@ -26,10 +26,10 @@ Classpath to PlantUMLBuilder and plantuml.jar has to be set, e.g.:
 groovy -cp ~/sw/PlantUml/plantuml.jar:src/main/groovy/ BuilderTest.groovy
 */
 
-import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
-import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderSeqPlugin
+import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilder
+import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderSeqPlugin
 import net.sourceforge.plantuml.SourceStringReader
-import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderSeqPlugin
+import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderSeqPlugin
 
 
 def callFunction(builder) {

@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cz.atlas.bubbles.it.plantumlbuilder
+package org.bitbucket.novakmi.plantumlbuilder
 
 import org.bitbucket.novakmi.nodebuilder.SimpleNode
 

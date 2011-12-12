@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 
 
-package cz.atlas.bubbles.it.plantumlbuilder
+package org.bitbucket.novakmi.plantumlbuilder
 
 import org.bitbucket.novakmi.nodebuilder.SimpleNode
 import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin

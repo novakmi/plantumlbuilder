@@ -23,11 +23,12 @@ THE SOFTWARE.
 /*
 Use groovy 1.8.0+
 Classpath to PlantUMLBuilder and plantuml.jar has to be set, e.g.:
-groovy -cp ~/sw/PlantUml/plantuml.jar:../src/main/groovy/ example2.groovy
+groovy -cp ~/sw/PlantUml/plantuml.jar:blantumlbuilder-x.x.x.jar example-seq1.groovy
 */
 
 import net.sourceforge.plantuml.SourceStringReader
 import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilder
+import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderSeqPlugin
 
 // define actors and participants as constant strings
 User1 = 'User1'
@@ -63,25 +64,29 @@ def scan(builder, user, mediaList) {
     }
 }
 // create new builder
-def builder = new PlantUmlBuilder()
-// plantuml element is a root element of PlantUML
-builder.plantuml {
-    title('Plantumlbuilder example - scan')
-    //create actors and participants
-    actor('Joe', as: User1)
-    actor('Sally', as: User2)
-    participant('xsane' , as: scanSoftware)
-    participant(scanner)
-    participant('"Hard\\ndisk"', as: storage)
-    scan(builder, User1, [paper, photo]) //call function - reuse for User1
-    scan(builder, User2, [paper, paper]) //call function - reuse for user2
-}
+def builder = new PlantUmlBuilder() // new instance
+        def seqPlugin =  new PlantUmlBuilderSeqPlugin()
+        seqPlugin.setAutoNumber(true)
+        builder.addPlantUmlBuilderPluginListener(seqPlugin)
+        def a = 'A'
+        def b = 'B'
+        builder.plantuml {
+             title('Plantumlbuilder example sequence plugin/autonumber')
+            builder.participant(a)
+            builder.participant(b)
+            alt('on case 1') {
+                msg(a, to: b, close: 'deactivate', text: 'call b', returnText: 'operation finished')
+                'else'('case 2')
+                msg(b, to: a, close: 'destroy', text: 'call a', returnText: 'operation finished')
+            }
+        }
+
 
 println builder.getText() // get PlantUML text
 println ''
 
 // use plantUML to create png file from plantuml tgext
 SourceStringReader s = new SourceStringReader(builder.getText())
-FileOutputStream file = new FileOutputStream('./example2.png')
+FileOutputStream file = new FileOutputStream('./example-seq1.png')
 s.generateImage(file)
 file.close()

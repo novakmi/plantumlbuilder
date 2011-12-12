@@ -24,13 +24,13 @@ THE SOFTWARE.
 // Tip: Use Intellij Idea community edition to work with gradle (GradelGUI plugin)
 // run 'gradle tasks' to see available tasks
 
-version = '0.0.4'
+version = '0.1.0'
 sourceCompatibility = '1.6'
-tailfPackage = "cz.atlas.bubbles.it"
+productPackage = "org.bitbucket.novakmi"
 installDir = file('./install')
 
 if (!System.getenv()['PLANTUML_DIR']) {
-    logger.error("PLANTUML_DIR is not defined!")
+        logger.error("PLANTUML_DIR is not defined!")
 }
 assert (System.getenv()['PLANTUML_DIR']) // end with error if PLANTUML_DIR not defined
 
@@ -40,126 +40,132 @@ apply plugin: 'maven' // to use maven repository
 apply plugin: 'idea' // to generate project+module files for Intellij Idea
 
 idea {
-    module {
-        downloadJavadoc = true
-    }
+        module {
+                downloadJavadoc = true
+        }
 }
 
 repositories {
-    mavenCentral() // standard maven repository
-    // create repository for PLANTUML_DIR env. variable must point to directory where plantum.jar is located
-    flatDir name: 'localPantUmlRepository', dirs: file(System.getenv()['PLANTUML_DIR']).absolutePath
+        mavenCentral() // standard maven repository
+        // create repository for PLANTUML_DIR env. variable must point to directory where plantum.jar is located
+        flatDir name: 'localPantUmlRepository', dirs: file(System.getenv()['PLANTUML_DIR']).absolutePath
+        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+                name = 'bubbleswayrepo'
+                addArtifactPattern('http://cloud.github.com/downloads/bubblesway/bubbleswayrepo/[artifact]-[revision](-[classifier])(.[ext])')
+        }
 }
 
 // Define dependencies
 dependencies {
-    compile group: '', name: 'plantuml' // plantuml jar is automatically resolved from localPlantUmlRepository
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.4'
-    groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '1.8.4'
-    testCompile group: 'org.testng', name: 'testng', version: '6.2.1'
-    testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.0'
-    //testCompile 'org.uncommons:reportng:1.1.1'
-    testCompile group: 'janino', name: 'janino', version: '2.5.10'
+        groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '1.8.4'
+        compile group: '', name: 'plantuml' // plantuml jar is automatically resolved from localPlantUmlRepository
+        compile group: 'org.bitbucket.novakmi', name: 'nodebuilder', version: '0.0.1'
+        // dependecies for tests
+        compile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.4'
+        testCompile group: 'org.testng', name: 'testng', version: '6.2.1'
+        testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.0'
+        //testCompile 'org.uncommons:reportng:1.1.1'
+        testCompile group: 'janino', name: 'janino', version: '2.5.10'
 }
 
 
 jar {
-    manifest {
-        attributes(
-            'Implementation-Title': project.name,
-            'Implementation-Version': version,
-            'Specification-Vendor': 'bubbles.way',
-            'Built-By': 'bubbles.way',
-            'Specification-Title': project.name,
-            'Extension-Name': project.name,
-            'Specification-Version': version
-        )
-    }
+        manifest {
+                attributes(
+                    'Implementation-Title': project.name,
+                    'Implementation-Version': version,
+                    'Specification-Vendor': 'Michal Novak (bubbles.way@gmail.com)',
+                    'Built-By': 'bubbles.way',
+                    'Specification-Title': project.name,
+                    'Extension-Name': project.name,
+                    'Specification-Version': version
+                )
+        }
 }
 
 clean << {  //add to clean task
-    installDir.deleteDir()
+        installDir.deleteDir()
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from "${project.projectDir}/src/main"
+        classifier = 'sources'
+        from "${project.projectDir}/src/main"
 }
 
 task groovydocJar(type: Jar, dependsOn: groovydoc) {
-    classifier = 'groovydoc'
-    from groovydoc.destinationDir
+        classifier = 'groovydoc'
+        from groovydoc.destinationDir
 }
 
 test {
-    useTestNG() {
-        suiteXmlBuilder().suite(name: 'Test Plantuml groovy builder') {
-            test(name: 'plantuml'/*, annotations: 'JDK', verbose: '1'*/) {
-                groups {
-                    run {
-                        include(name: "basic")
-                    }
+        useTestNG() {
+                suiteXmlBuilder().suite(name: 'Test Plantuml groovy builder') {
+                        test(name: 'plantuml'/*, annotations: 'JDK', verbose: '1'*/) {
+                                groups {
+                                        run {
+                                                include(name: "basic")
+                                        }
+                                }
+                                classes([:]) {
+                                        'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderTest")
+                                        'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderClassPluginTest")
+                                        'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderSeqPluginTest")
+                                }
+                        }
                 }
-                classes([:]) {
-                    'class'(name: "cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBuilderTest")
-                    'class'(name: "cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBuilderClassPluginTest")
-                    'class'(name: "cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBuilderSeqPluginTest")
-                }
-            }
         }
-    }
 //    options {
-    //        listeners << 'org.uncommons.reportng.HTMLReporter'
-    //        listeners << 'org.uncommons.reportng.JUnitXMLReporter'
-    //    }
+        //        listeners << 'org.uncommons.reportng.HTMLReporter'
+        //        listeners << 'org.uncommons.reportng.JUnitXMLReporter'
+        //    }
 }
 
 
 task prepareInstall(type: Copy, dependsOn: [jar, sourcesJar, groovydocJar]) {
-    installDir.mkdirs()
-    //logger.quiet("externalJars {}", externalJars)
-    from configurations['compile']?.files/*?.findAll { it.absolutePath.indexOf('unspecified') < 0 }*/
-    from "${project.projectDir}/build/libs"
-    into installDir
+        installDir.mkdirs()
+        //logger.quiet("externalJars {}", externalJars)
+        from configurations['compile']?.files/*?.findAll { it.absolutePath.indexOf('unspecified') < 0 }*/
+        from "${project.projectDir}/build/libs"
+        into installDir
 }
 
 // zip into build/distributions
 task zipInstall(type: Zip, dependsOn: prepareInstall) {
-    from installDir.toString()
+        from installDir.toString()
 }
 
 // http://daniel.gredler.net/2011/08/08/gradle-keeping-libraries-up-to-date/
 // Find any 3rd party libraries which have released new versions
 // to the central Maven repo since we last upgraded.
 task checkLibVersions << {
-    def checked = [:]
-    allprojects {
-        configurations.each { configuration ->
-            configuration.allDependencies.each { dependency ->
-                def version = dependency.version
-                if (version && !version.contains('SNAPSHOT') && !checked[dependency]) {
-                    def group = dependency.group
-                    def path = group.replace('.', '/')
-                    def name = dependency.name
-                    def url = "http://repo1.maven.org/maven2/$path/$name/maven-metadata.xml"
-                    try {
-                        def metadata = new XmlSlurper().parseText(url.toURL().text)
-                        def versions = metadata.versioning.versions.version.collect { it.text() }
-                        versions.removeAll { it.toLowerCase().contains('alpha') }
-                        versions.removeAll { it.toLowerCase().contains('beta') }
-                        versions.removeAll { it.toLowerCase().contains('rc') }
-                        def newest = versions.max()
-                        if (version != newest) {
-                            println "$group:$name $version -> $newest [$versions]"
+        def checked = [:]
+        allprojects {
+                configurations.each { configuration ->
+                        configuration.allDependencies.each { dependency ->
+                                def version = dependency.version
+                                if (version && !version.contains('SNAPSHOT') && !checked[dependency]) {
+                                        def group = dependency.group
+                                        def path = group.replace('.', '/')
+                                        def name = dependency.name
+                                        def url = "http://repo1.maven.org/maven2/$path/$name/maven-metadata.xml"
+                                        try {
+                                                def metadata = new XmlSlurper().parseText(url.toURL().text)
+                                                def versions = metadata.versioning.versions.version.collect { it.text() }
+                                                versions.removeAll { it.toLowerCase().contains('alpha') }
+                                                versions.removeAll { it.toLowerCase().contains('beta') }
+                                                versions.removeAll { it.toLowerCase().contains('rc') }
+                                                def newest = versions.max()
+                                                if (version != newest) {
+                                                        println "$group:$name $version -> $newest [$versions]"
+                                                }
+                                        } catch (FileNotFoundException e) {
+                                                logger.debug "Unable to download $url: $e.message"
+                                        } catch (org.xml.sax.SAXParseException e) {
+                                                logger.debug "Unable to parse $url: $e.message"
+                                        }
+                                        checked[dependency] = true
+                                }
                         }
-                    } catch (FileNotFoundException e) {
-                        logger.debug "Unable to download $url: $e.message"
-                    } catch (org.xml.sax.SAXParseException e) {
-                        logger.debug "Unable to parse $url: $e.message"
-                    }
-                    checked[dependency] = true
                 }
-            }
         }
-    }
 }

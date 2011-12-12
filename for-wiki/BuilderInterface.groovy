@@ -34,8 +34,8 @@ Classpath to PlantUMLBuilder and plantuml.jar has to be set, e.g.:
 groovy -cp ~/sw/PlantUml/plantuml.jar:../src/main/groovy/ example1.groovy
 */
 
-import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
-import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilderClassPlugin
+import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilder
+import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderClassPlugin
 import net.sourceforge.plantuml.SourceStringReader
 import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
 import org.bitbucket.novakmi.nodebuilder.PluginResult

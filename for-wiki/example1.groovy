@@ -27,7 +27,7 @@ groovy -cp ~/sw/PlantUml/plantuml.jar:../src/main/groovy/ example1.groovy
 */
 
 import net.sourceforge.plantuml.SourceStringReader
-import cz.atlas.bubbles.it.plantumlbuilder.PlantUmlBuilder
+import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilder
 
 // create new builder
 def builder = new PlantUmlBuilder()
