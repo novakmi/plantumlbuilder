@@ -66,14 +66,13 @@ def scan(builder, user, mediaList) {
 // create new builder
 def builder = new PlantUmlBuilder() // new instance
         def seqPlugin =  new PlantUmlBuilderSeqPlugin()
-        seqPlugin.setAutoNumber(true)
-        builder.addPlantUmlBuilderPluginListener(seqPlugin)
+        builder.addPlugin(seqPlugin)
         def a = 'A'
         def b = 'B'
         builder.plantuml {
-             title('Plantumlbuilder example sequence plugin/autonumber')
-            builder.participant(a)
-            builder.participant(b)
+            title('Plantumlbuilder example sequence plugin/autonumber')
+            participant(a)
+            participant(b)
             alt('on case 1') {
                 msg(a, to: b, close: 'deactivate', text: 'call b', returnText: 'operation finished')
                 'else'('case 2')

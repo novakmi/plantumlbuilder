@@ -56,11 +56,9 @@ builder.plantuml {
         '+void removePlantUmlBuilderPluginListener(NodeBuilderPlugin listener)',
     ]
     pclass(PlantUmlBuilder.class.name, members: builderMembers)
-    note('See @groovy.beans.ListenerList', pos: "top of ${PlantUmlBuilder.class.name}")
     pinterface(NodeBuilderPlugin.class.name, members: ['+PluginResult processNodeBefore(final SimpleNode node, IndentPrinter out, boolean postProcess)'])
     penum(PluginResult.class.name, members: [
         PluginResult.NOT_ACCEPTED,
-        PluginResult.PROCESSED_STOP,
         PluginResult.PROCESSED,
         PluginResult.FAILED,
     ])

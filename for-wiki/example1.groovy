@@ -23,7 +23,7 @@ THE SOFTWARE.
 /*
 Use groovy 1.8.0+
 Classpath to PlantUMLBuilder and plantuml.jar has to be set, e.g.:
-groovy -cp ~/sw/PlantUml/plantuml.jar:../src/main/groovy/ example1.groovy
+groovy -cp ~/sw/PlantUml/plantuml.jar:nodebuilder-0.0.1.jar:plantumlbuilder-0.1.0.jar example1.groovy
 */
 
 import net.sourceforge.plantuml.SourceStringReader
