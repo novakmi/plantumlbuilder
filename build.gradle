@@ -24,7 +24,7 @@ THE SOFTWARE.
 // Tip: Use Intellij Idea community edition to work with gradle (GradelGUI plugin)
 // run 'gradle tasks' to see available tasks
 
-version = '0.0.3'
+version = '0.0.4'
 sourceCompatibility = '1.6'
 tailfPackage = "cz.atlas.bubbles.it"
 installDir = file('./install')
