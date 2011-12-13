@@ -53,9 +53,9 @@ repositories {
 // Define dependencies
 dependencies {
         groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '1.8.4'
-        compile group: 'net.sourceforge.plantuml', name: 'plantuml', version: '7497' // plantuml jar is automatically resolved from localPlantUmlRepository
-        compile group: 'org.bitbucket.novakmi', name: 'nodebuilder', version: '0.0.1'
+        compile group: 'org.bitbucket.novakmi', name: 'nodebuilder', version: '0.0.2'
         // dependecies for tests
+        testCompile group: 'net.sourceforge.plantuml', name: 'plantuml', version: '7497'
         testCompile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.4'
         testCompile group: 'org.testng', name: 'testng', version: '6.2.1'
         testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.0'
