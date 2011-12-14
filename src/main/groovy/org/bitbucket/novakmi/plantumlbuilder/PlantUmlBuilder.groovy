@@ -22,6 +22,7 @@ THE SOFTWARE.
 
 package org.bitbucket.novakmi.plantumlbuilder
 
+import org.bitbucket.novakmi.nodebuilder.BuilderException
 import org.bitbucket.novakmi.nodebuilder.PluginSimpleNodeBuilder
 import org.bitbucket.novakmi.nodebuilder.SimpleNode
 
@@ -32,15 +33,19 @@ class PlantUmlBuilder extends PluginSimpleNodeBuilder {
         private StringWriter stringWriter
         private String builderText = null
 
-        public PlantUmlBuilder() {
+        /**
+         * Create new PlantUmlBuilder
+         * @param indent number of spaces for indentation (default is 2)
+         */
+        public PlantUmlBuilder(indent = 2) {
                 stringWriter = new StringWriter()
                 writer = new PrintWriter(stringWriter)
-                out = new IndentPrinter(writer)
+                out = new IndentPrinter(writer, " " * indent)
                 out.decrementIndent() // to start from beg. of line
         }
 
         @Override
-        protected boolean processNode(SimpleNode node, Object opaque) {
+        protected boolean processNode(SimpleNode node, Object opaque) throws BuilderException {
                 def retVal = true
                 switch (node.name) {
                         case 'plant':
@@ -74,18 +79,21 @@ class PlantUmlBuilder extends PluginSimpleNodeBuilder {
                                 if (root == node) {
                                         break
                                 }
+                        default:
+                                throw new BuilderException("Node: ${SimpleNode.getNodePath(node)} is not recognized by the PlantUmlBuilder builder!")
+                                break
                 }
                 return retVal
         }
 
         @Override
-        protected boolean processNodeAfterChildrend(SimpleNode node, Object opaque) {
+        protected boolean processNodeAfterChildren(SimpleNode node, Object opaque) {
                 opaque.decrementIndent()
                 return true
         }
 
         @Override
-        protected boolean processNodeBeforeChildrend(SimpleNode node, Object opaque) {
+        protected boolean processNodeBeforeChildren(SimpleNode node, Object opaque) {
                 opaque.incrementIndent()
                 return true
         }
@@ -98,7 +106,7 @@ class PlantUmlBuilder extends PluginSimpleNodeBuilder {
          *         getText(plainPlantUml: true)
          * @return build text
          */
-        public String getText(params) {
+        public String getText(params) throws BuilderException {
                 def umlval = ''
                 if (!builderText) {  // reuse from previous run?
                         StringBuffer buffer = stringWriter.getBuffer()
@@ -131,5 +139,5 @@ class PlantUmlBuilder extends PluginSimpleNodeBuilder {
                 super.reset()
                 builderText = null
         }
-       
+
 }

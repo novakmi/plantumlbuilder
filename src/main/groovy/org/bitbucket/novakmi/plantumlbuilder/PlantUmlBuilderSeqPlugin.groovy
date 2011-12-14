@@ -64,7 +64,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                         if (!postProcess) {
                                 out.printIndent()
                                 out.println(val)
-                                retVal = PluginResult.PROCESSED
+                                retVal = PluginResult.PROCESSED_FULL
                         }
                 }
 
@@ -78,7 +78,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                         processClose(node.value) // sets retVal to FAILED
                                 }
                                 if (retVal != PluginResult.FAILED) {
-                                        retVal = PluginResult.PROCESSED
+                                        retVal = PluginResult.PROCESSED_FULL
                                 }
                                 break
                         case 'msg': // 'msg' is alias for message
@@ -110,7 +110,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                         processClose(to)  // sets retVal to FAILED
                                 }
                                 if (retVal != PluginResult.FAILED) {
-                                        retVal = PluginResult.PROCESSED
+                                        retVal = PluginResult.PROCESSED_FULL
                                 }
                                 break
                         case 'opt':
@@ -126,33 +126,40 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                 } else {
                                         out.println("end")
                                 }
-                                retVal = PluginResult.PROCESSED
+                                retVal = PluginResult.PROCESSED_FULL
                                 break
                         case 'ref':
-                                if (!node.attributes.over) {
-                                        out.println("***** 'ref' requires 'over' attribute ****")
-                                        retVal = PluginResult.FAILED
+                                if (!postProcess) {
+                                        if (!node.attributes.over) {
+                                                out.println("***** 'ref' requires 'over' attribute ****")
+                                                retVal = PluginResult.FAILED
+                                        } else {
+                                                process("$node.name over ${node.attributes.over.join(',')} : $node.value")
+                                                retVal = PluginResult.PROCESSED_FULL
+                                        }
                                 } else {
-                                        process("$node.name over ${node.attributes.over.join(',')} : $node.value")
-                                        retVal = PluginResult.PROCESSED
+                                        retVal = PluginResult.PROCESSED_FULL
                                 }
                                 break
                         case 'else':
                                 process("else $node.value")
-                                retVal = PluginResult.PROCESSED
+                                retVal = PluginResult.PROCESSED_FULL
                                 break
                         case 'divider':
                                 process("== $node.value ==")
-                                retVal = PluginResult.PROCESSED
+                                retVal = PluginResult.PROCESSED_FULL
                                 break
                         case 'delay':
                                 process("...$node.value...")
-                                retVal = PluginResult.PROCESSED
+                                retVal = PluginResult.PROCESSED_FULL
                                 break
                         case 'deactivate':
                         case 'destroy':
                                 process("$node.name $node.value")
-                                retVal = PluginResult.PROCESSED
+                                retVal = PluginResult.PROCESSED_FULL
+                                break
+                        default:
+                                retVal = PluginResult.NOT_ACCEPTED
                                 break
                 }
 

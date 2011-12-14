@@ -59,21 +59,21 @@ class PlantUmlBuilderClassPlugin extends NodeBuilderPlugin {
                                         out.println("$name ${node.value}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}${asText}${node.attributes?.members ? " {" : ""}")
                                         if (node.attributes?.members) {
                                                 out.incrementIndent()
-                                                node.attributes?.members.each {
+                                                node?.attributes?.members?.each {
                                                         out.printIndent()
                                                         out.println("$it")
                                                 }
                                                 out.decrementIndent()
                                         }
                                 }
-                                retVal = PluginResult.PROCESSED
+                                retVal = PluginResult.PROCESSED_FULL
                                 break
                         case 'relation':
                                 if (!postProcess) {
                                         out.printIndent()
                                         out.println("${node.value} ${node.attributes.rel} ${node.attributes.to}${node.attributes.text ? " :${node.attributes.text}" : ""}")
                                 }
-                                retVal = PluginResult.PROCESSED
+                                retVal = PluginResult.PROCESSED_FULL
                                 break
                         case 'ppackage':
                                 out.printIndent()
@@ -82,8 +82,11 @@ class PlantUmlBuilderClassPlugin extends NodeBuilderPlugin {
                                 } else {
                                         out.println("end package")
                                 }
-                                retVal = PluginResult.PROCESSED
+                                retVal = PluginResult.PROCESSED_FULL
                                 break;
+                        default:
+                                retVal = PluginResult.NOT_ACCEPTED
+                                break
                 }
                 return retVal
         }
