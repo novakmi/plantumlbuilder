@@ -28,9 +28,9 @@ THE SOFTWARE.
 @GrabResolver(name = 'bubbleswayrepo', root = 'https://github.com/bubblesway/bubbleswayrepo/raw/master/releases', m2compatible = true)
 @Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '7497')  //for newer versions, update numbers
 @Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '0.1.0')
-@Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.2.0')
+@Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.2.1')
 
-// Without Internet connection, run as groovy script with jars in classpath (-cp), comment @Grab ... above
+// Without Internet connection, run as groovy script with jars in the classpath (-cp), comment @Grab ... annotations above
 // 'groovy -cp plantumlbuilder-0.1.0.jar:plantuml-7497.jar:nodebuilder-0.0.2.jar  <scriptName>.groovy'
 
 // This script template represents example of usage without any plugin
