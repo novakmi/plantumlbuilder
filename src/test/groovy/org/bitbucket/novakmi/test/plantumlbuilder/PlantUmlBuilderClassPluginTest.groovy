@@ -213,6 +213,62 @@ interface MyInterface << interface >>
         logger.trace("<== plantInterfaceTest")
     }
 
+        @Test(groups = ["basic"])
+        public void plantAbstractTest() {
+                logger.trace("==> plantAbstractTest")
+                def builder = new PlantUmlBuilder() // new instance
+                builder.addPlugin(new PlantUmlBuilderClassPlugin())
+
+                builder.plantuml {
+                        pabstract('MyAbstract')
+                }
+                Assert.assertEquals(builder.getText(),
+                    '''@startuml
+abstract MyAbstract
+@enduml''')
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                builder.reset()
+
+                builder.plantuml {
+                        pabstract('MyAbstract', stereotype: 'abstract')
+                }
+                Assert.assertEquals(builder.getText(),
+                    '''@startuml
+abstract MyAbstract << abstract >>
+@enduml''')
+                PlantUmlBuilderTest.assertPlantFile(builder)
+                logger.trace("<== plantAbstractTest")
+        }
+
+        @Test(groups = ["basic"])
+        public void plantAbstractClassTest() {
+                logger.trace("==> plantAbstractClassTest")
+                def builder = new PlantUmlBuilder() // new instance
+                builder.addPlugin(new PlantUmlBuilderClassPlugin())
+
+                builder.plantuml {
+                        paclass('MyClassAbstract')
+                }
+                Assert.assertEquals(builder.getText(),
+                    '''@startuml
+abstract class MyClassAbstract
+@enduml''')
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                builder.reset()
+
+                builder.plantuml {
+                        paclass('MyClassAbstract', stereotype: 'abstract class')
+                }
+                Assert.assertEquals(builder.getText(),
+                    '''@startuml
+abstract class MyClassAbstract << abstract class >>
+@enduml''')
+                PlantUmlBuilderTest.assertPlantFile(builder)
+                logger.trace("<== plantAbstractClassTest")
+        }
+
     @Test(groups = ["basic"])
     public void plantPackageTest() {
         logger.trace("==> plantPackageTest")

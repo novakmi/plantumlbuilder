@@ -44,6 +44,8 @@ class PlantUmlBuilderClassPlugin extends NodeBuilderPlugin {
                 PluginResult retVal = PluginResult.NOT_ACCEPTED
                 IndentPrinter out = (IndentPrinter) opaque
                 switch (node.name) {
+                        case 'pabstract':
+                        case 'paclass':
                         case 'pclass':
                         case 'pinterface':
                         case 'penum':
@@ -55,6 +57,9 @@ class PlantUmlBuilderClassPlugin extends NodeBuilderPlugin {
                                 } else {
                                         out.printIndent()
                                         def name = node.name[1..-1] //skip starting 'p'
+                                        if (name == 'aclass') {
+                                                name = 'abstract class'
+                                        }
                                         def asText = node.attributes?.as ? " as \"${node.attributes.as}\"" : ""
                                         out.println("$name ${node.value}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}${asText}${node.attributes?.members ? " {" : ""}")
                                         if (node.attributes?.members) {

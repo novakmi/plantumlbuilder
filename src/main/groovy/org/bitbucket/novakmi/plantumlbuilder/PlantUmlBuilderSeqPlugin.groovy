@@ -81,7 +81,11 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                         retVal = PluginResult.PROCESSED_FULL
                                 }
                                 break
-                        case 'msg': // 'msg' is alias for message
+                        case 'msgAd': // alias for msg(..., close:'deactivate')
+                                if (!node.attributes.close) {
+                                        node.attributes.close = 'deactivate'
+                                }
+                        case 'msg': // 'msg'
                                 def to = node.attributes.to
                                 def noReturn = node.attributes.noReturn
                                 if (!to) { // self message

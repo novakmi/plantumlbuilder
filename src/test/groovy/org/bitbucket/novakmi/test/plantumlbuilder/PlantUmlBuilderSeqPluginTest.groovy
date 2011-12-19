@@ -205,7 +205,31 @@ destroy B
 @enduml''')
         PlantUmlBuilderTest.assertPlantFile(builder)
 
-        builder.reset()
+            def deactivateText = '''@startuml
+actor A
+participant B
+A -> B : call b
+activate B
+B --> A
+deactivate B
+@enduml'''
+            builder.reset()
+            builder.plantuml {
+                    makeParticipants()
+                    msg(a, to: b, text: 'call b', close: 'deactivate')
+            }
+            Assert.assertEquals(builder.getText(),deactivateText)
+            PlantUmlBuilderTest.assertPlantFile(builder)
+
+            builder.reset()
+            builder.plantuml {
+                    makeParticipants()
+                    msgAd(a, to: b, text: 'call b') //msgAd = activate/deactivate
+            }
+            Assert.assertEquals(builder.getText(),deactivateText)
+            PlantUmlBuilderTest.assertPlantFile(builder)
+
+            builder.reset()
         builder.plantuml {
             makeParticipants()
             msg(a, to: b, text: 'call b', returnText: 'return to a', close: 'deactivate')
