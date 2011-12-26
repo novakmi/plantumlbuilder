@@ -61,7 +61,7 @@ class PlantUmlBuilderClassPlugin extends NodeBuilderPlugin {
                                                 name = 'abstract class'
                                         }
                                         def asText = node.attributes?.as ? " as \"${node.attributes.as}\"" : ""
-                                        out.println("$name ${node.value}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}${asText}${node.attributes?.members ? " {" : ""}")
+                                        out.println("$name ${node.value}${asText}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}${node.attributes?.members ? " {" : ""}")
                                         if (node.attributes?.members) {
                                                 out.incrementIndent()
                                                 node?.attributes?.members?.each {
