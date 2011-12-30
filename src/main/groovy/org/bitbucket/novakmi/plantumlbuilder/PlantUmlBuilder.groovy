@@ -23,25 +23,18 @@ THE SOFTWARE.
 package org.bitbucket.novakmi.plantumlbuilder
 
 import org.bitbucket.novakmi.nodebuilder.BuilderException
-import org.bitbucket.novakmi.nodebuilder.PluginSimpleNodeBuilder
 import org.bitbucket.novakmi.nodebuilder.SimpleNode
+import org.bitbucket.novakmi.nodebuilder.TextPluginSimpleNodeBuilder
 
 // Builder class
-class PlantUmlBuilder extends PluginSimpleNodeBuilder {
-        private IndentPrinter out
-        private PrintWriter writer
-        private StringWriter stringWriter
-        private String builderText = null
+class PlantUmlBuilder extends TextPluginSimpleNodeBuilder {
 
         /**
          * Create new PlantUmlBuilder
          * @param indent number of spaces for indentation (default is 2)
          */
         public PlantUmlBuilder(indent = 2) {
-                stringWriter = new StringWriter()
-                writer = new PrintWriter(stringWriter)
-                out = new IndentPrinter(writer, " " * indent)
-                out.decrementIndent() // to start from beg. of line
+                super(indent)
         }
 
         @Override
@@ -77,8 +70,10 @@ class PlantUmlBuilder extends PluginSimpleNodeBuilder {
                                 break
                         case 'plantuml':
                                 if (root == node) {
+                                        opaque.setIndentLevel(-1) //do not indent childs under 'plantuml' node
                                         break
                                 }
+                                throw new BuilderException("Node: ${SimpleNode.getNodePath(node)} must be root node!")
                         default:
                                 throw new BuilderException("Node: ${SimpleNode.getNodePath(node)} is not recognized by the PlantUmlBuilder builder!")
                                 break
@@ -86,37 +81,17 @@ class PlantUmlBuilder extends PluginSimpleNodeBuilder {
                 return retVal
         }
 
-        @Override
-        protected boolean processNodeAfterChildren(SimpleNode node, Object opaque) {
-                opaque.decrementIndent()
-                return true
-        }
-
-        @Override
-        protected boolean processNodeBeforeChildren(SimpleNode node, Object opaque) {
-                opaque.incrementIndent()
-                return true
-        }
-
         /**
          * Get PlantUML text build by the builder
          * @param params map with optional name params.
          *         Currently supported 'plainPlantUml' - do not add '@startuml/@enduml' to the returned PlantUML text
-         *         getText()
-         *         getText(plainPlantUml: true)
+         *         getBuiltText()
+         *         getBuiltText(plainPlantUml: true)
          * @return build text
          */
-        public String getText(params) throws BuilderException {
+        @Override
+        public String getBuiltText(params) throws BuilderException {
                 def umlval = ''
-                if (!builderText) {  // reuse from previous run?
-                        StringBuffer buffer = stringWriter.getBuffer()
-                        buffer.delete(0, buffer.length()) // clear buffer
-                        stringWriter.flush()
-                        if (root) {
-                                processTree(root, out)
-                        }
-                        builderText = buffer.toString()
-                }
                 if (root?.value) {
                         umlval = " $root.value"
                 }
@@ -124,20 +99,10 @@ class PlantUmlBuilder extends PluginSimpleNodeBuilder {
                 if (!params?.plainPlantUml) {
                         retVal += "@startuml${umlval}\n"
                 }
-                retVal += builderText
+                retVal += getText()
                 if (!params?.plainPlantUml) {
                         retVal += "@enduml"
                 }
                 return retVal
         }
-
-        /**
-         * Reset root element of the builder.
-         * Use this method to start building PlantUML text from the beginning.
-         */
-        @Override public void reset() {
-                super.reset()
-                builderText = null
-        }
-
 }
