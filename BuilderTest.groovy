@@ -54,12 +54,12 @@ builder.plantuml {
     } // deactivate added automatically
 }
 
-println builder.getText()
+println builder.getBuiltText()
 println ''
 println 'Without start/end'
-println builder.getText(plainPlantUml: true)
+println builder.getBuiltText(plainPlantUml: true)
 
-SourceStringReader s = new SourceStringReader(builder.getText())
+SourceStringReader s = new SourceStringReader(builder.getBuiltText())
 FileOutputStream file = new FileOutputStream("./plantUmlBuilderTest.png")
 s.generateImage(file);
 file.close()
@@ -73,8 +73,8 @@ builder.plantuml {
         }
     }
 }
-println builder.getText()
-s = new SourceStringReader(builder.getText())
+println builder.getBuiltText()
+s = new SourceStringReader(builder.getBuiltText())
 file = new FileOutputStream("./plantUmlBuilderTest2.png")
 s.generateImage(file);
 file.close()

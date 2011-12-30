@@ -77,11 +77,11 @@ builder.plantuml {
     scan(builder, User2, [paper, paper]) //call function - reuse for user2
 }
 
-println builder.getText() // get PlantUML text
+println builder.getBuiltText() // get PlantUML text
 println ''
 
 // use plantUML to create png file from plantuml tgext
-SourceStringReader s = new SourceStringReader(builder.getText())
+SourceStringReader s = new SourceStringReader(builder.getBuiltText())
 FileOutputStream file = new FileOutputStream('./example2.png')
 s.generateImage(file)
 file.close()

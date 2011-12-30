@@ -36,8 +36,8 @@ class PlantUmlBuilderTest {
     static def assertPlantFile(builder, prefix = '') {
         logger.trace("==> assertPlantFile")
         if (makePlantFile) {
-            def s = new SourceStringReader(builder.getText())
-            logger.trace(builder.getText())
+            def s = new SourceStringReader(builder.getBuiltText())
+            logger.trace(builder.getBuiltText())
             def file = new FileOutputStream("./${prefix}_plantTestNg.png")
             s.generateImage(file);
             file.close()
@@ -92,7 +92,7 @@ deactivate B'''
             plant('A-->B')
             plant('deactivate B')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 A->B
 activate B
@@ -117,13 +117,13 @@ deactivate B
         builder.plantuml {
             _buildSeq(builder)
         }
-        Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
+        Assert.assertEquals(builder.getBuiltText(), "@startuml${_seqString}@enduml")
         assertPlantFile(builder)
         builder.reset()
         builder.plantuml('img/myseq.png') {
             _buildSeq(builder)
         }
-        Assert.assertEquals(builder.getText(), "@startuml img/myseq.png${_seqString}@enduml")
+        Assert.assertEquals(builder.getBuiltText(), "@startuml img/myseq.png${_seqString}@enduml")
         //assertPlantFile(builder)
         logger.trace("<== plantPlainSeqIndentTest")
     }
@@ -139,13 +139,13 @@ deactivate B
         builder.plantuml {
             _buildSeq(builder)
         }
-        Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
+        Assert.assertEquals(builder.getBuiltText(), "@startuml${_seqString}@enduml")
         builder.reset()
-        Assert.assertEquals(builder.getText(), '@startuml\n@enduml')
+        Assert.assertEquals(builder.getBuiltText(), '@startuml\n@enduml')
         builder.plantuml {
             _buildSeq(builder)
         }
-        Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
+        Assert.assertEquals(builder.getBuiltText(), "@startuml${_seqString}@enduml")
         logger.trace("<== plantPlainResetTest")
     }
 
@@ -158,12 +158,12 @@ deactivate B
         builder.plantuml {
             _buildSeq(builder)
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), "${_seqStringNoNL}\n")
+        Assert.assertEquals(builder.getBuiltText(plainPlantUml: true), "${_seqStringNoNL}\n")
         builder.reset()
         builder.plantuml {
             _buildSeq(builder)
         }
-        Assert.assertEquals(builder.getText(), "@startuml${_seqString}@enduml")
+        Assert.assertEquals(builder.getBuiltText(), "@startuml${_seqString}@enduml")
         logger.trace("<== plantPlainGetTextParamsTest")
     }
 /**
@@ -179,7 +179,7 @@ deactivate B
             title('Test title')
             participant('A')
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), 'title Test title\nparticipant A\n')
+        Assert.assertEquals(builder.getBuiltText(plainPlantUml: true), 'title Test title\nparticipant A\n')
         assertPlantFile(builder)
 
         // test 'actor' keyword
@@ -187,14 +187,14 @@ deactivate B
         builder.plantuml {
             actor('MyActor')
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), 'actor MyActor\n')
+        Assert.assertEquals(builder.getBuiltText(plainPlantUml: true), 'actor MyActor\n')
         assertPlantFile(builder)
 
         builder.reset()
         builder.plantuml {
             actor('"My actor\\n(system)"', as: 'MyActor')
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), 'actor "My actor\\n(system)" as MyActor\n')
+        Assert.assertEquals(builder.getBuiltText(plainPlantUml: true), 'actor "My actor\\n(system)" as MyActor\n')
         assertPlantFile(builder)
 
         // test 'participant'
@@ -202,13 +202,13 @@ deactivate B
         builder.plantuml {
             participant('MyParticipant')
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant MyParticipant\n')
+        Assert.assertEquals(builder.getBuiltText(plainPlantUml: true), 'participant MyParticipant\n')
         assertPlantFile(builder)
         builder.reset()
         builder.plantuml {
             participant('"My participant\\n(system)"', as: 'MyParticipant')
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant "My participant\\n(system)" as MyParticipant\n')
+        Assert.assertEquals(builder.getBuiltText(plainPlantUml: true), 'participant "My participant\\n(system)" as MyParticipant\n')
         assertPlantFile(builder)
 
         // test 'note' keyword
@@ -217,7 +217,7 @@ deactivate B
             participant('A')
             note('My note')
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant A\nnote My note\n')
+        Assert.assertEquals(builder.getBuiltText(plainPlantUml: true), 'participant A\nnote My note\n')
         assertPlantFile(builder)
         ['right', 'left'].each {nt ->
             builder.reset()
@@ -225,7 +225,7 @@ deactivate B
                 participant('A')
                 note("My note $nt", pos: nt)
             }
-            Assert.assertEquals(builder.getText(plainPlantUml: true), "participant A\nnote $nt : My note $nt\n")
+            Assert.assertEquals(builder.getBuiltText(plainPlantUml: true), "participant A\nnote $nt : My note $nt\n")
             assertPlantFile(builder)
         }
         ['left', 'right', 'over', 'top', 'bottom'].each {nt ->
@@ -234,7 +234,7 @@ deactivate B
                 participant('A')
                 note("My note $nt A", pos: "$nt of A")
             }
-            Assert.assertEquals(builder.getText(plainPlantUml: true), "participant A\nnote $nt of A : My note $nt A\n")
+            Assert.assertEquals(builder.getBuiltText(plainPlantUml: true), "participant A\nnote $nt of A : My note $nt A\n")
             assertPlantFile(builder)
         }
         // test note as
@@ -242,7 +242,7 @@ deactivate B
         builder.plantuml {
             note("This is my note", as: "N1")
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), "note This is my note as N1\n")
+        Assert.assertEquals(builder.getBuiltText(plainPlantUml: true), "note This is my note as N1\n")
         assertPlantFile(builder)
         // test note on multiple lines
         builder.reset()
@@ -254,7 +254,7 @@ deactivate B
             plant('on several lines')
             plant('end note')
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true),
+        Assert.assertEquals(builder.getBuiltText(plainPlantUml: true),
             """participant A
 note left
 a note

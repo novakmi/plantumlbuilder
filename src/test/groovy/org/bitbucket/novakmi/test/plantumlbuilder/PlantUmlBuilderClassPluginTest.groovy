@@ -39,7 +39,7 @@ class PlantUmlBuilderClassPluginTest {
         builder.plantuml {
             pclass('MyClass')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 class MyClass
 @enduml''')
@@ -50,7 +50,7 @@ class MyClass
         builder.plantuml {
             pclass('MyClass', stereotype: 'union')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 class MyClass << union >>
 @enduml''')
@@ -68,7 +68,7 @@ class MyClass << union >>
         builder.plantuml {
             pclass('MyClass', members: ['aaa', 'getAaa()', 'ccc'])
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 class MyClass {
   aaa
@@ -83,7 +83,7 @@ class MyClass {
         builder.plantuml {
             pclass('MyClass', stereotype: 'project object', members: ['aaa', 'getAaa()', 'ccc'])
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 class MyClass << project object >> {
   aaa
@@ -105,7 +105,7 @@ class MyClass << project object >> {
         builder.plantuml {
             pclass('MyClass', as: 'My Class')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 class MyClass as "My Class"
 @enduml''')
@@ -115,7 +115,7 @@ class MyClass as "My Class"
         builder.plantuml {
             penum('MyEnum', as: 'My Enum')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 enum MyEnum as "My Enum"
 @enduml''')
@@ -125,7 +125,7 @@ enum MyEnum as "My Enum"
         builder.plantuml {
             penum('MyEnum', as: 'MyEnum2')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 enum MyEnum as "MyEnum2"
 @enduml''')
@@ -135,7 +135,7 @@ enum MyEnum as "MyEnum2"
         builder.plantuml {
             pinterface('MyInterface', as: 'My Interface')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 interface MyInterface as "My Interface"
 @enduml''')
@@ -147,7 +147,7 @@ interface MyInterface as "My Interface"
         builder.plantuml {
             pclass('MyClass', stereotype: 'union')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 class MyClass << union >>
 @enduml''')
@@ -166,7 +166,7 @@ class MyClass << union >>
         builder.plantuml {
             penum('MyEnum')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 enum MyEnum
 @enduml''')
@@ -177,7 +177,7 @@ enum MyEnum
         builder.plantuml {
             penum('MyEnum', stereotype: 'enum')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 enum MyEnum << enum >>
 @enduml''')
@@ -194,7 +194,7 @@ enum MyEnum << enum >>
         builder.plantuml {
             pinterface('MyInterface')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 interface MyInterface
 @enduml''')
@@ -205,7 +205,7 @@ interface MyInterface
         builder.plantuml {
             pinterface('MyInterface', stereotype: 'interface')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 interface MyInterface << interface >>
 @enduml''')
@@ -222,7 +222,7 @@ interface MyInterface << interface >>
                 builder.plantuml {
                         pabstract('MyAbstract')
                 }
-                Assert.assertEquals(builder.getText(),
+                Assert.assertEquals(builder.getBuiltText(),
                     '''@startuml
 abstract MyAbstract
 @enduml''')
@@ -233,7 +233,7 @@ abstract MyAbstract
                 builder.plantuml {
                         pabstract('MyAbstract', stereotype: 'abstract')
                 }
-                Assert.assertEquals(builder.getText(),
+                Assert.assertEquals(builder.getBuiltText(),
                     '''@startuml
 abstract MyAbstract << abstract >>
 @enduml''')
@@ -250,7 +250,7 @@ abstract MyAbstract << abstract >>
                 builder.plantuml {
                         paclass('MyClassAbstract')
                 }
-                Assert.assertEquals(builder.getText(),
+                Assert.assertEquals(builder.getBuiltText(),
                     '''@startuml
 abstract class MyClassAbstract
 @enduml''')
@@ -261,7 +261,7 @@ abstract class MyClassAbstract
                 builder.plantuml {
                         paclass('MyClassAbstract', stereotype: 'abstract class')
                 }
-                Assert.assertEquals(builder.getText(),
+                Assert.assertEquals(builder.getBuiltText(),
                     '''@startuml
 abstract class MyClassAbstract << abstract class >>
 @enduml''')
@@ -278,7 +278,7 @@ abstract class MyClassAbstract << abstract class >>
         builder.plantuml {
             ppackage('MyPackage')
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 package MyPackage
 end package
@@ -291,7 +291,7 @@ end package
                 pclass('PackageClass') {}
             }
         }
-        Assert.assertEquals(builder.getText(),
+        Assert.assertEquals(builder.getBuiltText(),
             '''@startuml
 package MyPackage
   class PackageClass

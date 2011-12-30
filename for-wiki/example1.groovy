@@ -43,13 +43,13 @@ builder.plantuml {
             plant('deactivate B')
 }
 
-println builder.getText() // get PlantUML text
+println builder.getBuiltText() // get PlantUML text
 println ''
 println 'Without @startuml/@enduml'
-println builder.getText(plainPlantUml: true)  // get PlantUML text without @startuml and @enduml
+println builder.getBuiltText(plainPlantUml: true)  // get PlantUML text without @startuml and @enduml
 
 // use plantUML to create png file from plantuml tgext
-SourceStringReader s = new SourceStringReader(builder.getText())
+SourceStringReader s = new SourceStringReader(builder.getBuiltText())
 FileOutputStream file = new FileOutputStream('./example1.png')
 s.generateImage(file)
 file.close()
@@ -67,8 +67,8 @@ builder.plantuml {
         plant('deactivate B')
 }
 
-println builder.getText() // get PlantUML text
-s = new SourceStringReader(builder.getText())
+println builder.getBuiltText() // get PlantUML text
+s = new SourceStringReader(builder.getBuiltText())
 file = new FileOutputStream('./example1-2.png')
 s.generateImage(file)
 file.close()

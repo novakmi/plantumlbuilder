@@ -50,7 +50,7 @@ builder.addPlugin(new PlantUmlBuilderClassPlugin())
 builder.plantuml {
     def builderMembers = [
         '-@groovy.beans.ListenerList\\nList<NodeBuilderPlugin> pluginListeners',
-        '+String getText(params)',
+        '+String getBuiltText(params)',
         '+void reset()',
         '+void addPlantUmlBuilderPluginListener(NodeBuilderPlugin listener)',
         '+void removePlantUmlBuilderPluginListener(NodeBuilderPlugin listener)',
@@ -74,7 +74,7 @@ builder.plantuml {
 }
 
 // use plantUML to create png file from plantuml text
-SourceStringReader s = new SourceStringReader(builder.getText())
+SourceStringReader s = new SourceStringReader(builder.getBuiltText())
 FileOutputStream file = new FileOutputStream('./plantbuilderinterface.png')
 s.generateImage(file)
 file.close()
