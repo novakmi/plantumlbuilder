@@ -34,8 +34,8 @@ class PlantUmlBuilderSeqPluginTest {
     @Test(groups = ["basic"])
     public void plantSeqDividerDelayTest() {
         logger.trace("==> plantSeqDividerDelayTest")
-        def builder = new PlantUmlBuilder() // new instance
-        builder.addPlugin(new PlantUmlBuilderSeqPlugin())
+        def builder = new PlantUmlBuilder(2, [new PlantUmlBuilderSeqPlugin()]) // new instance, plugin(s) passed in constructor
+        //builder.addPlugin(new PlantUmlBuilderSeqPlugin()) // instead of calling addPlugin
 
         builder.plantuml {
             actor('A')

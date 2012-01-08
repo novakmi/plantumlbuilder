@@ -62,8 +62,7 @@ class PlantUmlBuilderTest {
     }
 
 /**
- * Helper string constatnt to verify basic indented diagram.
- * @see PlantUmlBuilderTest._buildSeq
+ * Helper string constant to verify basic indented diagram.
  */
     private final def _seqStringNoNL = '''A->B
 activate B
@@ -167,7 +166,7 @@ deactivate B
         logger.trace("<== plantPlainGetTextParamsTest")
     }
 /**
- * Basic test to test builder reset fucntion.
+ * Basic test to test builder reset function.
  */
     @Test(groups = ["basic"])
     public void plantPlainKeywordsTest() {

@@ -32,9 +32,10 @@ class PlantUmlBuilder extends TextPluginSimpleNodeBuilder {
         /**
          * Create new PlantUmlBuilder
          * @param indent number of spaces for indentation (default is 2)
+         * @param plugins list of plugins to be added (no plugins by default)
          */
-        public PlantUmlBuilder(indent = 2) {
-                super(indent)
+        public PlantUmlBuilder(indent = 2, plugins = null) {
+                super(indent, plugins)
         }
 
         @Override
@@ -70,7 +71,7 @@ class PlantUmlBuilder extends TextPluginSimpleNodeBuilder {
                                 break
                         case 'plantuml':
                                 if (root == node) {
-                                        opaque.setIndentLevel(-1) //do not indent childs under 'plantuml' node
+                                        opaque.setIndentLevel(-1) //do not indent children under 'plantuml' node
                                         break
                                 }
                                 throw new BuilderException("Node: ${SimpleNode.getNodePath(node)} must be root node!")
@@ -90,7 +91,7 @@ class PlantUmlBuilder extends TextPluginSimpleNodeBuilder {
          * @return build text
          */
         @Override
-        public String getBuiltText(params) throws BuilderException {
+        public String getBuiltText(params = null) throws BuilderException {
                 def umlval = ''
                 if (root?.value) {
                         umlval = " $root.value"
