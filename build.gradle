@@ -21,10 +21,10 @@ THE SOFTWARE.
 */
 
 // For running Gradle, add GRADLE_HOME/bin to PATH, NCS_DIR has to be defined
-// Tip: Use Intellij Idea community edition to work with gradle (GradelGUI plugin)
+// Tip: Use Intellij Idea community edition to work with gradle (GradleGUI plugin)
 // run 'gradle tasks' to see available tasks
 
-version = '0.3.0'
+version = '0.3.1'
 sourceCompatibility = '1.6'
 groupId = "org.bitbucket.novakmi"
 installDir = file('./install')
@@ -41,12 +41,6 @@ idea {
 
 repositories {
         mavenCentral() // standard maven repository
-        // create repository for PLANTUML_DIR env. variable must point to directory where plantum.jar is located
-        //flatDir name: 'localPantUmlRepository', dirs: file(System.getenv()['PLANTUML_DIR']).absolutePath
-        /*add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-                name = 'bubbleswayrepo'
-                addArtifactPattern('http://cloud.github.com/downloads/bubblesway/bubbleswayrepo/[artifact]-[revision](-[classifier])(.[ext])')
-        }*/
         mavenRepo(name:'bubbleswayrepo', url: 'https://github.com/bubblesway/bubbleswayrepo/raw/master/releases')
 }
 
@@ -54,7 +48,7 @@ repositories {
 dependencies {
         groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '1.8.5'
         compile group: 'org.bitbucket.novakmi', name: 'nodebuilder', version: '0.2.0'
-        // dependecies for tests
+        // dependencies for tests
         testCompile group: 'net.sourceforge.plantuml', name: 'plantuml', version: '7500'
         testCompile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.4'
         testCompile group: 'org.testng', name: 'testng', version: '6.2.1'
@@ -151,7 +145,7 @@ uploadArchives { // support to upload to github emulated maven repository
 
 // http://daniel.gredler.net/2011/08/08/gradle-keeping-libraries-up-to-date/
 // Find any 3rd party libraries which have released new versions
-// to the central Maven repo since we last upgraded.
+// to the central Maven repository since we last upgraded.
 task checkLibVersions << {
         def checked = [:]
         allprojects {
