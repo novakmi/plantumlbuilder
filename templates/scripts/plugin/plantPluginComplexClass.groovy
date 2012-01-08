@@ -28,7 +28,7 @@ THE SOFTWARE.
 //If you have Internet connection, use groovy Grab to get dependencies (may take some time for the first time to download jars)
 //Run as ordinary groovy script with command 'groovy <scriptName>.groovy' (or as Linux script './<scriptName>.groovy')
 @GrabResolver(name = 'bubbleswayrepo', root = 'https://github.com/bubblesway/bubbleswayrepo/raw/master/releases', m2compatible = true)
-@Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '7497')  //for newer versions, update numbers
+@Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '7500')  //for newer versions, update numbers
 @Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '0.2.0')
 @Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.3.0')
 
@@ -68,7 +68,7 @@ builder.plantuml("${fileName}") {
         relation(fixed, rel: '"*" o-- "1"', to: number)
 
         ppackage('"mobile lines"') { // use quotes to have space
-                penum(brand, as: "mobile phone\\nmanufacturer",  // multi line, use double slasdh to escape first one
+                penum(brand, as: "mobile phone\\nmanufacturer",  // multiline, use double slash to escape first one
                     members: [
                         'nokia',
                         'samsung',
