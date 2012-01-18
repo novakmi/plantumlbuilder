@@ -26,22 +26,23 @@ package org.bitbucket.novakmi.plantumlbuilder
 import org.bitbucket.novakmi.nodebuilder.SimpleNode
 import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
 import org.bitbucket.novakmi.nodebuilder.PluginResult
+import org.bitbucket.novakmi.nodebuilder.BuilderException
 
 class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
 
         @Override
-        protected PluginResult processNodeBefore(SimpleNode node, Object opaque, Map pluginOpaque) {
+        protected PluginResult processNodeBefore(SimpleNode node, Object opaque, Map pluginOpaque) throws BuilderException {
                 PluginResult retVal = process(node, false, opaque)
                 return retVal
         }
 
         @Override
-        protected PluginResult processNodeAfter(SimpleNode node, Object opaque, Map pluginOpaque) {
+        protected PluginResult processNodeAfter(SimpleNode node, Object opaque, Map pluginOpaque) throws BuilderException {
                 PluginResult retVal = process(node, true, opaque)
                 return retVal
         }
 
-        private PluginResult process(SimpleNode node, boolean postProcess, Object opaque) {
+        private PluginResult process(SimpleNode node, boolean postProcess, Object opaque) throws BuilderException {
                 PluginResult retVal = PluginResult.NOT_ACCEPTED
                 IndentPrinter out = (IndentPrinter) opaque
                 def processClose = {to ->
@@ -53,8 +54,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                                 out.println("${node.attributes.close} $to")
                                                 break
                                         default:
-                                                out.println("**** close can be only 'deactivate' or 'destroy', not ${node.attributes.close} ***")
-                                                retVal = PluginResult.FAILED
+                                                throw new BuilderException("NodeBuilderPlugin: ${SimpleNode.getNodePath(node)} close can be only 'deactivate' or 'destroy', not ${node.attributes.close}")
                                                 break
                                 }
                         }
@@ -77,9 +77,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                 } else {
                                         processClose(node.value) // sets retVal to FAILED
                                 }
-                                if (retVal != PluginResult.FAILED) {
-                                        retVal = PluginResult.PROCESSED_FULL
-                                }
+                                retVal = PluginResult.PROCESSED_FULL
                                 break
                         case 'msgAd': // alias for msg(..., close:'deactivate')
                                 if (!node.attributes.close) {
@@ -113,9 +111,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                         }
                                         processClose(to)  // sets retVal to FAILED
                                 }
-                                if (retVal != PluginResult.FAILED) {
-                                        retVal = PluginResult.PROCESSED_FULL
-                                }
+                                retVal = PluginResult.PROCESSED_FULL
                                 break
                         case 'opt':
                         case 'loop':
@@ -135,8 +131,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                         case 'ref':
                                 if (!postProcess) {
                                         if (!node.attributes.over) {
-                                                out.println("***** 'ref' requires 'over' attribute ****")
-                                                retVal = PluginResult.FAILED
+                                                throw new BuilderException("NodeBuilderPlugin: ${SimpleNode.getNodePath(node)} 'ref' requires 'over' attribute")
                                         } else {
                                                 process("$node.name over ${node.attributes.over.join(',')} : $node.value")
                                                 retVal = PluginResult.PROCESSED_FULL

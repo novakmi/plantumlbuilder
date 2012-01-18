@@ -26,21 +26,22 @@ import org.bitbucket.novakmi.nodebuilder.SimpleNode
 
 import org.bitbucket.novakmi.nodebuilder.PluginResult
 import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
+import org.bitbucket.novakmi.nodebuilder.BuilderException
 
 class PlantUmlBuilderClassPlugin extends NodeBuilderPlugin {
         @Override
-        protected PluginResult processNodeBefore(SimpleNode node, Object opaque, Map pluginOpaque) {
+        protected PluginResult processNodeBefore(SimpleNode node, Object opaque, Map pluginOpaque) throws BuilderException {
                 PluginResult retVal = process(node, false, opaque)
                 return retVal
         }
 
         @Override
-        protected PluginResult processNodeAfter(SimpleNode node, Object opaque, Map pluginOpaque) {
+        protected PluginResult processNodeAfter(SimpleNode node, Object opaque, Map pluginOpaque) throws BuilderException {
                 PluginResult retVal = process(node, true, opaque)
                 return retVal
         }
 
-        private PluginResult process(SimpleNode node, boolean postProcess, Object opaque) {
+        private PluginResult process(SimpleNode node, boolean postProcess, Object opaque) throws BuilderException {
                 PluginResult retVal = PluginResult.NOT_ACCEPTED
                 IndentPrinter out = (IndentPrinter) opaque
                 switch (node.name) {

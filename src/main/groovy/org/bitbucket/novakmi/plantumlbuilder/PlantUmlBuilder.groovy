@@ -39,8 +39,7 @@ class PlantUmlBuilder extends TextPluginSimpleNodeBuilder {
         }
 
         @Override
-        protected boolean processNode(SimpleNode node, Object opaque) throws BuilderException {
-                def retVal = true
+        protected void processNode(SimpleNode node, Object opaque) throws BuilderException {
                 switch (node.name) {
                         case 'plant':
                                 opaque.printIndent()
@@ -79,7 +78,6 @@ class PlantUmlBuilder extends TextPluginSimpleNodeBuilder {
                                 throw new BuilderException("Node: ${SimpleNode.getNodePath(node)} is not recognized by the PlantUmlBuilder builder!")
                                 break
                 }
-                return retVal
         }
 
         /**

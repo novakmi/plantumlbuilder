@@ -28,6 +28,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testng.annotations.Test
 import org.testng.Assert
+import org.bitbucket.novakmi.nodebuilder.BuilderException
 
 class PlantUmlBuilderSeqPluginTest {
 
@@ -132,21 +133,18 @@ activate A
 destroy A
 @enduml''')
 
-        builder.reset()
-        builder.plantuml {
-            actor('A')
-            activate('A', close: 'finish')
-        }
-        Assert.assertEquals(builder.getBuiltText(),
-            '''@startuml
-actor A
-activate A
-**** close can be only 'deactivate' or 'destroy', not finish ***
-@enduml''')
+            builder.reset()
+            builder.plantuml {
+                    actor('A')
+                    activate('A', close: 'finish')
+            }
 
-        PlantUmlBuilderTest.assertPlantFile(builder)
+            try {
+                    builder.getBuiltText()
+            } catch (BuilderException expected) {
+                    Assert.assertTrue(expected.getMessage().contains("close can be only 'deactivate' or 'destroy', not finish"))
+            }
 
-        logger.trace("<== plantSeqActivateTest")
     }
     //Initialize logging
 
@@ -415,13 +413,11 @@ ref over A,B : See diagram A
             builder.participant(b)
             ref('See diagram A')
         }
-        Assert.assertEquals(builder.getBuiltText(),
-            """@startuml
-participant A
-participant B
-***** 'ref' requires 'over' attribute ****
-@enduml""")
-        PlantUmlBuilderTest.assertPlantFile(builder)
+        try {
+                builder.getBuiltText()
+        } catch (BuilderException expected) {
+                Assert.assertTrue(expected.getMessage().contains("'ref' requires 'over' attribute"))
+        }
         logger.trace("<== plantSeqRefTest")
     }
 
