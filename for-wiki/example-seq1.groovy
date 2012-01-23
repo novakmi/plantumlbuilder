@@ -66,7 +66,7 @@ def scan(builder, user, mediaList) {
 // create new builder
 def builder = new PlantUmlBuilder() // new instance
         def seqPlugin =  new PlantUmlBuilderSeqPlugin()
-        builder.addPlugin(seqPlugin)
+        builder.registerPlugin(seqPlugin)
         def a = 'A'
         def b = 'B'
         builder.plantuml {

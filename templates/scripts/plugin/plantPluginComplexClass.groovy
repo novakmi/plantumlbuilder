@@ -37,7 +37,7 @@ THE SOFTWARE.
 
 // This script template represents example of usage with Class  plugin
 def builder = new org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilder() // create new builder
-builder.addPlugin(new org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderClassPlugin()) // add class diagram plugin support
+builder.registerPlugin(new org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderClassPlugin()) // add class diagram plugin support
 //name of file to generate
 final def fileName = "plant_plugin_complex_class.png"
 // when variables are used instead of direct strings, one can benefit from IDE auto-completion, refactoring, etc.

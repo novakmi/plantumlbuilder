@@ -33,8 +33,8 @@ THE SOFTWARE.
 //due to @Grab limitation in script, we have to have def ... after Grab, in our case we can just create builder
 // see http://groovy.codehaus.org/Grapes+and+grab()
 def builder = new org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilder() // create new builder
-builder.addPlugin(new org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderClassPlugin()) // add class diagram plugin support
-builder.addPlugin(new org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderSeqPlugin()) // add seq. diagram plugin support
+builder.registerPlugin(new org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderClassPlugin()) // add class diagram plugin support
+builder.registerPlugin(new org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderSeqPlugin()) // add seq. diagram plugin support
 
 if (args) {  // arguments passed can be processed this way
         println "Following arguments have been passed:"

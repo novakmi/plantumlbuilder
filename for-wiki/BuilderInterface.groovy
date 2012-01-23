@@ -45,7 +45,7 @@ import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
 
 // create new builder
 def builder = new PlantUmlBuilder()
-builder.addPlugin(new PlantUmlBuilderClassPlugin())
+builder.registerPlugin(new PlantUmlBuilderClassPlugin())
 // plantuml element is a root element of PlantUML
 builder.plantuml {
     def builderMembers = [

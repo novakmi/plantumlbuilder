@@ -34,7 +34,7 @@ class PlantUmlBuilderClassPluginTest {
     public void plantClassTest() {
         logger.trace("==> plantClassTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addPlugin(new PlantUmlBuilderClassPlugin())
+        builder.registerPlugin(new PlantUmlBuilderClassPlugin())
 
         builder.plantuml {
             pclass('MyClass')
@@ -63,7 +63,7 @@ class MyClass << union >>
     public void plantClassMemberTest() {
         logger.trace("==> plantClassMemberTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addPlugin(new PlantUmlBuilderClassPlugin())
+        builder.registerPlugin(new PlantUmlBuilderClassPlugin())
 
         builder.plantuml {
             pclass('MyClass', members: ['aaa', 'getAaa()', 'ccc'])
@@ -100,7 +100,7 @@ class MyClass << project object >> {
     public void plantAsTest() {
         logger.trace("==> plantAsTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addPlugin(new PlantUmlBuilderClassPlugin())
+        builder.registerPlugin(new PlantUmlBuilderClassPlugin())
 
         builder.plantuml {
             pclass('MyClass', as: 'My Class')
@@ -161,7 +161,7 @@ class MyClass << union >>
     public void plantEnumTest() {
         logger.trace("==> plantEnumTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addPlugin(new PlantUmlBuilderClassPlugin())
+        builder.registerPlugin(new PlantUmlBuilderClassPlugin())
 
         builder.plantuml {
             penum('MyEnum')
@@ -189,7 +189,7 @@ enum MyEnum << enum >>
     public void plantInterfaceTest() {
         logger.trace("==> plantInterfaceTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addPlugin(new PlantUmlBuilderClassPlugin())
+        builder.registerPlugin(new PlantUmlBuilderClassPlugin())
 
         builder.plantuml {
             pinterface('MyInterface')
@@ -217,7 +217,7 @@ interface MyInterface << interface >>
         public void plantAbstractTest() {
                 logger.trace("==> plantAbstractTest")
                 def builder = new PlantUmlBuilder() // new instance
-                builder.addPlugin(new PlantUmlBuilderClassPlugin())
+                builder.registerPlugin(new PlantUmlBuilderClassPlugin())
 
                 builder.plantuml {
                         pabstract('MyAbstract')
@@ -245,7 +245,7 @@ abstract MyAbstract << abstract >>
         public void plantAbstractClassTest() {
                 logger.trace("==> plantAbstractClassTest")
                 def builder = new PlantUmlBuilder() // new instance
-                builder.addPlugin(new PlantUmlBuilderClassPlugin())
+                builder.registerPlugin(new PlantUmlBuilderClassPlugin())
 
                 builder.plantuml {
                         paclass('MyClassAbstract')
@@ -273,7 +273,7 @@ abstract class MyClassAbstract << abstract class >>
     public void plantPackageTest() {
         logger.trace("==> plantPackageTest")
         def builder = new PlantUmlBuilder() // new instance
-        builder.addPlugin(new PlantUmlBuilderClassPlugin())
+        builder.registerPlugin(new PlantUmlBuilderClassPlugin())
 
         builder.plantuml {
             ppackage('MyPackage')
