@@ -1,11 +1,3 @@
-/**
- * Created by IntelliJ IDEA.
- * User: mnl
- * Date: 6/7/11
- * Time: 11:17 PM
- * To change this template use File | Settings | File Templates.
- */
-
 /*
 Copyright (c) 2011 bubbles.way@gmail.com
 
@@ -34,14 +26,12 @@ Classpath to PlantUMLBuilder and plantuml.jar has to be set, e.g.:
 groovy -cp ~/sw/PlantUml/plantuml.jar:../src/main/groovy/ example1.groovy
 */
 
+import net.sourceforge.plantuml.SourceStringReader
+import org.bitbucket.novakmi.nodebuilder.BuilderNode
+import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
+import org.bitbucket.novakmi.nodebuilder.PluginResult
 import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilder
 import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderClassPlugin
-import net.sourceforge.plantuml.SourceStringReader
-import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
-import org.bitbucket.novakmi.nodebuilder.PluginResult
-import org.bitbucket.novakmi.nodebuilder.SimpleNode
-import org.bitbucket.novakmi.nodebuilder.PluginResult
-import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
 
 // create new builder
 def builder = new PlantUmlBuilder()
@@ -56,7 +46,7 @@ builder.plantuml {
         '+void removePlantUmlBuilderPluginListener(NodeBuilderPlugin listener)',
     ]
     pclass(PlantUmlBuilder.class.name, members: builderMembers)
-    pinterface(NodeBuilderPlugin.class.name, members: ['+PluginResult processNodeBefore(final SimpleNode node, IndentPrinter out, boolean postProcess)'])
+    pinterface(NodeBuilderPlugin.class.name, members: ['+PluginResult processNodeBefore(final BuilderNode node, IndentPrinter out, boolean postProcess)'])
     penum(PluginResult.class.name, members: [
         PluginResult.NOT_ACCEPTED,
         PluginResult.PROCESSED,
@@ -70,7 +60,7 @@ builder.plantuml {
         "+value",
         "+children = [] //children nodes",
     ]
-    pclass(SimpleNode.class.name, members: nodeMembers)
+    pclass(BuilderNode.class.name, members: nodeMembers)
 }
 
 // use plantUML to create png file from plantuml text

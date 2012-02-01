@@ -23,7 +23,7 @@ THE SOFTWARE.
 
 package org.bitbucket.novakmi.plantumlbuilder
 
-import org.bitbucket.novakmi.nodebuilder.SimpleNode
+import org.bitbucket.novakmi.nodebuilder.BuilderNode
 import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
 import org.bitbucket.novakmi.nodebuilder.PluginResult
 import org.bitbucket.novakmi.nodebuilder.BuilderException
@@ -31,18 +31,18 @@ import org.bitbucket.novakmi.nodebuilder.BuilderException
 class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
 
         @Override
-        protected PluginResult processNodeBefore(SimpleNode node, Object opaque, Map pluginOpaque) throws BuilderException {
+        protected PluginResult processNodeBefore(BuilderNode node, Object opaque, Map pluginOpaque) throws BuilderException {
                 PluginResult retVal = process(node, false, opaque)
                 return retVal
         }
 
         @Override
-        protected PluginResult processNodeAfter(SimpleNode node, Object opaque, Map pluginOpaque) throws BuilderException {
+        protected PluginResult processNodeAfter(BuilderNode node, Object opaque, Map pluginOpaque) throws BuilderException {
                 PluginResult retVal = process(node, true, opaque)
                 return retVal
         }
 
-        private PluginResult process(SimpleNode node, boolean postProcess, Object opaque) throws BuilderException {
+        private PluginResult process(BuilderNode node, boolean postProcess, Object opaque) throws BuilderException {
                 PluginResult retVal = PluginResult.NOT_ACCEPTED
                 IndentPrinter out = (IndentPrinter) opaque
                 def processClose = {to ->
@@ -54,7 +54,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                                 out.println("${node.attributes.close} $to")
                                                 break
                                         default:
-                                                throw new BuilderException("NodeBuilderPlugin: ${SimpleNode.getNodePath(node)} close can be only 'deactivate' or 'destroy', not ${node.attributes.close}")
+                                                throw new BuilderException("NodeBuilderPlugin: ${BuilderNode.getNodePath(node)} close can be only 'deactivate' or 'destroy', not ${node.attributes.close}")
                                                 break
                                 }
                         }
@@ -131,7 +131,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                         case 'ref':
                                 if (!postProcess) {
                                         if (!node.attributes.over) {
-                                                throw new BuilderException("NodeBuilderPlugin: ${SimpleNode.getNodePath(node)} 'ref' requires 'over' attribute")
+                                                throw new BuilderException("NodeBuilderPlugin: ${BuilderNode.getNodePath(node)} 'ref' requires 'over' attribute")
                                         } else {
                                                 process("$node.name over ${node.attributes.over.join(',')} : $node.value")
                                                 retVal = PluginResult.PROCESSED_FULL

@@ -23,11 +23,11 @@ THE SOFTWARE.
 package org.bitbucket.novakmi.plantumlbuilder
 
 import org.bitbucket.novakmi.nodebuilder.BuilderException
-import org.bitbucket.novakmi.nodebuilder.SimpleNode
-import org.bitbucket.novakmi.nodebuilder.TextPluginSimpleNodeBuilder
+import org.bitbucket.novakmi.nodebuilder.BuilderNode
+import org.bitbucket.novakmi.nodebuilder.TextPluginTreeNodeBuilder
 
 // Builder class
-class PlantUmlBuilder extends TextPluginSimpleNodeBuilder {
+class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
 
         /**
          * Create new PlantUmlBuilder
@@ -39,7 +39,7 @@ class PlantUmlBuilder extends TextPluginSimpleNodeBuilder {
         }
 
         @Override
-        protected void processNode(SimpleNode node, Object opaque) throws BuilderException {
+        protected void processNode(BuilderNode node, Object opaque) throws BuilderException {
                 switch (node.name) {
                         case 'plant':
                                 opaque.printIndent()
@@ -73,9 +73,9 @@ class PlantUmlBuilder extends TextPluginSimpleNodeBuilder {
                                         opaque.setIndentLevel(-1) //do not indent children under 'plantuml' node
                                         break
                                 }
-                                throw new BuilderException("Node: ${SimpleNode.getNodePath(node)} must be root node!")
+                                throw new BuilderException("Node: ${BuilderNode.getNodePath(node)} must be root node!")
                         default:
-                                throw new BuilderException("Node: ${SimpleNode.getNodePath(node)} is not recognized by the PlantUmlBuilder builder!")
+                                throw new BuilderException("Node: ${BuilderNode.getNodePath(node)} is not recognized by the PlantUmlBuilder builder!")
                                 break
                 }
         }
