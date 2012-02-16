@@ -42,7 +42,7 @@ class PlantUmlBuilderSeqPluginTest {
             actor('A')
             divider('my divider')
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 == my divider ==
@@ -54,7 +54,7 @@ actor A
             actor('A')
             delay('wait 5 minutes')
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 ...wait 5 minutes...
@@ -73,7 +73,7 @@ actor A
             actor('A')
             activate('A')
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 activate A
@@ -86,7 +86,7 @@ activate A
             activate('A')
             deactivate('A')
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 activate A
@@ -100,7 +100,7 @@ deactivate A
             activate('A')
             destroy('A')
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 activate A
@@ -113,7 +113,7 @@ destroy A
             actor('A')
             activate('A', close: 'deactivate')
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 activate A
@@ -126,7 +126,7 @@ deactivate A
             actor('A')
             activate('A', close: 'destroy')
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 activate A
@@ -140,7 +140,7 @@ destroy A
             }
 
             try {
-                    builder.getBuiltText()
+                    builder.getText()
             } catch (BuilderException expected) {
                     Assert.assertTrue(expected.getMessage().contains("close can be only 'deactivate' or 'destroy', not finish"))
             }
@@ -163,7 +163,7 @@ destroy A
             makeParticipants()
             msg(a)
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 participant B
@@ -176,7 +176,7 @@ A -> A
             makeParticipants()
             msg(a, text: 'self activate', close: 'deactivate')
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 participant B
@@ -192,7 +192,7 @@ deactivate A
             makeParticipants()
             msg(a, to: b, text: 'call b', close: 'destroy')
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 participant B
@@ -216,7 +216,7 @@ deactivate B
                     makeParticipants()
                     msg(a, to: b, text: 'call b', close: 'deactivate')
             }
-            Assert.assertEquals(builder.getBuiltText(),deactivateText)
+            Assert.assertEquals(builder.getText(),deactivateText)
             PlantUmlBuilderTest.assertPlantFile(builder)
 
             builder.reset()
@@ -224,7 +224,7 @@ deactivate B
                     makeParticipants()
                     msgAd(a, to: b, text: 'call b') //msgAd = activate/deactivate
             }
-            Assert.assertEquals(builder.getBuiltText(),deactivateText)
+            Assert.assertEquals(builder.getText(),deactivateText)
             PlantUmlBuilderTest.assertPlantFile(builder)
 
             builder.reset()
@@ -232,7 +232,7 @@ deactivate B
             makeParticipants()
             msg(a, to: b, text: 'call b', returnText: 'return to a', close: 'deactivate')
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 participant B
@@ -248,7 +248,7 @@ deactivate B
             makeParticipants()
             msg(a, to: b, type: '-->', text: 'call b', returnType: '->', returnText: 'return to a', close: 'deactivate')
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 participant B
@@ -264,7 +264,7 @@ deactivate B
             makeParticipants()
             msg(a, to: b, type: '-->', text: 'call b', noReturn: true, activate: true)
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 participant B
@@ -298,7 +298,7 @@ activate B
                 }
             }
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             '''@startuml
 actor A
 participant B
@@ -334,7 +334,7 @@ deactivate B
                     msg(a, to: b, close: 'deactivate', text: 'call b', returnText: 'operation finished')
                 }
             }
-            Assert.assertEquals(builder.getBuiltText(),
+            Assert.assertEquals(builder.getText(),
                 """@startuml
 participant A
 participant B
@@ -366,7 +366,7 @@ end
                 msg(b, to: a, close: 'destroy', text: 'call a', returnText: 'operation finished')
             }
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             """@startuml
 participant A
 participant B
@@ -399,7 +399,7 @@ end
             builder.participant(b)
             ref('See diagram A', over: [a, b])
         }
-        Assert.assertEquals(builder.getBuiltText(),
+        Assert.assertEquals(builder.getText(),
             """@startuml
 participant A
 participant B
@@ -414,7 +414,7 @@ ref over A,B : See diagram A
             ref('See diagram A')
         }
         try {
-                builder.getBuiltText()
+                builder.getText()
         } catch (BuilderException expected) {
                 Assert.assertTrue(expected.getMessage().contains("'ref' requires 'over' attribute"))
         }

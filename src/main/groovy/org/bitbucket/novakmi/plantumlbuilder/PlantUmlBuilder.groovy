@@ -89,7 +89,7 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
          * @return build text
          */
         @Override
-        public String getBuiltText(params = null) throws BuilderException {
+        public String getText(params = null) throws BuilderException {
                 def umlval = ''
                 if (root?.value) {
                         umlval = " $root.value"
@@ -98,7 +98,7 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
                 if (!params?.plainPlantUml) {
                         retVal += "@startuml${umlval}\n"
                 }
-                retVal += getText()
+                retVal += getTextBuffer()
                 if (!params?.plainPlantUml) {
                         retVal += "@enduml"
                 }
