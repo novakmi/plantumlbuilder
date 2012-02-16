@@ -84,8 +84,8 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
          * Get PlantUML text build by the builder
          * @param params map with optional name params.
          *         Currently supported 'plainPlantUml' - do not add '@startuml/@enduml' to the returned PlantUML text
-         *         getBuiltText()
-         *         getBuiltText(plainPlantUml: true)
+         *         getText()
+         *         getText(plainPlantUml: true)
          * @return build text
          */
         @Override

@@ -96,5 +96,5 @@ builder.plantuml("${fileName}") {
 
 }
 
-println builder.getBuiltText() // get and print PlantUML text
-new net.sourceforge.plantuml.SourceStringReader(builder.getBuiltText()).generateImage(new FileOutputStream("./${fileName}")) // create image
+println builder.getText() // get and print PlantUML text
+new net.sourceforge.plantuml.SourceStringReader(builder.getText()).generateImage(new FileOutputStream("./${fileName}")) // create image

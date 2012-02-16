@@ -57,8 +57,8 @@ for (u in umls) { // one can also use umls.each {u->
         builder.reset() // empty builder
         u.buildUml(builder)
         print("Processing ${u.getName()} ...")
-        new File("${u.getName()}.txt").write(builder.getBuiltText()) //write plantuml script to file
-        new net.sourceforge.plantuml.SourceStringReader(builder.getBuiltText()).generateImage(new FileOutputStream("./${u.getName()}.png")) // create image
+        new File("${u.getName()}.txt").write(builder.getText()) //write plantuml script to file
+        new net.sourceforge.plantuml.SourceStringReader(builder.getText()).generateImage(new FileOutputStream("./${u.getName()}.png")) // create image
         println("done")
 }
 
