@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 bubbles.way@gmail.com
+Copyright (c) 2012 bubbles.way@gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@ repositories {
 // Define dependencies
 dependencies {
         groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '1.8.6'
-        compile group: 'org.bitbucket.novakmi', name: 'nodebuilder', version: '0.3.0'
+        compile group: 'org.bitbucket.novakmi', name: 'nodebuilder', version: '0.5.0'
         // dependencies for tests
         testCompile group: 'net.sourceforge.plantuml', name: 'plantuml', version: '7622'
         testCompile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.4'

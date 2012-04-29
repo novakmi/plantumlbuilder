@@ -29,7 +29,7 @@ THE SOFTWARE.
 //Run as ordinary groovy script with command 'groovy <scriptName>.groovy' (or as Linux script './<scriptName>.groovy')
 @GrabResolver(name = 'bubbleswayrepo', root = 'https://github.com/bubblesway/bubbleswayrepo/raw/master/releases', m2compatible = true)
 @Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '7500')  //for newer versions, update numbers
-@Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '0.2.0')
+@Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '0.5.0')
 @Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.3.0')
 
 // Without Internet connection, run as groovy script with jars in the classpath (-cp), comment @Grab ... annotations above
