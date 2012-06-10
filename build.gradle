@@ -24,14 +24,14 @@ THE SOFTWARE.
 // Tip: Use Intellij Idea community edition to work with gradle (GradleGUI plugin)
 // run 'gradle tasks' to see available tasks
 
-version = '0.3.1'
-sourceCompatibility = '1.6'
-groupId = "org.bitbucket.novakmi"
-installDir = file('./install')
-
 apply plugin: 'groovy'
 apply plugin: 'maven' // to use maven repository
 apply plugin: 'idea' // to generate project+module files for Intellij Idea
+
+version = '0.3.1'
+sourceCompatibility = '1.6'
+def groupId = "org.bitbucket.novakmi"
+def installDir = file('./install')
 
 idea {
         module {
