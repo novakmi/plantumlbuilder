@@ -2,7 +2,6 @@
 //(https://bitbucket.org/bubbles.way/plantumlbuilder/src/LICENSE)
 
 /*
-Use groovy 1.8.0+
 Classpath to PlantUMLBuilder and plantuml.jar has to be set, e.g.:
 groovy -cp ~/sw/PlantUml/plantuml.jar:../src/main/groovy/ example1.groovy
 */
