@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-// For running Gradle, add GRADLE_HOME/bin to PATH, NCS_DIR has to be defined
+// For running Gradle, add GRADLE_HOME/bin to PATH
 // Tip: Use Intellij Idea community edition to work with gradle (GradleGUI plugin)
 // run 'gradle tasks' to see available tasks
 
