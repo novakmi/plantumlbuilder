@@ -22,7 +22,7 @@ idea {
 
 repositories {
         mavenCentral() // standard maven repository
-        mavenRepo(name:'bubbleswayrepo', url: 'https://github.com/bubblesway/bubbleswayrepo/raw/master/releases')
+        mavenRepo(name:'novakmirepo', url: 'https://github.com/novakmi/novakmirepo/raw/master/releases')
 }
 
 // Define dependencies
