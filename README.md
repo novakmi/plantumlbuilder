@@ -11,7 +11,7 @@ Use [groovy][groovy_id] version 2.0.0 and later.
 
 See `changelog.txt`.
 
-Michal Novak (<bubbles.way@gmail.com>)  
+Michal Novak (<it.novakmi@gmail.com>)
 
 [gradle_id]: http://www.gradle.org/  "Gradle"
 [groovy_id]: http://groovy.codehaus.org/  "Groovy"

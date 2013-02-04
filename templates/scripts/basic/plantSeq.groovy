@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 //This is free software licensed under MIT License, see LICENSE file
-//(https://bitbucket.org/bubbles.way/plantumlbuilder/src/LICENSE)
+//(https://bitbucket.org/novakmi/plantumlbuilder/src/LICENSE)
 
 //If you have Internet connection, use groovy Grab to get dependencies (may take some time for the first time to download jars)
 //Run as ordinary groovy script with command 'groovy <scriptName>.groovy' (or as Linux script './<scriptName>.groovy')

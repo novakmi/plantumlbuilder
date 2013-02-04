@@ -1,5 +1,5 @@
 //This is free software licensed under MIT License, see LICENSE file
-//(https://bitbucket.org/bubbles.way/plantumlbuilder/src/LICENSE)
+//(https://bitbucket.org/novakmi/plantumlbuilder/src/LICENSE)
 
 /*
 Classpath to PlantUMLBuilder and plantuml.jar has to be set, e.g.:

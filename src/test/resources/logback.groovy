@@ -1,5 +1,5 @@
 //This is free software licensed under MIT License, see LICENSE file
-//(https://bitbucket.org/bubbles.way/plantumlbuilder/src/LICENSE)
+//(https://bitbucket.org/novakmi/plantumlbuilder/src/LICENSE)
 
 import ch.qos.logback.classic.boolex.JaninoEventEvaluator
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
