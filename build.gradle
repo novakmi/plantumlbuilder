@@ -79,13 +79,15 @@ test {
                                 }
                              */
                                 classes([:]) {
-                                        //'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderTest")
-                                    'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderClassPluginTest") {
-                                        methods {
-                                            include(name: "plantPackageTest")
-                                        }
-                                    }
-                                        //'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderSeqPluginTest")
+                                      'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderTest")
+//                                    'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderClassPluginTest") {
+//                                        methods {
+//                                            include(name: "plantPackageTest")
+//                                        }
+//                                    }
+                                      'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderSeqPluginTest")
+                                      'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderClassPluginTest")
+                                      'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderCompPluginTest")
                                 }
                         }
                 }
