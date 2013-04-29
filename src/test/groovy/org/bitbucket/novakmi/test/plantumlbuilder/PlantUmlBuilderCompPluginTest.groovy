@@ -109,4 +109,28 @@ CompA --> CompB : my link
                 log.trace("<== plantLinkCompTest")
         }
 
+        @Test(groups = ["basic"])
+        public void plantInlineLinkCompTest() {
+                log.trace("==> plantInlineLinkCompTest")
+                def builder = new PlantUmlBuilder() // new instance
+                builder.registerPlugin(new PlantUmlBuilderCompPlugin())
+
+                builder.plantuml {
+                        component('CompA', link: [[to: 'CompB'], [to: 'CompB', description: 'my link'], [to: 'CompA', type: '..>', description: 'self link']])
+                        component('CompB', link: [to: 'CompA', type: '<..>'])
+                }
+                Assert.assertEquals(builder.getText(),
+                        '''@startuml
+component [CompA]
+CompA --> CompB
+CompA --> CompB : my link
+CompA ..> CompA : self link
+component [CompB]
+CompB <..> CompA
+@enduml''')
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                log.trace("<== plantInlineLinkCompTest")
+        }
+
 }

@@ -21,6 +21,18 @@ class PlantUmlBuilderCompPlugin extends NodeBuilderPlugin {
                 return retVal
         }
 
+        private _makeLink(IndentPrinter out, from, to, type = null, description = null) throws BuilderException {
+                if (from == null) {
+                        throw new BuilderException("PlantUmlBuilderCompPlugin: from is null!")
+                }
+                if (to == null) {
+                        throw new BuilderException("PlantUmlBuilderCompPlugin: to is null!")
+                }
+                def linkType = type ?: '-->'
+                def linkDescription = description ? " : ${description}" : ""
+                out.println("${from} ${linkType} ${to}${linkDescription}")
+        }
+
         private PluginResult process(BuilderNode node, boolean postProcess, Object opaque) throws BuilderException {
                 PluginResult retVal = PluginResult.NOT_ACCEPTED
                 IndentPrinter out = (IndentPrinter) opaque
@@ -47,6 +59,16 @@ class PlantUmlBuilderCompPlugin extends NodeBuilderPlugin {
                                         out.printIndent()
                                         def asText = node.attributes?.as ? " as ${node.attributes.as}" : ""
                                         out.println("${node.name} [${node.value}]${asText}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}")
+                                } else {
+                                        if (node.attributes.link) { // create link/links
+                                                def linkList = node.attributes.link instanceof List ? node.attributes.link : [node.attributes.link]
+                                                linkList.each {linkMap ->
+                                                        if (!linkMap instanceof Map) {
+                                                                throw new BuilderException("PlantUmlBuilderCompPlugin: ${BuilderNode.getNodePath(node)} does ${linkMap} has to be link map!")
+                                                        }
+                                                        _makeLink(out, node.value, linkMap.to, linkMap.type, linkMap.description)
+                                                }
+                                        }
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
                                 break
@@ -55,9 +77,7 @@ class PlantUmlBuilderCompPlugin extends NodeBuilderPlugin {
                                         if (!node.attributes.to) {
                                                 throw new BuilderException("PlantUmlBuilderCompPlugin: ${BuilderNode.getNodePath(node)} does not have 'to' attribute!")
                                         }
-                                        def linkType = node.attributes?.type ?: '-->'
-                                        def description = node.attributes?.description ? " : ${node.attributes.description}" : ""
-                                        out.println("${node.value} ${linkType} ${node.attributes.to}${description}")
+                                        _makeLink(out, node.value, node.attributes.to, node.attributes?.type, node.attributes?.description)
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
                                 break
