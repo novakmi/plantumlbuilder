@@ -7,7 +7,7 @@
 @GrabResolver(name = 'novakmirepo', root = 'https://github.com/novakmi/novakmirepo/raw/master/releases', m2compatible = true)
 @Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '7965')  //for newer versions, update numbers
 @Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '0.8.0')
-@Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.3.1')
+@Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.4.0')
 
 // Without Internet connection, run as groovy script with jars in the classpath (-cp), comment @Grab ... annotations above
 // 'groovy -cp plantumlbuilder-x.x.x.jar:plantuml-xxxx.jar:nodebuilder-x.x.x.jar  <scriptName>.groovy'

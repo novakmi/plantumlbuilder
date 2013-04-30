@@ -9,7 +9,7 @@ apply plugin: 'groovy'
 apply plugin: 'maven' // to use maven repository
 apply plugin: 'idea' // to generate project+module files for Intellij Idea
 
-version = '0.4.0working'
+version = '0.4.0'
 sourceCompatibility = '1.6'
 def groupId = "org.bitbucket.novakmi"
 def installDir = file('./install')

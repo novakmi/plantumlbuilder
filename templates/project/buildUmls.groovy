@@ -8,7 +8,7 @@
 @GrabResolver(name = 'novakmirepo', root = 'https://github.com/novakmi/novakmirepo/raw/master/releases', m2compatible = true)
 @Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '7965')  //for newer versions, update numbers
 @Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '0.8.0')
-@Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.3.1')
+@Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.4.0')
 
 //due to @Grab limitation in script, we have to have def ... after Grab, in our case we can just create builder
 // see http://groovy.codehaus.org/Grapes+and+grab()
