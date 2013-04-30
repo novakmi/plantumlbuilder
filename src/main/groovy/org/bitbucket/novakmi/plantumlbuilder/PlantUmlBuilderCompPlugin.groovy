@@ -66,7 +66,8 @@ class PlantUmlBuilderCompPlugin extends NodeBuilderPlugin {
                                                         if (!linkMap instanceof Map) {
                                                                 throw new BuilderException("PlantUmlBuilderCompPlugin: ${BuilderNode.getNodePath(node)} does ${linkMap} has to be link map!")
                                                         }
-                                                        _makeLink(out, node.value, linkMap.to, linkMap.type, linkMap.description)
+                                                        def from = node.attributes.as ?: node.value
+                                                        _makeLink(out, from, linkMap.to, linkMap.type, linkMap.description)
                                                 }
                                         }
                                 }
