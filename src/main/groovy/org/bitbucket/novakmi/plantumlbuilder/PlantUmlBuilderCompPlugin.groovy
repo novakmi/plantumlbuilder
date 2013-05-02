@@ -50,7 +50,10 @@ class PlantUmlBuilderCompPlugin extends NodeBuilderPlugin {
                                         out.printIndent()
                                         def name = node.name
                                         def value = node.value ? " \"${node.value}\"" : ''
-                                        out.println("${name}${value} {")
+                                        def asText = node.attributes?.as ? " as ${node.attributes.as}" : ""
+                                        def stereotype = node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""
+                                        def bcg = node.attributes?.background ? " $node.attributes.background" : ""
+                                        out.println("${name}${value}${asText}${stereotype}${bcg} {")
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
                                 break
@@ -58,7 +61,9 @@ class PlantUmlBuilderCompPlugin extends NodeBuilderPlugin {
                                 if (!postProcess) {
                                         out.printIndent()
                                         def asText = node.attributes?.as ? " as ${node.attributes.as}" : ""
-                                        out.println("${node.name} [${node.value}]${asText}${node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""}")
+                                        def stereotype = node.attributes?.stereotype ? " << $node.attributes.stereotype >>" : ""
+                                        def bcg = node.attributes?.background ? " $node.attributes.background" : ""
+                                        out.println("${node.name} [${node.value}]${asText}${stereotype}${bcg}")
                                 } else {
                                         if (node.attributes.link) { // create link/links
                                                 def linkList = node.attributes.link instanceof List ? node.attributes.link : [node.attributes.link]
