@@ -78,8 +78,13 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                         out.printIndent()
                                         out.println("$node.value $type $to${text ? " : $text" : ''}")
                                         if (activate) {
+                                                def actval = "" //used to add e.g. color
+                                                if ((node.attributes?.activate instanceof GString) ||
+                                                (node.attributes?.activate instanceof String)) {
+                                                        actval = " ${(node.attributes.activate.value)}"
+                                                }
                                                 out.printIndent()
-                                                out.println("activate $to")
+                                                out.println("activate ${to}${actval}")
                                         }
                                 } else {
                                         if (node.attributes.returnText || node.attributes.returnType || !noReturn) {

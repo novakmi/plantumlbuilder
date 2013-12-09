@@ -167,7 +167,6 @@ deactivate A
 @enduml''')
         PlantUmlBuilderTest.assertPlantFile(builder)
 
-
         builder.reset()
         builder.plantuml {
             makeParticipants()
@@ -256,6 +255,54 @@ activate B
 
         logger.trace("<== plantSeqMsgTest")
     }
+
+        @Test(groups = ["basic"])
+        public void plantSeqMsgActivateValueTest() {
+                logger.trace("==> plantSeqMsgActivateValueTest")
+                def builder = new PlantUmlBuilder() // new instance
+                builder.registerPlugin(new PlantUmlBuilderSeqPlugin())
+                def a = 'A'
+                def b = 'B'
+                def makeParticipants = {
+                        builder.actor(a)
+                        builder.participant(b)
+                }
+
+                builder.reset()
+                builder.plantuml {
+                        makeParticipants()
+                        msg(a, text: 'self activate', activate: "#FFBBBB", close: 'deactivate')
+                }
+                Assert.assertEquals(builder.getText(),
+                        '''@startuml
+actor A
+participant B
+A -> A : self activate
+activate A #FFBBBB
+deactivate A
+@enduml''')
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                builder.reset()
+                builder.plantuml {
+                        makeParticipants()
+                        msgAd(a, to: b, activate: "#FFBBBB")
+                }
+                Assert.assertEquals(builder.getText(),
+                        '''@startuml
+actor A
+participant B
+A -> B
+activate B #FFBBBB
+B --> A
+deactivate B
+@enduml''')
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+
+                logger.trace("<== plantSeqMsgActivateValueTest")
+        }
+
 
     @Test(groups = ["basic"])
     public void plantSeqMsgNestingTest() {
