@@ -449,5 +449,97 @@ ref over A,B : See diagram A
         logger.trace("<== plantSeqRefTest")
     }
 
+        @Test(groups = ["basic"])
+        public void plantSeqBoxTest() {
+                logger.trace("==> plantSeqBoxTest")
+                def a = 'A'
+                def b = 'B'
+
+                def builder = new PlantUmlBuilder() // new instance
+                builder.registerPlugin(new PlantUmlBuilderSeqPlugin())
+                builder.plantuml {
+                        box {
+                                participant(a)
+                                participant(b)
+                        }
+                }
+                Assert.assertEquals(builder.getText(),
+                        """@startuml
+box
+  participant A
+  participant B
+end box
+@enduml""")
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                builder.reset()
+                builder.plantuml {
+                        box("BoxName") {
+                                participant(a)
+                                participant(b)
+                        }
+                }
+                Assert.assertEquals(builder.getText(),
+                        """@startuml
+box "BoxName"
+  participant A
+  participant B
+end box
+@enduml""")
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                builder.reset()
+                builder.plantuml {
+                        box("BoxName with space") {
+                                participant(a)
+                                participant(b)
+                        }
+                }
+                Assert.assertEquals(builder.getText(),
+                        """@startuml
+box "BoxName with space"
+  participant A
+  participant B
+end box
+@enduml""")
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                builder.reset()
+                builder.plantuml {
+                        box(color: "#LightBlue") {
+                                participant(a)
+                                participant(b)
+                        }
+                }
+                Assert.assertEquals(builder.getText(),
+                        """@startuml
+box #LightBlue
+  participant A
+  participant B
+end box
+@enduml""")
+
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                builder.reset()
+                builder.plantuml {
+                        box("BoxName", color: "#LightBlue") {
+                                participant(a)
+                                participant(b)
+                        }
+                }
+                Assert.assertEquals(builder.getText(),
+                        """@startuml
+box "BoxName" #LightBlue
+  participant A
+  participant B
+end box
+@enduml""")
+
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                logger.trace("<== plantSeqBoxTest")
+        }
+
     private static final Logger logger = LoggerFactory.getLogger(PlantUmlBuilderSeqPluginTest.class);
 }

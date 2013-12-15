@@ -126,6 +126,17 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
                                 break
+                        case 'box':  // optional value = box text, optional color attribute
+                                out.printIndent()
+                                if (!postProcess) {
+                                        def textString = node.value ? " \"$node.value\"" : ""
+                                        def colorString = node.attributes.color ? " ${node.attributes.color}" : ""
+                                        out.println("$node.name${textString}${colorString}")
+                                } else {
+                                        out.println("end box")
+                                }
+                                retVal = PluginResult.PROCESSED_FULL
+                                break
                         case 'ref':
                                 if (!postProcess) {
                                         if (!node.attributes.over) {
