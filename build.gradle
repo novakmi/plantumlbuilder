@@ -1,3 +1,5 @@
+import org.codehaus.groovy.control.CompilerConfiguration
+
 //This is free software licensed under MIT License, see LICENSE file
 //(https://bitbucket.org/novakmi/plantumlbuilder/src/LICENSE)
 
@@ -22,7 +24,7 @@ idea {
 
 repositories {
         mavenCentral() // standard maven repository
-        maven {url 'https://github.com/novakmi/novakmirepo/raw/master/releases'}
+        maven { url 'https://github.com/novakmi/novakmirepo/raw/master/releases' }
 }
 
 // Define dependencies
@@ -42,13 +44,13 @@ dependencies {
 jar {
         manifest {
                 attributes(
-                    'Implementation-Title': project.name,
-                    'Implementation-Version': version,
-                    'Specification-Vendor': 'Michal Novak (it.novakmi@gmail.com)',
-                    'Built-By': 'novakmi',
-                    'Specification-Title': project.name,
-                    'Extension-Name': project.name,
-                    'Specification-Version': version
+                        'Implementation-Title': project.name,
+                        'Implementation-Version': version,
+                        'Specification-Vendor': 'Michal Novak (it.novakmi@gmail.com)',
+                        'Built-By': 'novakmi',
+                        'Specification-Title': project.name,
+                        'Extension-Name': project.name,
+                        'Specification-Version': version
                 )
         }
 }
@@ -71,23 +73,23 @@ test {
         useTestNG() {
                 suiteXmlBuilder().suite(name: 'Test Plantuml groovy builder') {
                         test(name: 'plantuml', annotations: 'JDK', verbose: '1') {
-                            /*
-                                groups {
-                                        run {
-                                                include(name: "basic")
-                                        }
-                                }
-                             */
+                                /*
+                                    groups {
+                                            run {
+                                                    include(name: "basic")
+                                            }
+                                    }
+                                 */
                                 classes([:]) {
-                                      'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderTest")
+                                        'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderTest")
 //                                    'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderClassPluginTest") {
 //                                        methods {
 //                                            include(name: "plantPackageTest")
 //                                        }
 //                                    }
-                                      'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderSeqPluginTest")
-                                      'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderClassPluginTest")
-                                      'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderCompPluginTest")
+                                        'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderSeqPluginTest")
+                                        'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderClassPluginTest")
+                                        'class'(name: "org.bitbucket.novakmi.test.plantumlbuilder.PlantUmlBuilderCompPluginTest")
                                 }
                         }
                 }
@@ -148,7 +150,9 @@ task checkLibVersions << {
                                         def url = "http://repo1.maven.org/maven2/$path/$name/maven-metadata.xml"
                                         try {
                                                 def metadata = new XmlSlurper().parseText(url.toURL().text)
-                                                def versions = metadata.versioning.versions.version.collect { it.text() }
+                                                def versions = metadata.versioning.versions.version.collect {
+                                                        it.text()
+                                                }
                                                 versions.removeAll { it.toLowerCase().contains('alpha') }
                                                 versions.removeAll { it.toLowerCase().contains('beta') }
                                                 versions.removeAll { it.toLowerCase().contains('rc') }
@@ -163,6 +167,58 @@ task checkLibVersions << {
                                         }
                                         checked[dependency] = true
                                 }
+                        }
+                }
+        }
+}
+
+def templateDir = "${project.projectDir}/templates"
+def scriptDir = "${templateDir}/scripts"
+def scriptDirBasic = "${scriptDir}/basic"
+def scriptDirPlugin = "${scriptDir}/plugin"
+def projectDir = "${templateDir}/project"
+
+
+private void runCmdInDir(runCmd, dir) {
+        logger.info("Running ${runCmd} in ${dir}")
+        def proc = runCmd.execute(null, new File(dir))
+        proc.waitFor()
+        def ret = proc.exitValue()
+        logger.info("${runCmd} return code: ${ret}")
+        logger.info(proc.in.text)
+        if (proc.exitValue() != 0) {
+                logger.error("ERROR running ${runCmd}")
+                logger.lifecycle(proc.err.text)
+                throw new StopActionException("Failed to process ${runCmd} in directory ${dir}")
+        }
+}
+
+
+def runTemplateScript(script, dir) {
+        def classPath = sourceSets.main.runtimeClasspath.asPath
+        def runCmd = "groovy -cp ${classPath} ${dir}/${script}"
+        println runCmd
+        runCmdInDir(runCmd, dir)
+}
+
+task buildTemplates << {
+        ["plantClass", "plantSeq"].each {
+                runTemplateScript("${it}.groovy", scriptDirBasic)
+        }
+
+        ["plantPluginClass", "plantPluginComplexClass", "plantPluginSeqActivate"].each {
+                runTemplateScript("${it}.groovy", scriptDirPlugin)
+        }
+
+        runTemplateScript("buildUmls.groovy", projectDir)
+}
+
+task cleanTemplates << {
+        [scriptDirBasic, scriptDirPlugin, projectDir].each {
+                ["png", "txt"].each { e ->
+                        def dir = new File(it)
+                        dir.eachFileMatch(~".*.${e}") { f ->
+                                new File(dir, f.name).delete()
                         }
                 }
         }
