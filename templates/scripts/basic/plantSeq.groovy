@@ -31,9 +31,9 @@ builder.plantuml("${fileName}") {
                 plant("deactivate $b")
         }
         title('Plantuml builder basic template - simple sequence diagram')
-        participant('"A node"', as: A)
-        participant(B)
-        participant(C)
+        plant('participant "A node" as A')
+        plant("participant B")
+        plant("participant C")
         plant("$A->$B")
         plant("activate $B") {
                 interact(B, C) //reuse

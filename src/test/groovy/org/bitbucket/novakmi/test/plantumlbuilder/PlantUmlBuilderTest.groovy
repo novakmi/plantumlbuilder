@@ -157,7 +157,7 @@ deactivate B
         // test 'title' keyword
         builder.plantuml {
             title('Test title')
-            participant('A')
+            plant("participant A")
         }
         Assert.assertEquals(builder.getText(plainPlantUml: true), 'title Test title\nparticipant A\n')
         assertPlantFile(builder)
@@ -165,14 +165,14 @@ deactivate B
         // test 'actor' keyword
         builder.reset()
         builder.plantuml {
-            actor('MyActor')
+            plant('actor MyActor')
         }
         Assert.assertEquals(builder.getText(plainPlantUml: true), 'actor MyActor\n')
         assertPlantFile(builder)
 
         builder.reset()
         builder.plantuml {
-            actor('"My actor\\n(system)"', as: 'MyActor')
+            plant('actor "My actor\\n(system)" as MyActor')
         }
         Assert.assertEquals(builder.getText(plainPlantUml: true), 'actor "My actor\\n(system)" as MyActor\n')
         assertPlantFile(builder)
@@ -180,13 +180,13 @@ deactivate B
         // test 'participant'
         builder.reset()
         builder.plantuml {
-            participant('MyParticipant')
+            plant('participant MyParticipant')
         }
         Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant MyParticipant\n')
         assertPlantFile(builder)
         builder.reset()
         builder.plantuml {
-            participant('"My participant\\n(system)"', as: 'MyParticipant')
+            plant('participant "My participant\\n(system)" as MyParticipant')
         }
         Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant "My participant\\n(system)" as MyParticipant\n')
         assertPlantFile(builder)
@@ -194,7 +194,7 @@ deactivate B
         // test 'note' keyword
         builder.reset()
         builder.plantuml {
-            participant('A')
+            plant('participant A')
             note('My note')
         }
         Assert.assertEquals(builder.getText(plainPlantUml: true), 'participant A\nnote My note\n')
@@ -202,7 +202,7 @@ deactivate B
         ['right', 'left'].each {nt ->
             builder.reset()
             builder.plantuml {
-                participant('A')
+                plant('participant A')
                 note("My note $nt", pos: nt)
             }
             Assert.assertEquals(builder.getText(plainPlantUml: true), "participant A\nnote $nt : My note $nt\n")
@@ -211,7 +211,7 @@ deactivate B
         ['left', 'right', 'over', 'top', 'bottom'].each {nt ->
             builder.reset()
             builder.plantuml {
-                participant('A')
+                plant('participant A')
                 note("My note $nt A", pos: "$nt of A")
             }
             Assert.assertEquals(builder.getText(plainPlantUml: true), "participant A\nnote $nt of A : My note $nt A\n")
@@ -227,7 +227,7 @@ deactivate B
         // test note on multiple lines
         builder.reset()
         builder.plantuml {
-            participant('A')
+            plant('participant A')
             plant('note left') // for multiple line note use 'plant' keyword
             plant('a note')
             plant('can also be defined')

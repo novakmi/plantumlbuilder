@@ -49,6 +49,19 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                 }
 
                 switch (node.name) {
+                        case 'actor':
+                        case 'participant':
+                                if (!postProcess) {
+                                        out.printIndent()
+                                        out.print(node.name)
+                                        if (node.attributes.as) {
+                                                out.println(" $node.value as $node.attributes.as")
+                                        } else {
+                                                out.println(" $node.value")
+                                        }
+                                }
+                                retVal = PluginResult.PROCESSED_FULL
+                                break
                         case 'activate':
                                 if (!postProcess) {
                                         out.printIndent()

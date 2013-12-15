@@ -30,16 +30,6 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
                                 opaque.printIndent()
                                 opaque.println("title $node.value")
                                 break
-                        case 'actor':
-                        case 'participant':
-                                opaque.printIndent()
-                                opaque.print(node.name)
-                                if (node.attributes.as) {
-                                        opaque.println(" $node.value as $node.attributes.as")
-                                } else {
-                                        opaque.println(" $node.value")
-                                }
-                                break
                         case 'note':
                                 opaque.printIndent()
                                 opaque.print(node.name)
