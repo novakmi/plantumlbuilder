@@ -1,0 +1,612 @@
+plantumlbuilder
+===============
+:Author:    Michal Novák
+:Email:     it.novakmi@gmail.com
+:URL:       https://bitbucket.org/novakmi/yangbuilder
+:Date:      2015-04-13
+:Revision:  0.0.1
+
+This  document describes how to use Groovy builder for the PlantUML language.
+The document is written in http://www.methods.co.nz/asciidoc/[AsciiDoc].
+
+== Version history
+
+[options="header"]
+|======
+| Version     | Notes          | Date        | Author
+| {revision}  | Updated        | {date}      | {author}
+|======
+
+== References
+
+[bibliography]
+* [[[groovy]]] http://www.groovy-lang.org/[Groovy - a dynamic language for JAVA platform]
+* [[[nodebuilder]]] https://bitbucket.org/novakmi/nodebuilder[Library for creation of groovy builders with plugin support]
+* [[[UML]]] http://www.uml.org/ - Unified Modeling Language
+* [[[PlantUML]]]  http://plantuml.sourceforge.net - component that allows to quickly write UML diagrams.
+* [[[plantumlbuilder]]] https://bitbucket.org/novakmi/plantumlbuilder[Groovy builder for PlantUML language]
+
+== Terminology
+
+* *UML* a Data Modeling Language for the Network Configuration Protocol (NETCONF), see <<RFC6020>>
+* *Groovy builder:*  http://en.wikipedia.org/wiki/Design_Patterns[builder design pattern] implemented in the <<groovy>>,
+  with support for DSL (Domain Specific Language), see http://groovy-lang.org/dsls.html#_builders[groovy builders]
+
+== License
+
+The <<plantumlbuilder>> is free software, licensed under http://en.wikipedia.org/wiki/MIT_License[MIT Licnense].
+
+----
+include::../LICENSE[]
+----
+
+== Introduction
+
+NOTE: _This document is still work in progress. Please take a look at the examples in the `templates\scripts` directory
+       and at the tests in the `tests\groovy` directory to see usage of all <<plantumlbuilder>> features._
+
+The <<platnumlbuilder>> represents implementation of <<groovy>> builder for <<PlantUML>> language. 
+
+Using groovy builders is a way to create programatically tree like structures. PlantUML language does not fully resemble tree like structure,
+in spite of this, a groovy builder can simplify UML modeling in PlantUML language (especially sequence diagrams).
+
+The main benefits of using builder are:
+
+* reuse - in UML diagram and between UML diagrams
+* parametrization
+* customization of diagram language 
+* direct creation of UML images from groovy script
+* taking advantage of an IDE (e.g. Intellij Idea) when creating UML diagram - text formating, auto completion
+
+=== Dependencies
+
+To start using <<plantumbuilder>> you need to have <<PlantUML>> jar file (`plantuml.jar`) and <<plantumlbuilder>> jar file (`plantumlbuilder-x.x.x.jar`) or sources. 
+For editting it is recommended to use [[http://www.jetbrains.com/idea/| Intellij Idea IDE]] (e.g. free community edition) to create UML in <<groovy>>.
+
+=== First Plantumlbuilder diagrams
+
+The basic <<plantumlbuilder>> command is `plant` element. See following groovy script:
+
+[source, java]
+----
+// create new builder
+def builder = new PlantUmlBuilder()
+// plantuml element is a root element of PlantUML
+builder.plantuml {
+            plant('A->B') // plant  only puts text to the output
+            plant('activate B')
+            plant('B->C')
+            plant('activate C')
+            plant('C-->B')
+            plant('deactivate C')
+            plant('A-->B')
+            plant('deactivate B')
+}
+
+println builder.getText() // get PlantUML text
+println ''
+println 'Without @startuml/@enduml'
+println builder.getText(plainPlantUml: true)  // get PlantUML text without @startuml and @enduml
+
+// use plantUML to create png file from plantuml text
+SourceStringReader s = new SourceStringReader(builder.getText())
+FileOutputStream file = new FileOutputStream('./example1.png')
+s.generateImage(file)
+file.close()
+----
+
+This produces following <<PlantUML>> output:
+
+[source, perl]
+----
+@startuml
+A->B
+activate B
+B->C
+activate C
+C-->B
+deactivate C
+A-->B
+deactivate B
+@enduml
+
+Without @startuml/@enduml
+A->B
+activate B
+B->C
+activate C
+C-->B
+deactivate C
+A-->B
+deactivate B
+----
+
+and following image:
+
+TODO:: {{images/example1.png}}
+
+
+As you can see, it is possible to generate either PlantUML text enclosed in `@startuml`/`@enduml` (`builder.getText()`) or text not being enclosed in `@startuml`/`@enduml` (`builder.getText(plainPlantUml: true)`). The latter is useful for example if you want to add image name to the <<PlantUML>> text.
+
+Next script (only <<plantumlbuilder> part shown) produces same diagram picture, but the output is differently indented. 
+
+NOTE: Note you can use `builder.reset()` to clear already existing content of the builder.
+
+[source, java]
+----
+builder.reset()
+builder.plantuml {
+        plant('A->B')
+        plant('activate B') {
+            plant('B->C')
+            plant('activate C')
+            plant('C-->B')
+            plant('deactivate C')
+        }
+        plant('A-->B')
+        plant('deactivate B')
+}
+----
+
+Following PlantUML text is created:
+
+[source, perl]
+----
+@startuml
+A->B
+activate B
+  B->C
+  activate C
+  C-->B
+  deactivate C
+A-->B
+deactivate B
+@enduml
+----
+
+You can see the indenting of the text follows parent/child relationship of builder elements. 
+This is useful (for more complex diagrams) to increase readability.
+
+=== Advanced diagram example
+
+Following example demonstrates how Plantumlbuilder can help with reuse of similar 
+parts of sequence diagram.
+
+[source, java]
+----
+// define actors and participants as constant strings
+User1 = 'User1'
+User2 = 'User2'
+scanner = 'scanner'
+scanSoftware = 'scanSoftware'
+storage = 'storage'
+
+paper = 'paper'
+photo = 'photo'
+
+
+def scan(builder, user, mediaList) {
+    mediaList.each {media ->
+        builder.plant("$user -> $scanner: Insert $media into $scanner") {
+            def scan = { // reuse via closure
+                plant("$user -> $scanSoftware: Press 'Scan' button")
+                plant("$scanSoftware -> $scanner: scan")
+                plant("$scanner --> $scanSoftware: image data")
+                plant("$user -> $scanSoftware: save")
+                plant("$scanSoftware -> $storage: Create image file")
+            }
+
+            if (media == paper) {  // programming can be used
+                plant("$user -> $scanSoftware: Set B/W 300 DPI")
+                scan() // perform closure - reuse
+            } else {
+                plant("$user -> $scanSoftware: Set COLOR 1200 DPI")
+                scan() // perform closure - reuse
+            }
+        }
+        builder.plant("$user -> $scanner: Remove $media from $scanner")
+    }
+}
+// create new builder
+def builder = new PlantUmlBuilder()
+// plantuml element is a root element of PlantUML
+builder.plantuml {
+    title('Plantumlbuilder example - scan')
+    //create actors and participants
+    actor('Joe', as: User1)
+    actor('Sally', as: User2)
+    participant('xsane' , as: scanSoftware)
+    participant(scanner)
+    participant('"Hard\\ndisk"', as: storage)
+    scan(builder, User1, [paper, photo]) //call function - reuse for User1
+    scan(builder, User2, [paper, paper]) //call function - reuse for user2
+}
+
+println builder.getText() // get PlantUML text
+println ''
+
+// use plantUML to create png file from plantuml tgext
+SourceStringReader s = new SourceStringReader(builder.getText())
+FileOutputStream file = new FileOutputStream('./example2.png')
+s.generateImage(file)
+file.close()
+----
+
+Following PlantUML text is created 
+
+[source, perl]
+----
+@startuml
+title Plantumlbuilder example - scan
+actor Joe as User1
+actor Sally as User2
+participant xsane as scanSoftware
+participant scanner
+participant "Hard\ndisk" as storage
+User1 -> scanner: Insert paper into scanner
+  User1 -> scanSoftware: Set B/W 300 DPI
+  User1 -> scanSoftware: Press 'Scan' button
+  scanSoftware -> scanner: scan
+  scanner --> scanSoftware: image data
+  User1 -> scanSoftware: save
+  scanSoftware -> storage: Create image file
+User1 -> scanner: Remove paper from scanner
+User1 -> scanner: Insert photo into scanner
+  User1 -> scanSoftware: Set COLOR 1200 DPI
+  User1 -> scanSoftware: Press 'Scan' button
+  scanSoftware -> scanner: scan
+  scanner --> scanSoftware: image data
+  User1 -> scanSoftware: save
+  scanSoftware -> storage: Create image file
+User1 -> scanner: Remove photo from scanner
+User2 -> scanner: Insert paper into scanner
+  User2 -> scanSoftware: Set B/W 300 DPI
+  User2 -> scanSoftware: Press 'Scan' button
+  scanSoftware -> scanner: scan
+  scanner --> scanSoftware: image data
+  User2 -> scanSoftware: save
+  scanSoftware -> storage: Create image file
+User2 -> scanner: Remove paper from scanner
+User2 -> scanner: Insert paper into scanner
+  User2 -> scanSoftware: Set B/W 300 DPI
+  User2 -> scanSoftware: Press 'Scan' button
+  scanSoftware -> scanner: scan
+  scanner --> scanSoftware: image data
+  User2 -> scanSoftware: save
+  scanSoftware -> storage: Create image file
+User2 -> scanner: Remove paper from scanner
+@enduml
+----
+
+which corresponds to the diagram image:
+
+TODO:: {{images/example2.png}}
+
+== Interface
+
+Plantumlbuilder groovy interface
+
+The interface consists of two parts
+
+* the Plantumlbuilder interface
+* the Plugin interface allowing extension of Plantumbuilder language
+
+TODO:: images/plantbuilderinterface.png
+
+=== PlantUmlBuilder interface
+
+[source, java]
+----
+/**
+ * Get PlantUML text build by the builder
+ * @param params map with optional name params.
+ *         Currently supported 'plainPlantUml' - do not add '@startuml/@enduml' to the returned PlantUML text
+ *         getText()
+ *         getText(plainPlantUml: true)
+ * @return build text
+ */
+public String getText(params)
+----
+
+[source, java]
+----
+/**
+ * Reset root element of the builder.
+ * Use this method to start building PlantUML text from the beginning.
+ */
+public void reset()
+----
+
+
+[source, java]
+----
+/**
+ * Add a plugin listener.
+ */
+void addPlantUmlBuilderPluginListener(PlantUmlBuilderPluginListener listener)
+----
+
+[source, java]
+----
+/**
+ * Remove the plugin listener.
+ */
+void removePlantUmlBuilderPluginListener(PlantUmlBuilderPluginListener listener)
+----
+TODO:: See {{{cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBuilderTest}}} for examples of the usage.
+
+=== PlantUmlBuilderPluginListener interface
+
+[source, java]
+----
+/**
+ * Builder node
+ */
+private class Node {
+    def name = ''   // name of node (e.g. plant('text, at:'attrib') - name is plant)
+    def parent = null // parent node (or null if this is root node)
+    def attributes = [:] //attributes (e.g. plant('text, at:'atrib') - attributes.at == 'attrib')
+    def value = null //value of node (e.g. plant('text, at:'attrib') - value is text)
+    def children = [] //children nodes
+}
+----
+
+[source, java]
+----
+//Listener interface  for node or attributes
+enum PluginListenerResult {
+    NOT_ACCEPTED, // node not accepted by plagin
+    PROCESSED_STOP, // node processed by plugin, do not process node with other plugins
+    PROCESSED_CONTINUE, // node processed by plugin, process node with other plugins as well
+    FAILED, // node processing failed
+}
+----
+[source, java]
+----
+interface PlantUmlBuilderPluginListener {
+    /**
+     * Process given node in plugin before and after plantuml builder
+     * @param node builder node to process (
+     * @param out IndentPrinter to print PlantUML text
+     * @param postProcess if false, it is pre processing time, if true, it is post processing time
+     * @return result
+     * $see PluginListenerResult, Node
+     */
+    PluginListenerResult process(final Node node, IndentPrinter out, boolean postProcess)
+}
+----
+
+== <<plantumlbuilder>> language reference
+
+=== Base reference
+
+==== `plantuml`
+
+Represetns <<platumlbuilder>> root node mark (not present in PlantUML text). It is possible to pass text to be placed after `@startuml` (e.g. image name).
+
+Examples:
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+builder.plantuml {
+...
+}
+
+----- | *N/A*
+a|
+[source,java]
+-----
+builder.plantuml("img\myuml.png") {
+...
+}
+
+----- | *N/A*
+|=====
+
+
+==== `plant`
+
+Text is directly copied as line to the PlantUML text.
+With this keyword,any PlantUML keyword can be entered by the builder.
+
+Example(s):
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+plant("autonumber")
+----- a| 
+----
+autonumber
+----
+|=====
+
+==== `title`
+
+Example(s):
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+title("My diagram")
+----- a| 
+----
+title My diagram
+----
+|=====
+
+==== `participant` and `actor`
+
+Attribute: `as` (optional)
+
+Example(s):
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+participant("MyParticipant")
+----- a| 
+----
+participant MyParticipant
+----
+a|
+[source,java]
+-----
+participant("My Participant", as: "MyParticipant")
+----- a| 
+----
+participant My Participant as MyParticipant
+----
+a|
+[source,java]
+-----
+actor("MyActor")
+----- a| 
+----
+actor MyActor
+----
+a|
+[source,java]
+-----
+actor("My Actor", as: "MyActor")
+----- a| 
+----
+actor My Actor as MyActor
+----
+|=====
+
+==== `note`
+
+Attribute: `as` (optional), `pos` (optional)
+
+Example(s):
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+note("MyNote")
+----- a| 
+----
+note MyNote
+----
+a|
+[source,java]
+-----
+note("My note", as: "MyNote")
+----- a| 
+----
+note My note as MyNote
+----
+a|
+[source,java]
+-----
+note("MyNote", pos: "right")
+----- a| 
+----
+note right : MyNote
+----
+|=====
+
+
+[options="header"]
+|======
+| keyword | Attributes | Builder   `PlantUML`                    
+
+|`plantuml` root node mark\\not reflected\\in PlantUML text, it is possible\\to pass text to be placed\\after {{{@startuml}}} like image name.| |*builder*\\builder.plantuml {\\...\\}\\\\**PlantUML**\\N/A\\\\**builder**\\builder.plantuml('img\myuml.png') {\\...\\}\\\\**PlantUML**\\N/A
+|**plant**\\PlantUML line\\content directly\\copied as line to the PlantUML text.\\With this keyword any\\PlantUML constructs can be created||**builder**\\plant('autonumber')\\\\**PlantUML**\\{{{autonumber}}}
+|**title**\\PlantUML {{{title}}}||**builder**\\title('My diagram')\\\\**PlantUML**\\{{{title My diagram}}}|
+|**participant**\\PlantUML {{participant}}|**as** (optional)|**builder**\\participant('MyParticipant')\\\\**PlantUML**\\{{{participant MyParticipant}}}\\\\**builder**\\participant('My Participant', as: 'MyParticipant')\\\\**PlantUML**\\participant My Participant as MyParticipant|
+|**actor**\\PlantUML {{actor}}|**as** (optional)|**builder**\\actor('MyActor')\\\\**PlantUML**\\{{{actor MyActor}}}\\\\**builder**\\actor('My Actor', as: 'MyActor')\\\\**PlantUML**\\actor My Actor as MyActor|
+|**note**\\PlantUML {{note}}|**pos** (optional)\\**as** (optional)|**builder**\\note('My note')\\\\**PlantUML**\\{{{note MyNote}}}\\\\**builder**\\note('My note', pos: 'right)\\\\**PlantUML**\\{{{note right : My note}}}\\\\**builder**\\note('My note', as: 'N1')\\\\**PlantUML**\\{{{note My note as N1}}}|
+|======
+
+
+== Plugins
+
+==== Pluntumlbuilder sequence plugin
+
+[options="header"]
+|======
+|=keyword|=Attributes|=Builder         \\PlantUML                    |
+|**msg**\\Sequence diagram message.\\\\(This keyword is described\\separately in the table below.)| (see below) | (see below) |
+|**activate**\\Activate participant.\\It is possible to specify\\{{{activate - deactivate}}} or\\{{{activate - destroy}}} block.|**close** (optional)\\specify how to close\\block of commands.|**builder**\\activate('A')\\\\**PlantUML**\\activate A\\\\**builder**\\activate('A', close: 'deactivate) {\\  ...\\}\\\\**PlantUML**\\activate A\\  ...\\deactivate A|
+|**deactivate**\\Deactivate participant.||**builder**\\deactivate('A')\\\\**PlantUML**\\deactivate A|
+|**destroy**\\Destroy participant.||**builder**\\destroy('A')\\\\**PlantUML**\\destroy A|
+|**divider**\\Divider.||**builder**\\divider('separate')\\\\**PlantUML**\\== separate ==|
+|**delay**\\Delay.||**builder**\\delay('wait')\\\\**PlantUML**\\...wait...|
+|**group**\\{{{group}}} group command||**builder**\\group('MyGroup') {\\...\\}\\\\\\**PlantUML**\\group MyGroup\\...\\end|
+|**opt**\\{{{opt}}} frame command||**builder**\\opt('condition') {\\...\\}\\\\\\**PlantUML**\\opt condition\\...\\end|
+|**loop**\\{{{loop}}} frame command||**builder**\\loop('till buffer not empty') {\\...\\}\\\\\\**PlantUML**\\loop till buffer not empty\\...\\end|
+|**par**\\{{{par}}} frame command||**builder**\\par('in parallel') {\\...\\}\\\\\\**PlantUML**\\par in parallel\\...\\end|
+|**break**\\{{{break}}} frame command||**builder**\\break('MyBreak') {\\...\\}\\\\\\**PlantUML**\\break MyBreak\\...\\end|
+|**critical**\\{{{critical}}} frame command||**builder**\\critical('MyCritical') {\\...\\}\\\\\\**PlantUML**\\critical MyCritical\\...\\end|
+|**alt** and  **else**\\{{{alt}}} frame command||**builder**\\alt('buffer empty') {\\...\\  'else'('buffer size < 10')\\...\\}\\\\\\**PlantUML**\\alt buffer empty\\...\\else buffer size < 10\\...\\end|
+|**ref**\\{{{ref}}} frame command|**over** list of\\ participants\\(mandatory)|**builder**\\ref('see diagram x', over: ['A', 'B'])\\\\**PlantUML**\\ref over A,B : see diagram x|
+|======
+
+==== {{{msg}}} keyword
+
+[options="header"]
+|======
+|=Attributes|=Builder         \\PlantUML                  |
+||**builder**\\msg('A')\\\\**PlantUML**\\A -> A|
+|**to**|**builder**\\msg('A', to: 'B')\\\\**PlantUML**\\A -> B\\B --> A|
+|**noReturn**\\boolean|**builder**\\msg('A', to: 'B', noReturn: true)\\\\**PlantUML**\\A -> B|
+|**text**|**builder**\\msg('A', to: 'B', text: 'call B')\\\\**PlantUML**\\A -> B : call B\\B --> A|
+|**type**|**builder**\\msg('A', to: 'B', text: 'call B', type: '-->')\\\\**PlantUML**\\A --> B : call B\\B --> A|
+|**activate**\\boolean|**builder**\\msg('A', to: 'B', text: 'call B', activate: true)\\\\**PlantUML**\\A -> B : call B\\activate B\\B --> A|
+|**close**\\'deactivate' or 'destroy'|**builder**\\msg('A', to: 'B', text: 'call B', close: 'deactivate')\\\\**PlantUML**\\A -> B : call B\\activate B\\B --> A\\deactivate B\\\\**builder**\\msg('A', to: 'B', text: 'call B', close: 'destroy')\\\\**PlantUML**\\A -> B : call B\\activate B\\B --> A\\destroy B|
+|**returnText**|**builder**\\msg('A', to: 'B', text: 'call B', close: 'deactivate', returnText: 'finished')\\\\**PlantUML**\\A -> B : call B\\activate B\\B --> A : finished\\deactivate B|
+|**returnType**|**builder**\\msg('A', to: 'B', text: 'call B', close: 'deactivate', returnType: '->')\\\\**PlantUML**\\A -> B : call B\\activate B\\B -> A\\deactivate B|
+|======
+
+See {{{PlantUmlBuilderSeqPluginTest}}} for more information
+
+==== Pluntumlbuilder class plugin
+
+TODO::
+See {{{PlantUmlBuilderClassPluginTest}}} for more information.
+
+==== Pluntumlbuilder component plugin
+
+TODO::
+
+
+== Plantuml builder Ivy repository for gradle ===
+
+Unfortunately bitbucket does not provide a way to support custom repository for gradle dependencies. It is possible to use github.
+
+{{{
+#!java
+repositories {        
+        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+                name = 'bubbleswayrepo'
+                addArtifactPattern('http://cloud.github.com/downloads/bubblesway/bubbleswayrepo/[artifact]-[revision](-[classifier])(.[ext])')
+        }
+}
+
+dependencies {      
+        compile group: 'cz.atlas.bubbles.it', name: 'plantumlbuilder', version: '0.2.0'
+}
+}}}
