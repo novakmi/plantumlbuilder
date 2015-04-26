@@ -3,7 +3,7 @@ plantumlbuilder
 :Author:    Michal Novák
 :Email:     it.novakmi@gmail.com
 :URL:       https://bitbucket.org/novakmi/yangbuilder
-:Date:      2015-04-13
+:Date:      2015-04-26
 :Revision:  0.0.1
 
 This  document describes how to use Groovy builder for the PlantUML language.
@@ -528,44 +528,44 @@ note right : MyNote
 ----
 |=====
 
-
-[options="header"]
-|======
-| keyword | Attributes | Builder   `PlantUML`                    
-
-|`plantuml` root node mark\\not reflected\\in PlantUML text, it is possible\\to pass text to be placed\\after {{{@startuml}}} like image name.| |*builder*\\builder.plantuml {\\...\\}\\\\**PlantUML**\\N/A\\\\**builder**\\builder.plantuml('img\myuml.png') {\\...\\}\\\\**PlantUML**\\N/A
-|**plant**\\PlantUML line\\content directly\\copied as line to the PlantUML text.\\With this keyword any\\PlantUML constructs can be created||**builder**\\plant('autonumber')\\\\**PlantUML**\\{{{autonumber}}}
-|**title**\\PlantUML {{{title}}}||**builder**\\title('My diagram')\\\\**PlantUML**\\{{{title My diagram}}}|
-|**participant**\\PlantUML {{participant}}|**as** (optional)|**builder**\\participant('MyParticipant')\\\\**PlantUML**\\{{{participant MyParticipant}}}\\\\**builder**\\participant('My Participant', as: 'MyParticipant')\\\\**PlantUML**\\participant My Participant as MyParticipant|
-|**actor**\\PlantUML {{actor}}|**as** (optional)|**builder**\\actor('MyActor')\\\\**PlantUML**\\{{{actor MyActor}}}\\\\**builder**\\actor('My Actor', as: 'MyActor')\\\\**PlantUML**\\actor My Actor as MyActor|
-|**note**\\PlantUML {{note}}|**pos** (optional)\\**as** (optional)|**builder**\\note('My note')\\\\**PlantUML**\\{{{note MyNote}}}\\\\**builder**\\note('My note', pos: 'right)\\\\**PlantUML**\\{{{note right : My note}}}\\\\**builder**\\note('My note', as: 'N1')\\\\**PlantUML**\\{{{note My note as N1}}}|
-|======
-
-
 == Plugins
 
-==== Pluntumlbuilder sequence plugin
+=== Pluntumlbuilder sequence plugin
+
+See `PlantUmlBuilderSeqPluginTest` for more information and examples.
+
+==== `msg`
+
+Sequence diagram message.
+
+Attributes (all optional):
+
+* `to`
+* `noReturn`
+* `text`
+* `returnText`
+* `type`
+* `returnType`
+* `activate`
+* `close`
 
 [options="header"]
-|======
-|=keyword|=Attributes|=Builder         \\PlantUML                    |
-|**msg**\\Sequence diagram message.\\\\(This keyword is described\\separately in the table below.)| (see below) | (see below) |
-|**activate**\\Activate participant.\\It is possible to specify\\{{{activate - deactivate}}} or\\{{{activate - destroy}}} block.|**close** (optional)\\specify how to close\\block of commands.|**builder**\\activate('A')\\\\**PlantUML**\\activate A\\\\**builder**\\activate('A', close: 'deactivate) {\\  ...\\}\\\\**PlantUML**\\activate A\\  ...\\deactivate A|
-|**deactivate**\\Deactivate participant.||**builder**\\deactivate('A')\\\\**PlantUML**\\deactivate A|
-|**destroy**\\Destroy participant.||**builder**\\destroy('A')\\\\**PlantUML**\\destroy A|
-|**divider**\\Divider.||**builder**\\divider('separate')\\\\**PlantUML**\\== separate ==|
-|**delay**\\Delay.||**builder**\\delay('wait')\\\\**PlantUML**\\...wait...|
-|**group**\\{{{group}}} group command||**builder**\\group('MyGroup') {\\...\\}\\\\\\**PlantUML**\\group MyGroup\\...\\end|
-|**opt**\\{{{opt}}} frame command||**builder**\\opt('condition') {\\...\\}\\\\\\**PlantUML**\\opt condition\\...\\end|
-|**loop**\\{{{loop}}} frame command||**builder**\\loop('till buffer not empty') {\\...\\}\\\\\\**PlantUML**\\loop till buffer not empty\\...\\end|
-|**par**\\{{{par}}} frame command||**builder**\\par('in parallel') {\\...\\}\\\\\\**PlantUML**\\par in parallel\\...\\end|
-|**break**\\{{{break}}} frame command||**builder**\\break('MyBreak') {\\...\\}\\\\\\**PlantUML**\\break MyBreak\\...\\end|
-|**critical**\\{{{critical}}} frame command||**builder**\\critical('MyCritical') {\\...\\}\\\\\\**PlantUML**\\critical MyCritical\\...\\end|
-|**alt** and  **else**\\{{{alt}}} frame command||**builder**\\alt('buffer empty') {\\...\\  'else'('buffer size < 10')\\...\\}\\\\\\**PlantUML**\\alt buffer empty\\...\\else buffer size < 10\\...\\end|
-|**ref**\\{{{ref}}} frame command|**over** list of\\ participants\\(mandatory)|**builder**\\ref('see diagram x', over: ['A', 'B'])\\\\**PlantUML**\\ref over A,B : see diagram x|
-|======
+|=====
+|<<plantumlbuilder>> | PlantUML| Note
 
-==== {{{msg}}} keyword
+a|
+[source,java]
+-----
+msg("A")
+----- a| 
+----
+A -> A
+----
+a|
+TODO
+|=====
+
+===== {{{msg}}} keyword
 
 [options="header"]
 |======
@@ -581,24 +581,313 @@ note right : MyNote
 |**returnType**|**builder**\\msg('A', to: 'B', text: 'call B', close: 'deactivate', returnType: '->')\\\\**PlantUML**\\A -> B : call B\\activate B\\B -> A\\deactivate B|
 |======
 
-See {{{PlantUmlBuilderSeqPluginTest}}} for more information
+
+==== msgAd
+
+==== `activate`
+
+Attribute: `close` (optional) - specifies how to close the activation block, value can be `deactivate` or `destroy`
+
+Activate participant. With attribute `close` it is possible to specify `activate - deactivate` or `activate - destroy` block.
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+activate("A")
+----- a| 
+----
+activate A
+----
+a|
+[source,java]
+-----
+activate("A", close: "deactivate") {
+...
+}
+----- a| 
+----
+activate A
+...
+deactivate A
+----
+a|
+[source,java]
+-----
+activate("A", close: "destroy") {
+...
+}
+----- a| 
+----
+activate A
+...
+destroy A
+----
+|=====
+
+==== `deactivate` and `destroy`
+
+Deactivate or destroy the participant.
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+deactivate("A")
+----- a| 
+----
+deactivate A
+----
+a|
+[source,java]
+-----
+destroy("A")
+----- a| 
+----
+destroy A
+----
+|=====
+
+==== `divider`
+
+Create divider of given name
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+divider("separate")
+----- a| 
+----
+== separate ==
+----
+|=====
+
+==== `delay`
+
+Create dealy of given name
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+delay("wait")
+----- a| 
+----
+...wait...
+----
+|=====
+
+==== `group`
+
+Create `group` of given name
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+group("MyGroup") {
+...
+}
+-----  a| 
+----
+group MyGroup
+...
+end
+----
+|=====
+
+==== `opt`
+
+Create `opt` frame for given condition
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+a|
+[source,java]
+-----
+opt("condition") {
+...
+}
+----- a| 
+----
+opt condition
+...
+end
+----
+|=====
+
+==== `alt` and `else`
+
+Create `alt` frame for given condition with `else` 
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+a|
+[source,java]
+-----
+alt("condition1") {
+...
+  else("contition2")
+...
+}
+----- a| 
+----
+alt condition1
+...
+else condition2
+...
+end
+----
+|=====
+
+NOTE: `else` in the `groovy` code is inside the `alt` block
+
+==== `loop`
+
+Create `loop` frame for given loop condition
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+a|
+[source,java]
+-----
+loop("condition") {
+...
+}
+----- a| 
+----
+loop condition
+...
+end
+----
+|=====
+
+==== `par`
+
+Create `par` frame
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+a|
+[source,java]
+-----
+par("in parallel") {
+...
+}
+----- a| 
+----
+par in parallel
+...
+end
+----
+|=====
+
+==== `break`
+
+Create `break` frame
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+a|
+[source,java]
+-----
+break("MyBreak") {
+...
+}
+----- a| 
+----
+break MyBreak
+...
+end
+----
+|=====
+
+
+==== `critical`
+
+Create `critical` frame
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+a|
+[source,java]
+-----
+critical("MyCritical") {
+...
+}
+----- a| 
+----
+break MyCritical
+...
+end
+----
+|=====
+
+==== `ref`
+
+Create `ref` frame
+
+Attribute: `over` - list of _participants_ (mandatory)
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+a|
+[source,java]
+-----
+ref("see diagram X", over: ["A", "B"])
+----- a| 
+----
+ref over A,B: see diagram X
+----
+|=====
+
+NOTE: Currenlty only one line `ref` is supported. Multiline `ref` has to be created with the `plant` keyword.
+
 
 ==== Pluntumlbuilder class plugin
 
-TODO::
-See {{{PlantUmlBuilderClassPluginTest}}} for more information.
+See `PlantUmlBuilderClassPluginTest` for more information and examples.
+
+TODO
 
 ==== Pluntumlbuilder component plugin
 
-TODO::
+See `PlantUmlBuilderCompPluginTest` for more information and examples.
+
+TODO
 
 
 == Plantuml builder Ivy repository for gradle ===
 
+TODO
+
 Unfortunately bitbucket does not provide a way to support custom repository for gradle dependencies. It is possible to use github.
 
-{{{
-#!java
+[source,java]
+-----
 repositories {        
         add(new org.apache.ivy.plugins.resolver.URLResolver()) {
                 name = 'bubbleswayrepo'
@@ -609,4 +898,4 @@ repositories {
 dependencies {      
         compile group: 'cz.atlas.bubbles.it', name: 'plantumlbuilder', version: '0.2.0'
 }
-}}}
+-----
