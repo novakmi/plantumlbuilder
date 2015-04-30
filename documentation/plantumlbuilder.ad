@@ -3,7 +3,7 @@ plantumlbuilder
 :Author:    Michal Novák
 :Email:     it.novakmi@gmail.com
 :URL:       https://bitbucket.org/novakmi/yangbuilder
-:Date:      2015-04-26
+:Date:      2015-04-30
 :Revision:  0.0.1
 
 This  document describes how to use Groovy builder for the PlantUML language.
@@ -13,8 +13,8 @@ The document is written in http://www.methods.co.nz/asciidoc/[AsciiDoc].
 
 [options="header"]
 |======
-| Version     | Notes          | Date        | Author
-| {revision}  | Updated        | {date}      | {author}
+| Version     | Notes                                   | Date        | Author
+| {revision}  | Initial Asciidoc version, updated       | {date}      | {author}
 |======
 
 == References
@@ -28,13 +28,13 @@ The document is written in http://www.methods.co.nz/asciidoc/[AsciiDoc].
 
 == Terminology
 
-* *UML* a Data Modeling Language for the Network Configuration Protocol (NETCONF), see <<RFC6020>>
+* *UML* a Data Modeling Language
 * *Groovy builder:*  http://en.wikipedia.org/wiki/Design_Patterns[builder design pattern] implemented in the <<groovy>>,
   with support for DSL (Domain Specific Language), see http://groovy-lang.org/dsls.html#_builders[groovy builders]
 
 == License
 
-The <<plantumlbuilder>> is free software, licensed under http://en.wikipedia.org/wiki/MIT_License[MIT Licnense].
+The <<plantumlbuilder>> is free software, licensed under http://en.wikipedia.org/wiki/MIT_License[MIT License].
 
 ----
 include::../LICENSE[]
@@ -47,7 +47,7 @@ NOTE: _This document is still work in progress. Please take a look at the exampl
 
 The <<platnumlbuilder>> represents implementation of <<groovy>> builder for <<PlantUML>> language. 
 
-Using groovy builders is a way to create programatically tree like structures. PlantUML language does not fully resemble tree like structure,
+Using groovy builders is a way to create tree like structures in source code. PlantUML language does not fully resemble tree like structure,
 in spite of this, a groovy builder can simplify UML modeling in PlantUML language (especially sequence diagrams).
 
 The main benefits of using builder are:
@@ -56,12 +56,12 @@ The main benefits of using builder are:
 * parametrization
 * customization of diagram language 
 * direct creation of UML images from groovy script
-* taking advantage of an IDE (e.g. Intellij Idea) when creating UML diagram - text formating, auto completion
+* taking advantage of an IDE (e.g. Intellij Idea) when creating UML diagram - text formatting, auto completion
 
 === Dependencies
 
-To start using <<plantumbuilder>> you need to have <<PlantUML>> jar file (`plantuml.jar`) and <<plantumlbuilder>> jar file (`plantumlbuilder-x.x.x.jar`) or sources. 
-For editting it is recommended to use [[http://www.jetbrains.com/idea/| Intellij Idea IDE]] (e.g. free community edition) to create UML in <<groovy>>.
+To start using <<plantumlbuilder>> you need to have <<PlantUML>> jar file (`plantuml.jar`) and <<plantumlbuilder>> jar file (`plantumlbuilder-x.x.x.jar`) or sources.
+For editing it is recommended to use [[http://www.jetbrains.com/idea/| Intellij Idea IDE]] (e.g. free community edition) to create UML in <<groovy>>.
 
 === First Plantumlbuilder diagrams
 
@@ -184,7 +184,6 @@ storage = 'storage'
 paper = 'paper'
 photo = 'photo'
 
-
 def scan(builder, user, mediaList) {
     mediaList.each {media ->
         builder.plant("$user -> $scanner: Insert $media into $scanner") {
@@ -289,7 +288,7 @@ Plantumlbuilder groovy interface
 The interface consists of two parts
 
 * the Plantumlbuilder interface
-* the Plugin interface allowing extension of Plantumbuilder language
+* the Plugin interface allowing extension of Plantumlbuilder language
 
 TODO:: images/plantbuilderinterface.png
 
@@ -355,8 +354,8 @@ private class Node {
 ----
 //Listener interface  for node or attributes
 enum PluginListenerResult {
-    NOT_ACCEPTED, // node not accepted by plagin
-    PROCESSED_STOP, // node processed by plugin, do not process node with other plugins
+    NOT_ACCEPTED, // node not accepted by the  plugin
+    PROCESSED_STOP, // node processed by the plugin, do not process node with other plugins
     PROCESSED_CONTINUE, // node processed by plugin, process node with other plugins as well
     FAILED, // node processing failed
 }
@@ -380,9 +379,11 @@ interface PlantUmlBuilderPluginListener {
 
 === Base reference
 
+Following keywords can be used by the <<plantumlbuilder>>.
+
 ==== `plantuml`
 
-Represetns <<platumlbuilder>> root node mark (not present in PlantUML text). It is possible to pass text to be placed after `@startuml` (e.g. image name).
+Represents <<plantumlbuilder>> root node mark (not present in PlantUML text). It is possible to pass text to be placed after `@startuml` (e.g. image name).
 
 Examples:
 
@@ -448,6 +449,50 @@ title My diagram
 ----
 |=====
 
+==== `note`
+
+Attribute: `as` (optional), `pos` (optional)
+
+Example(s):
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+note("MyNote")
+----- a| 
+----
+note MyNote
+----
+a|
+[source,java]
+-----
+note("My note", as: "MyNote")
+----- a| 
+----
+note My note as MyNote
+----
+a|
+[source,java]
+-----
+note("MyNote", pos: "right")
+----- a| 
+----
+note right : MyNote
+----
+|=====
+
+== Plugins
+
+=== Plantumlbuilder sequence plugin
+
+See `PlantUmlBuilderSeqPluginTest` for more information and examples.
+
+Following keywords are supported (added) by the sequence plugin.
+
 ==== `participant` and `actor`
 
 Attribute: `as` (optional)
@@ -492,62 +537,20 @@ actor My Actor as MyActor
 ----
 |=====
 
-==== `note`
-
-Attribute: `as` (optional), `pos` (optional)
-
-Example(s):
-
-[options="header"]
-|=====
-|<<plantumlbuilder>> | PlantUML
-
-a|
-[source,java]
------
-note("MyNote")
------ a| 
-----
-note MyNote
-----
-a|
-[source,java]
------
-note("My note", as: "MyNote")
------ a| 
-----
-note My note as MyNote
-----
-a|
-[source,java]
------
-note("MyNote", pos: "right")
------ a| 
-----
-note right : MyNote
-----
-|=====
-
-== Plugins
-
-=== Pluntumlbuilder sequence plugin
-
-See `PlantUmlBuilderSeqPluginTest` for more information and examples.
-
 ==== `msg`
 
 Sequence diagram message.
 
 Attributes (all optional):
 
-* `to`
-* `noReturn`
-* `text`
-* `returnText`
-* `type`
-* `returnType`
-* `activate`
-* `close`
+* `to` (_string_ - existing `actor`, `participant`, etc.)
+* `noReturn` (_boolean_)
+* `text` (_string_)
+* `returnText` (_string_)
+* `type` (_string_)
+* `returnType` (_string_)
+* `activate` (_boolean_ or _string_ - activation color)
+* `close`  (_string_ - "activate" or "destroy")
 
 [options="header"]
 |=====
@@ -562,27 +565,206 @@ msg("A")
 A -> A
 ----
 a|
-TODO
+Create a message with _self_ arrow.
+
+a|
+[source,java]
+-----
+msg("A", to: "B") {
+...
+}
+----- a| 
+----
+A -> B 
+...
+B --> A
+----
+a|
+Create message from `A` to `B` with automatic return arrow from `B` to `A`
+
+a|
+[source,java]
+-----
+msg("A", to: "B", noReturn:true)
+----- a| 
+----
+A -> B
+----
+a|
+Create message from `A` to `B` without return arrow
+
+a|
+[source,java]
+-----
+msg("A", to: "B", text:"call B") {
+...
+}
+----- a| 
+----
+A -> B : call B
+...
+B --> A
+----
+a|
+Create message from `A` to `B` with arrow text
+
+a|
+[source,java]
+-----
+msg("A", to: "B", type: "-->") {
+...
+}
+----- a| 
+----
+A --> B 
+...
+B --> A
+----
+a|
+Create message from `A` to `B` with different arrow type (same as return arrow)
+
+a|
+[source,java]
+-----
+msg("A", to: "B", activate: "true") {
+...
+}
+----- a| 
+----
+A -> B : call B
+activate B
+...
+B --> A
+----
+a|
+Create message from `A` to `B` with activation of the second participant
+
+a|
+[source,java]
+-----
+msg("A", to: "B", text:"call B", close: "deactivate") {
+...
+}
+----- 
+[source,java]
+-----
+msg("A", to: "B", text:"call B", close: "destroy") {
+...
+}
+----- a| 
+----
+A -> B : call B
+activate B
+...
+B --> A
+deactivate B
+----
+
+----
+A -> B : call B
+activate B
+...
+B --> A
+destroy B
+----
+
+a|
+Create message from `A` to `B` with activation (automatic) nad deactivation or destroy of the second participant
+
+a|
+[source,java]
+-----
+msg("A", to: "B", returnText: "finished") {
+...
+}
+----- 
+a| 
+----
+A -> B 
+...
+B --> A : finished
+----
+
+a|
+Create message from `A` to `B` with return arrow text
+
+a|
+[source,java]
+-----
+msg("A", to: "B", returnType: "->") {
+...
+}
+----- 
+a| 
+----
+A -> B : call B
+...
+B -> A
+----
+
+a|
+Create message from `A` to `B` with different return arrow type
+
 |=====
 
-===== {{{msg}}} keyword
-
-[options="header"]
-|======
-|=Attributes|=Builder         \\PlantUML                  |
-||**builder**\\msg('A')\\\\**PlantUML**\\A -> A|
-|**to**|**builder**\\msg('A', to: 'B')\\\\**PlantUML**\\A -> B\\B --> A|
-|**noReturn**\\boolean|**builder**\\msg('A', to: 'B', noReturn: true)\\\\**PlantUML**\\A -> B|
-|**text**|**builder**\\msg('A', to: 'B', text: 'call B')\\\\**PlantUML**\\A -> B : call B\\B --> A|
-|**type**|**builder**\\msg('A', to: 'B', text: 'call B', type: '-->')\\\\**PlantUML**\\A --> B : call B\\B --> A|
-|**activate**\\boolean|**builder**\\msg('A', to: 'B', text: 'call B', activate: true)\\\\**PlantUML**\\A -> B : call B\\activate B\\B --> A|
-|**close**\\'deactivate' or 'destroy'|**builder**\\msg('A', to: 'B', text: 'call B', close: 'deactivate')\\\\**PlantUML**\\A -> B : call B\\activate B\\B --> A\\deactivate B\\\\**builder**\\msg('A', to: 'B', text: 'call B', close: 'destroy')\\\\**PlantUML**\\A -> B : call B\\activate B\\B --> A\\destroy B|
-|**returnText**|**builder**\\msg('A', to: 'B', text: 'call B', close: 'deactivate', returnText: 'finished')\\\\**PlantUML**\\A -> B : call B\\activate B\\B --> A : finished\\deactivate B|
-|**returnType**|**builder**\\msg('A', to: 'B', text: 'call B', close: 'deactivate', returnType: '->')\\\\**PlantUML**\\A -> B : call B\\activate B\\B -> A\\deactivate B|
-|======
-
-
 ==== msgAd
+
+This keyword has same meaning as the `msg` keyword. In addition, it automatically adds `close` attribute with the `deactivate` value
+(can be overwritten with the `destroy` value).
+
+
+[source,java]
+-----
+msgAd("A", to: "B") {
+...
+}
+-----
+
+is same as:
+
+[source,java]
+-----
+msg("A", to: "B", close: "deactivate") {
+...
+}
+-----
+
+`destroy` can be specified by adding `close` attribute (in this case `msg` and `msgAd` are same)
+
+
+[source,java]
+-----
+msgAd("A", to: "B", close: "destroy") {
+...
+}
+-----
+
+is same as:
+
+[source,java]
+-----
+msg("A", to: "B", close: "destroy") {
+...
+}
+-----
+
+The activation color can be specified with `activate` attribute:
+
+[source,java]
+-----
+msgAd("A", to: "B", activate: "#Green") {
+...
+}
+-----
+
+is same as:
+
+[source,java]
+-----
+msg("A", to: "B", activate: "#Green", close: "deactivate") {
+...
+}
+-----
 
 ==== `activate`
 
@@ -674,7 +856,7 @@ divider("separate")
 
 ==== `delay`
 
-Create dealy of given name
+Create delay of given name
 
 [options="header"]
 |=====
@@ -745,7 +927,7 @@ a|
 -----
 alt("condition1") {
 ...
-  else("contition2")
+  else("condition2")
 ...
 }
 ----- a| 
@@ -812,7 +994,7 @@ Create `break` frame
 a|
 [source,java]
 -----
-break("MyBreak") {
+"break"("MyBreak") {
 ...
 }
 ----- a| 
@@ -823,6 +1005,7 @@ end
 ----
 |=====
 
+NOTE: As `break` is <<groovy>> keyword, in the builder it has to be specified as string
 
 ==== `critical`
 
@@ -864,38 +1047,61 @@ ref over A,B: see diagram X
 ----
 |=====
 
-NOTE: Currenlty only one line `ref` is supported. Multiline `ref` has to be created with the `plant` keyword.
+NOTE: Currently only one line `ref` is supported. Multiline `ref` has to be created with the `plant` keyword.
+
+==== `box`
+
+Encompass participants in the box
+
+Attribute: `color` - the color of the `box`
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+a|
+[source,java]
+-----
+box("User") {
+    actor("user")
+}
+----- a| 
+----
+box User
+   actor user
+end box
+----
+
+a|
+[source,java]
+-----
+box("User", color: "#LightBlue") {
+    actor("user")
+}
+----- a| 
+----
+box User #LightBlue
+   actor user
+end box
+----
+|=====
 
 
-==== Pluntumlbuilder class plugin
+==== Plantumlbuilder class plugin
 
 See `PlantUmlBuilderClassPluginTest` for more information and examples.
 
 TODO
 
-==== Pluntumlbuilder component plugin
+==== Plantumlbuilder component plugin
 
 See `PlantUmlBuilderCompPluginTest` for more information and examples.
 
 TODO
 
 
-== Plantuml builder Ivy repository for gradle ===
+== Plantuml Maven repository ===
 
-TODO
+The <<plantumlbuilder>> has been accepted by JCenter and is available in the JCenter Maven repository.
+It can be automatically used with Groovy `@Grab` or in `gradle`. There is no need to download and
+maintain `jar` files.
 
-Unfortunately bitbucket does not provide a way to support custom repository for gradle dependencies. It is possible to use github.
-
-[source,java]
------
-repositories {        
-        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-                name = 'bubbleswayrepo'
-                addArtifactPattern('http://cloud.github.com/downloads/bubblesway/bubbleswayrepo/[artifact]-[revision](-[classifier])(.[ext])')
-        }
-}
-
-dependencies {      
-        compile group: 'cz.atlas.bubbles.it', name: 'plantumlbuilder', version: '0.2.0'
-}
------
