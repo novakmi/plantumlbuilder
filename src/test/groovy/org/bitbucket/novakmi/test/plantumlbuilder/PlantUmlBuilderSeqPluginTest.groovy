@@ -3,13 +3,13 @@
 
 package org.bitbucket.novakmi.test.plantumlbuilder
 
+import org.bitbucket.novakmi.nodebuilder.BuilderException
 import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilder
 import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderSeqPlugin
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.testng.annotations.Test
 import org.testng.Assert
-import org.bitbucket.novakmi.nodebuilder.BuilderException
+import org.testng.annotations.Test
 
 class PlantUmlBuilderSeqPluginTest {
 
@@ -540,6 +540,96 @@ end box
 
                 logger.trace("<== plantSeqBoxTest")
         }
+
+        @Test(groups = ["basic"])
+        public void plantSeqParticipantTest() {
+                logger.trace("==> plantSeqAltTest")
+                def builder = new PlantUmlBuilder() // new instance
+                builder.registerPlugin(new PlantUmlBuilderSeqPlugin())
+                def _participant = 'pA'
+                def _actor = 'aA'
+                def _boundary = 'bA'
+                def _control = 'cA'
+                def _entity = 'eA'
+                def _database = 'dA'
+                builder.plantuml {
+                        participant(_participant)
+                        participant(_participant + "C", color: "#red")
+                        participant("\"Second ${_participant}\"", as: _participant+"2")
+                        participant("\"Third ${_participant}\"", as: _participant+"3", stereotype: "database")
+                        participant("\"Fourth ${_participant}\"", as: _participant+"4", stereotype: "database", color: "#green")
+                        participant("\"Fifth ${_participant}\"", as: _participant+"5", stereotype: "(C,#ADD1B2) database", color: "#blue")
+
+                        actor(_actor)
+                        actor(_actor + "C", color: "#red")
+                        actor("\"Second ${_actor}\"", as: _actor+"2")
+                        actor("\"Third ${_actor}\"", as: _actor+"3", stereotype: "actor")
+                        actor("\"Fourth ${_actor}\"", as: _actor+"4", stereotype: "actor", color: "#green")
+
+                        boundary(_boundary)
+                        boundary(_boundary+"C", color: "#red")
+                        boundary("\"Second ${_boundary}\"", as: _boundary+"2")
+                        boundary("\"Third ${_boundary}\"", as: _boundary+"3", stereotype: "boundary")
+                        boundary("\"Fourth ${_boundary}\"", as: _boundary+"4", stereotype: "boundary", color: "#green")
+
+                        control(_control)
+                        control(_control+"C", color: "#red")
+                        control("\"Second ${_control}\"", as: _control+"2")
+                        control("\"Third ${_control}\"", as: _control+"3", stereotype: "control")
+                        control("\"Fourth ${_control}\"", as: _control+"4", stereotype: "control", color: "#green")
+
+                        entity(_entity)
+                        entity(_entity+"C", color: "#red")
+                        entity("\"Second ${_entity}\"", as: _entity+"2")
+                        entity("\"Third ${_entity}\"", as: _entity+"3", stereotype: "entity")
+                        entity("\"Fourth ${_entity}\"", as: _entity+"4", stereotype: "entity", color: "#green")
+
+                        database(_database)
+                        database(_database+"C", color: "#red")
+                        database("\"Second ${_database}\"", as: _database+"2")
+                        database("\"Third ${_database}\"", as: _database+"3", stereotype: "database")
+                        database("\"Fourth ${_database}\"", as: _database+"4", stereotype: "database", color: "#green")
+                        database("\"Fifth ${_database}\"", as: _database+"5", stereotype: "(D,#ADD1B2) database", color: "#blue")
+                }
+                Assert.assertEquals(builder.getText(),
+                        """@startuml
+participant pA
+participant pAC #red
+participant "Second pA" as pA2
+participant "Third pA" as pA3 <<database>>
+participant "Fourth pA" as pA4 <<database>> #green
+participant "Fifth pA" as pA5 <<(C,#ADD1B2) database>> #blue
+actor aA
+actor aAC #red
+actor "Second aA" as aA2
+actor "Third aA" as aA3 <<actor>>
+actor "Fourth aA" as aA4 <<actor>> #green
+boundary bA
+boundary bAC #red
+boundary "Second bA" as bA2
+boundary "Third bA" as bA3 <<boundary>>
+boundary "Fourth bA" as bA4 <<boundary>> #green
+control cA
+control cAC #red
+control "Second cA" as cA2
+control "Third cA" as cA3 <<control>>
+control "Fourth cA" as cA4 <<control>> #green
+entity eA
+entity eAC #red
+entity "Second eA" as eA2
+entity "Third eA" as eA3 <<entity>>
+entity "Fourth eA" as eA4 <<entity>> #green
+database dA
+database dAC #red
+database "Second dA" as dA2
+database "Third dA" as dA3 <<database>>
+database "Fourth dA" as dA4 <<database>> #green
+database "Fifth dA" as dA5 <<(D,#ADD1B2) database>> #blue
+@enduml""")
+                PlantUmlBuilderTest.assertPlantFile(builder)
+                logger.trace("<== plantSeqAltTest")
+        }
+
 
     private static final Logger logger = LoggerFactory.getLogger(PlantUmlBuilderSeqPluginTest.class);
 }

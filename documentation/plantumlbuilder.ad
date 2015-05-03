@@ -493,9 +493,12 @@ See `PlantUmlBuilderSeqPluginTest` for more information and examples.
 
 Following keywords are supported (added) by the sequence plugin.
 
-==== `participant` and `actor`
+==== `participant`, `actor`, `boundary`, `control`, `entity` and `database`
 
-Attribute: `as` (optional)
+Attributes: 
+`as` (optional)
+`color` (optional)
+`stereotype` (optional)
 
 Example(s):
 
@@ -522,6 +525,14 @@ participant My Participant as MyParticipant
 a|
 [source,java]
 -----
+participant("MyParticipant", color: "#red")
+----- a| 
+----
+participant MyParticipant #red
+----
+a|
+[source,java]
+-----
 actor("MyActor")
 ----- a| 
 ----
@@ -530,12 +541,14 @@ actor MyActor
 a|
 [source,java]
 -----
-actor("My Actor", as: "MyActor")
+actor("My Actor", as: "MyActor", stereotype: "person")
 ----- a| 
 ----
-actor My Actor as MyActor
+actor My Actor as MyActor <<person>>
 ----
 |=====
+
+NOTE: In similar way use `boundary`, `control`, `entity` and `database`
 
 ==== `msg`
 

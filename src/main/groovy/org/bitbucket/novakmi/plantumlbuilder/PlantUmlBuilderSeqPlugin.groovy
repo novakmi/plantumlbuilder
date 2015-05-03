@@ -3,10 +3,10 @@
 
 package org.bitbucket.novakmi.plantumlbuilder
 
+import org.bitbucket.novakmi.nodebuilder.BuilderException
 import org.bitbucket.novakmi.nodebuilder.BuilderNode
 import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
 import org.bitbucket.novakmi.nodebuilder.PluginResult
-import org.bitbucket.novakmi.nodebuilder.BuilderException
 
 class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
 
@@ -50,15 +50,16 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
 
                 switch (node.name) {
                         case 'actor':
+                        case 'boundary':
+                        case 'control':
+                        case 'entity':
+                        case 'database':
                         case 'participant':
                                 if (!postProcess) {
                                         out.printIndent()
                                         out.print(node.name)
-                                        if (node.attributes.as) {
-                                                out.println(" $node.value as $node.attributes.as")
-                                        } else {
-                                                out.println(" $node.value")
-                                        }
+                                        out.println(" ${node.value}${node?.attributes?.as ? " as ${node.attributes.as}" : ""}"+
+                                                    "${node?.attributes?.stereotype ? " <<${node.attributes.stereotype}>>" : ""}${node.attributes.color ? " ${node.attributes.color}" : ""}")
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
                                 break
