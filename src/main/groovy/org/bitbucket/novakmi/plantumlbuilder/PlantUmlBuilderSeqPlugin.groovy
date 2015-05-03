@@ -167,6 +167,18 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                 process("$node.name $node.value")
                                 retVal = PluginResult.PROCESSED_FULL
                                 break
+                        case 'rnote':
+                        case 'hnote':
+                                if (!postProcess) {
+                                        if (!node.attributes.pos) {
+                                                throw new BuilderException("NodeBuilderPlugin: ${BuilderNode.getNodePath(node)} '${node.name}' requires 'pos' attribute")
+                                        }
+                                        opaque.printIndent()
+                                        opaque.print(node.name)
+                                        opaque.println(" ${node?.attributes.pos ? "${node.attributes.pos} : " : ''}$node.value")
+                                }
+                                retVal = PluginResult.PROCESSED_FULL
+                                break
                         default:
                                 retVal = PluginResult.NOT_ACCEPTED
                                 break

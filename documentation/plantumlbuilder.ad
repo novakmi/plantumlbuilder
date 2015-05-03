@@ -485,6 +485,8 @@ note right : MyNote
 ----
 |=====
 
+NOTE: Use `\\n` in the groovy string to format note on the several lines
+
 == Plugins
 
 === Plantumlbuilder sequence plugin
@@ -1098,6 +1100,46 @@ end box
 ----
 |=====
 
+==== `hnote` and `rnote`
+
+Hexagon and retangle note for sequence diagrams.
+
+Attribute:
+`pos` (mandatroy)
+
+Example(s):
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+hnote("MyHNote", pos: "over A")
+----- a| 
+----
+hnote over A : MyHNote
+----
+a|
+[source,java]
+-----
+rnote("MyRNote", pos: "over A")
+----- a| 
+----
+rnote over A : MyRNote
+----
+a|
+[source,java]
+-----
+hnote("See\\nthis diagram", pos: "over A")
+----- a| 
+----
+rnote over A : See\nthis diagram
+----
+|=====
+
+NOTE: Use `\\n` in the groovy string to format note on the several lines
 
 ==== Plantumlbuilder class plugin
 

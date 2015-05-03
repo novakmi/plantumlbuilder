@@ -630,6 +630,34 @@ database "Fifth dA" as dA5 <<(D,#ADD1B2) database>> #blue
                 logger.trace("<== plantSeqAltTest")
         }
 
+        @Test(groups = ["basic"])
+        public void plantSeqHnoteRnoteTest() {
+                logger.trace("==> plantSeqHnoteRnoteTest")
+                def builder = new PlantUmlBuilder() // new instance
+                builder.registerPlugin(new PlantUmlBuilderSeqPlugin())
+                def a = 'A'
+                def b = 'B'
+                builder.plantuml {
+                        builder.participant(a)
+                        note("See diagram A", pos: "over $a")
+                        hnote("See diagram A", pos: "over $a")
+                        rnote("See diagram A", pos: "over $a")
+                        hnote("See\\ndiagram A", pos: "over $a")
+                        rnote("See\\ndiagram A", pos: "over $a")
+                }
+                Assert.assertEquals(builder.getText(),
+                        """@startuml
+participant A
+note over A : See diagram A
+hnote over A : See diagram A
+rnote over A : See diagram A
+hnote over A : See\\ndiagram A
+rnote over A : See\\ndiagram A
+@enduml""")
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                logger.trace("<== plantSeqHnoteRnoteTest")
+        }
 
     private static final Logger logger = LoggerFactory.getLogger(PlantUmlBuilderSeqPluginTest.class);
 }
