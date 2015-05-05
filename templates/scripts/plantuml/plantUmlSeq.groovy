@@ -100,7 +100,7 @@ builder.plantuml("Splitting diagrams") {
         msg alice, to: bob, text: "message5", noReturn: true
 }
 finalize(false)
-// this is example how to print splitted diagrams into image
+// this is example how to print splitted diagrams into images
 net.sourceforge.plantuml.SourceStringReader s = new net.sourceforge.plantuml.SourceStringReader(builder.getText())
 def cnt = s.getBlocks()[0].getDiagram().getNbImages() // count number of images (in first block) // TODO loop over all blocks?
 def ret = true
@@ -132,5 +132,131 @@ builder.plantuml("Grouping message") {
                 "else" "Another type of failure"
                 msg bob, to: alice, text: "Please repeat", noReturn: true
         }
+}
+finalize()
+
+builder.plantuml("Notes on messages") {
+        msg alice, to: bob, text: "Hello", noReturn: true
+        note "this is a first note", pos: "left"
+        msg bob, to: alice, text: "ok", noReturn: true
+        msg bob, text: "I am thinking"
+        note "this is another note", pos: "right"
+        note "a note\\ncan also be defined\\non several lines", pos: "left" //TODO no block note support yet
+}
+finalize()
+
+builder.plantuml("Some other notes") {
+        participant alice
+        participant bob
+        note "This is displayed\\nleft of ${alice}.", pos: "left of ${alice} #aqua" //TODO better color handling
+        note "This is displayed right of ${alice}.", pos: "right of ${alice}"
+        note "This is displayed over ${alice}.", pos: "over ${alice}"
+        note "This is displayed\\n  over ${bob} and ${alice}.", pos: "over ${bob},${alice} #FFAAAA"
+        note "This is yet another\\nexample of\\na long note.", pos: "over ${bob},${alice}"
+}
+finalize()
+
+builder.plantuml("Changing note shapes") {
+        msg "caller", to: "server", text: "conReq", returnType: "->", returnText: "conConf", {
+                hnote "idle", pos: "over caller" //notice how to nest elements
+        }
+        rnote '"r" as rectangle\\n"h" as hexagon', pos: "over server"
+}
+finalize()
+
+// TODO Creole and HTML
+
+builder.plantuml("Divider") {
+        divider "Initialization"
+        msg alice, to: bob, text: "Authentication Request", returnText: "Authentication Response"
+        divider "Repetition"
+        msg alice, to: bob, text: "Another authentication Request", returnText: "Another authentication Response"
+}
+finalize()
+
+builder.plantuml("Reference") {
+        participant alice
+        actor bob
+        ref "init", over: [alice, bob]  // NOTE: use array for over
+        msg alice, to: bob, text: "hello", noReturn: true
+        ref "This can be on\\nseveral lines", over: [bob]
+}
+finalize()
+
+builder.plantuml("Delay") {
+        msg alice, to: bob, text: "Authentication Request", returnText: "Authentication Response", {
+                delay ""
+        }
+        delay "5 minutes latter"
+        msg bob, to: alice, text: "bye", noReturn: true
+}
+finalize()
+
+builder.plantuml("Lifeline Activation and Destruction") {
+        def user = "User"
+        participant user
+        msgAd user, to: "A", text: "doWork", returnText: "Done", {  // se how activate/deactivate is automatically added when block is finished
+                msgAd "A", to: "B", text: "<< createRequest >>", returnText: "RequestCreated", {
+                        msgAd "B", to: "C", text: "DoWork", returnText: "WorkDone", close: "destroy"
+                }
+        }
+}
+finalize()
+
+builder.plantuml("Lifeline Activation and Destruction with colors") {
+        def user = "User"
+        participant user
+        msgAd user, to: "A", text: "doWork", returnText: "Done", activate: "#FFBBBB", {  // color is specified as value of 'activate'
+                msgAd "A", text: "Internal call", activate: "#DarkSalmon", {
+                        msgAd "A", to: "B", text: "<< createRequest >>", returnText: "RequestCreated"
+                }
+        }
+}
+finalize()
+
+builder.plantuml("Participant creation") {
+        def other = "Other"
+        def string = "String"
+        msg alice, to: bob, text: "Hello", returnText: "ok", {
+                plant "create ${other}" // create has to be handled with plant //TODO
+                msg alice, to: other, text: "new", noReturn: true
+                plant "create control ${string}"
+                msg alice, to: string, noReturn: true
+                note "You can also put notes!", pos: "right"
+        }
+}
+finalize()
+
+// TODO
+/*
+builder.plantuml("Incoming and outgoing messages") {
+        msgAd "[", to: "A", text: "doWork", returnText: "Done", {  // se how activate/deactivate is automatically added when block is finished
+                msgAd "A", text: "Internal call", {
+                        msg "A", to: "]", text: "<< createRequest >>", noReturn: true
+                        msg "[", to: "A", text: "RequestCreated", noReturn: true, type: "-->"
+                                //returnText: "RequestCreated"
+                }
+        }
+}
+finalize()
+*/
+
+builder.plantuml("Participants encompass") {
+        def other = "Other"
+
+        box "Internal Service", color: "#LightBlue", {
+                participant bob
+                participant alice
+        }
+        msg alice, to: bob, text: "hello", noReturn: true
+        msg alice, to: other, text: "hello", noReturn: true
+
+}
+finalize()
+
+builder.plantuml("Removing Footer") {
+        plant "hide footbox" // use plant //TODO
+        title "Footer removed"
+        msg alice, to: bob, text: "Authentication Request", returnText: "Authentication Response"
 }
 finalize()
