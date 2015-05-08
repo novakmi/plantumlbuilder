@@ -659,5 +659,151 @@ rnote over A : See\\ndiagram A
                 logger.trace("<== plantSeqHnoteRnoteTest")
         }
 
-    private static final Logger logger = LoggerFactory.getLogger(PlantUmlBuilderSeqPluginTest.class);
+        @Test(groups = ["basic"])
+        public void plantSeqInOutTest() {
+                logger.trace("==> plantSeqInOutTest")
+                def builder = new PlantUmlBuilder() // new instance
+                builder.registerPlugin(new PlantUmlBuilderSeqPlugin())
+
+                def types = ["->", "o->", "o->o", "x->"]
+                builder.plantuml {
+                        msg("[", to: "A", noReturn: true)
+                        msg("]", to: "A", noReturn: true)
+                        types.each {t->
+                                msg("[", to: "A", noReturn: true, type: t)
+                                msg("]", to: "A", noReturn: true, type: t)
+                        }
+                        msg("[", to: "A", text: "i1", noReturn: true)
+                        msg("]", to: "A", text: "o1", noReturn: true)
+                        types.eachWithIndex { t, i ->
+                                msg("[", to: "A", text: "ti${i}", noReturn: true, type: t)
+                                msg("]", to: "A", text: "to${i}", noReturn: true, type: t)
+                        }
+                        msg("[", to: "A", text: "i2")
+                        msg("]", to: "A", text: "o2")
+                        types.eachWithIndex { t, i ->
+                                msg("[", to: "A", text: "tri${i}", type: t)
+                                msg("]", to: "A", text: "tro${i}", type: t)
+                                msg("[", to: "A", text: "trri${i}", returnType: t)
+                                msg("]", to: "A", text: "trro${i}", returnType: t)
+                        }
+                        msg("[", to: "A", text: "i3", returnText: "ri3")
+                        msg("]", to: "A", text: "o3", returnText: "ro3")
+                        msgAd("[", to: "A", text: "adi4")
+                        msgAd("]", to: "A", text: "ado4")
+                        types.eachWithIndex { t, i ->
+                                msgAd("[", to: "A", text: "tadi${i}", type: t)
+                                msgAd("]", to: "A", text: "tado${i}", type: t)
+                        }
+                }
+                Assert.assertEquals(builder.getText(),
+                        """@startuml
+[-> A
+A ->]
+[-> A
+A ->]
+[o-> A
+A o->]
+[o->o A
+A o->o]
+[x-> A
+A x->]
+[-> A : i1
+A ->] : o1
+[-> A : ti0
+A ->] : to0
+[o-> A : ti1
+A o->] : to1
+[o->o A : ti2
+A o->o] : to2
+[x-> A : ti3
+A x->] : to3
+[-> A : i2
+[<-- A
+A ->] : o2
+A <--]
+[-> A : tri0
+[<-- A
+A ->] : tro0
+A <--]
+[-> A : trri0
+[<- A
+A ->] : trro0
+A <-]
+[o-> A : tri1
+[<-- A
+A o->] : tro1
+A <--]
+[-> A : trri1
+[<-o A
+A ->] : trro1
+A <-o]
+[o->o A : tri2
+[<-- A
+A o->o] : tro2
+A <--]
+[-> A : trri2
+[o<-o A
+A ->] : trro2
+A o<-o]
+[x-> A : tri3
+[<-- A
+A x->] : tro3
+A <--]
+[-> A : trri3
+[<-x A
+A ->] : trro3
+A <-x]
+[-> A : i3
+[<-- A : ri3
+A ->] : o3
+A <--] : ro3
+[-> A : adi4
+activate A
+[<-- A
+deactivate A
+A ->] : ado4
+activate A
+A <--]
+deactivate A
+[-> A : tadi0
+activate A
+[<-- A
+deactivate A
+A ->] : tado0
+activate A
+A <--]
+deactivate A
+[o-> A : tadi1
+activate A
+[<-- A
+deactivate A
+A o->] : tado1
+activate A
+A <--]
+deactivate A
+[o->o A : tadi2
+activate A
+[<-- A
+deactivate A
+A o->o] : tado2
+activate A
+A <--]
+deactivate A
+[x-> A : tadi3
+activate A
+[<-- A
+deactivate A
+A x->] : tado3
+activate A
+A <--]
+deactivate A
+@enduml""")
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                logger.trace("<== plantSeqInOutTest")
+        }
+
+
+        private static final Logger logger = LoggerFactory.getLogger(PlantUmlBuilderSeqPluginTest.class);
 }

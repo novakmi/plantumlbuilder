@@ -227,19 +227,14 @@ builder.plantuml("Participant creation") {
 }
 finalize()
 
-// TODO
-/*
 builder.plantuml("Incoming and outgoing messages") {
         msgAd "[", to: "A", text: "doWork", returnText: "Done", {  // se how activate/deactivate is automatically added when block is finished
                 msgAd "A", text: "Internal call", {
-                        msg "A", to: "]", text: "<< createRequest >>", noReturn: true
-                        msg "[", to: "A", text: "RequestCreated", noReturn: true, type: "-->"
-                                //returnText: "RequestCreated"
+                        msg "]", to: "A", text: "<< createRequest >>", returnText:  "RequestCreated"
                 }
         }
 }
 finalize()
-*/
 
 builder.plantuml("Participants encompass") {
         def other = "Other"
