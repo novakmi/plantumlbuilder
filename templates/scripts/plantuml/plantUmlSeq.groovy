@@ -108,17 +108,16 @@ finalize()
 
 //TODO legend
 
-// TODO splitting  - newpage keyword
 builder.plantuml("Splitting diagrams") {
         msg alice, to: bob, text: "message1", noReturn: true
         msg alice, to: bob, text: "message1", noReturn: true
 
-        plant("newpage")
+        newpage()
 
         msg alice, to: bob, text: "message2", noReturn: true
         msg alice, to: bob, text: "message3", noReturn: true
 
-        plant("newpage A title for the\\nlast page")
+        newpage "A title for the\\nlast page"
 
         msg alice, to: bob, text: "message4", noReturn: true
         msg alice, to: bob, text: "message5", noReturn: true

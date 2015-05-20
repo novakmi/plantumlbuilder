@@ -449,6 +449,40 @@ title My diagram
 ----
 |=====
 
+==== `newpage`
+
+Example(s):
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+newpage()
+----- a| 
+----
+newpage
+----
+a|
+[source,java]
+-----
+newpage "Page break"
+----- a| 
+----
+newpage Page break
+----
+a|
+[source,java]
+-----
+newpage "Page break\\nmore lines"
+----- a| 
+----
+newpage Page break\nmore lines
+----
+|=====
+
 ==== `note`
 
 Attribute: `as` (optional), `pos` (optional)

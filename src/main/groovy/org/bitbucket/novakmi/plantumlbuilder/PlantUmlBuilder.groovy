@@ -30,6 +30,14 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
                                 opaque.printIndent()
                                 opaque.println("title $node.value")
                                 break
+                        case 'newpage':
+                                opaque.printIndent()
+                                opaque.print(node.name)
+                                if (node.value) {
+                                        opaque.print(" ${node.value}")
+                                }
+                                opaque.println()
+                                break
                         case 'note':
                                 opaque.printIndent()
                                 opaque.print(node.name)

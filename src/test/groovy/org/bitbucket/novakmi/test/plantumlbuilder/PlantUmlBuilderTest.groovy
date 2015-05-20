@@ -246,6 +246,30 @@ end note
         logger.trace("<== plantPlainKeywordsTest")
     }
 
+    @Test(groups = ["basic"])
+    public void plantNewpageTest() {
+        logger.trace("==> plantNewpageTest")
+        def builder = new PlantUmlBuilder() // new instance
+
+        builder.plantuml {
+            plant('participant A')
+            newpage()
+            plant('participant B')
+            newpage "New page title"
+            plant('participant C')
+            newpage "New page title\\nmore lines"
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true),
+                """participant A
+newpage
+participant B
+newpage New page title
+participant C
+newpage New page title\\nmore lines
+""")
+        assertPlantFile(builder)
+        logger.trace("<== plantNewpageTest")
+    }
     //Initialize logging
     private static final Logger logger = LoggerFactory.getLogger(PlantUmlBuilderTest.class);
 }
