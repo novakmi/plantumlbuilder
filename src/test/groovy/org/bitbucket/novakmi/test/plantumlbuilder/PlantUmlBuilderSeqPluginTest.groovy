@@ -805,5 +805,52 @@ deactivate A
         }
 
 
+        @Test(groups = ["basic"])
+        public void plantSeqAutonumberTest() {
+                logger.trace("==> plantSeqAutonumberTest")
+                def builder = new PlantUmlBuilder() // new instance
+                builder.registerPlugin(new PlantUmlBuilderSeqPlugin())
+                def a = 'A'
+                def b = 'B'
+                builder.plantuml {
+                        autonumber()
+                        msg a, to: b, text: "Request", returnText: "Response"
+                        autonumber 15
+                        msg a, to: b, text: "Request", returnText: "Response"
+                        autonumber 40, step: 10
+                        msg a, to: b, text: "Request", returnText: "Response"
+                        autonumber format: "<b>[000]"
+                        msg a, to: b, text: "Request", returnText: "Response"
+                        autonumber 15, format: "<b>(<u>##</u>)"
+                        msg a, to: b, text: "Request", returnText: "Response"
+                        autonumber 40, step: 10, format: "<font color=red><b>Message 0"
+                        msg a, to: b, text: "Request", returnText: "Response"
+                }
+                Assert.assertEquals(builder.getText(),
+                        """@startuml
+autonumber
+A -> B : Request
+B --> A : Response
+autonumber 15
+A -> B : Request
+B --> A : Response
+autonumber 40 10
+A -> B : Request
+B --> A : Response
+autonumber "<b>[000]"
+A -> B : Request
+B --> A : Response
+autonumber 15 "<b>(<u>##</u>)"
+A -> B : Request
+B --> A : Response
+autonumber 40 10 "<font color=red><b>Message 0"
+A -> B : Request
+B --> A : Response
+@enduml""")
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                logger.trace("<== plantSeqAutonumberTest")
+        }
+
         private static final Logger logger = LoggerFactory.getLogger(PlantUmlBuilderSeqPluginTest.class);
 }

@@ -231,6 +231,23 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
                                 break
+                        case 'autonumber':
+                                if (!postProcess) {
+                                        out.printIndent()
+                                        out.print(node.name)
+                                        if (node.value) {
+                                                out.print" ${node.value}"
+                                        }
+                                        if (node?.attributes?.step) {
+                                                out.print(" ${node?.attributes?.step}")
+                                        }
+                                        if (node?.attributes?.format) {
+                                                out.print(" \"${node?.attributes?.format}\"")
+                                        }
+                                        out.println("")
+                                }
+                                retVal = PluginResult.PROCESSED_FULL
+                                break
                         default:
                                 retVal = PluginResult.NOT_ACCEPTED
                                 break

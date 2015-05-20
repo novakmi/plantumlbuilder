@@ -74,7 +74,31 @@ builder.plantuml("Change arrow color") {
 }
 finalize()
 
-// TODO autonumber
+builder.plantuml("Message sequence numbering") {
+        autonumber()
+        msg bob, to: alice, text: "Authentication Request", returnText: "Authentication Response"
+}
+finalize()
+
+builder.plantuml("Message sequence numbering 2") {
+        autonumber()
+        msg bob, to: alice, text: "Authentication Request", returnText: "Authentication Response"
+        autonumber(15)
+        msg bob, to: alice, text: "Authentication Request", returnText: "Authentication Response"
+        autonumber(40, step: 10)
+        msg bob, to: alice, text: "Authentication Request", returnText: "Authentication Response"
+}
+finalize()
+
+builder.plantuml("Message sequence numbering 3") {
+        autonumber(format:"<b>[000]")
+        msg bob, to: alice, text: "Authentication Request", returnText: "Authentication Response"
+        autonumber(15, format: "<b>(<u>##</u>)")
+        msg bob, to: alice, text: "Authentication Request", returnText: "Authentication Response"
+        autonumber(40, step: 10, format: "<font color=red><b>Message 0  ")
+        msg bob, to: alice, text: "Authentication Request", returnText: "Authentication Response"
+}
+finalize()
 
 builder.plantuml("Tilte") {
         title "Simple communication example"

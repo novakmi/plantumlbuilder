@@ -722,6 +722,9 @@ Create message from `A` to `B` with different return arrow type
 
 |=====
 
+NOTE: Incomming and Outcomming messages are also supported with use of `[` and `]`. For example `msg("[", to: "A")` or `msg("]", to: "A", text: "o2")`
+
+
 ==== msgAd
 
 This keyword has same meaning as the `msg` keyword. In addition, it automatically adds `close` attribute with the `deactivate` value
@@ -850,6 +853,64 @@ destroy("A")
 destroy A
 ----
 |=====
+
+==== `autonumber`
+
+Specify arrow numbering
+
+value: numbering start (optional)
+
+Attributes:
+
+`step`: numbering step
+`format`: numbering format
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+autonumber()
+----- a| 
+----
+autonumber
+----
+a|
+[source,java]
+-----
+autonumber 15
+----- a| 
+----
+autonumber 15
+----
+a|
+[source,java]
+-----
+autonumber 40 15
+----- a| 
+----
+autonumber 40 15
+----
+a|
+[source,java]
+-----
+autonumber format: "<b>[000]" 
+----- a| 
+----
+autonumber "<b>[000]"
+----
+a|
+[source,java]
+-----
+autonumber 40, step: 10, format: "<font color=red><b>Message 0"
+----- a| 
+----
+autonumber 40 10 "<font color=red><b>Message 0"
+----
+|=====
+
 
 ==== `divider`
 
