@@ -241,9 +241,9 @@ builder.plantuml("Participant creation") {
         def other = "Other"
         def string = "String"
         msg alice, to: bob, text: "Hello", returnText: "ok", {
-                plant "create ${other}" // create has to be handled with plant //TODO
+                create other
                 msg alice, to: other, text: "new", noReturn: true
-                plant "create control ${string}"
+                create string, type: "control"
                 msg alice, to: string, noReturn: true
                 note "You can also put notes!", pos: "right"
         }

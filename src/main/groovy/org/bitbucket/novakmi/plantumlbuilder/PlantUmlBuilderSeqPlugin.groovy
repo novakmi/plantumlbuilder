@@ -147,6 +147,27 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
                                 break
+                        case 'create':
+                                if (!postProcess) {
+                                        out.printIndent()
+                                        out.print(node.name)
+                                        if (node?.attributes?.type) {
+                                                out.print(" ${node?.attributes?.type}")
+                                        }
+                                        out.print(" ${node.value}")
+                                        if (node?.attributes?.stereotype) {
+                                                out.print(" <<${node.attributes.stereotype}>>")
+                                        }
+                                        if (node?.attributes?.as) {
+                                                out.print(" as ${node?.attributes?.as}")
+                                        }
+                                        if (node?.attributes?.color) { // TODO color not working unless type or stereotype is specified
+                                                out.print(" ${node.attributes.color}")
+                                        }
+                                        out.println("")
+                                }
+                                retVal = PluginResult.PROCESSED_FULL
+                                break
                         case 'activate':
                                 if (!postProcess) {
                                         out.printIndent()

@@ -586,6 +586,52 @@ actor My Actor as MyActor <<person>>
 
 NOTE: In similar way use `boundary`, `control`, `entity` and `database`
 
+==== `create`
+
+Attributes: 
+`type` (optional) - one of `participant`, `actor`, `boundary`, `control`, `entity` and `database` (default is `participant`)
+`as` (optional)
+`color` (optional)
+`stereotype` (optional)
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+create "MyParticipant"
+----- a| 
+----
+create MyParticipant
+----
+a|
+[source,java]
+-----
+create '"My Participant"', as: "MyParticipant"
+----- a| 
+----
+create "My Participant" as MyParticipant
+----
+a|
+[source,java]
+-----
+create '"MyParticipant"', type: "control", color: "#red")
+----- a| 
+----
+create control MyParticipant #red
+----
+a|
+[source,java]
+-----
+crreate '"My Actor"', as: "MyActor", stereotype: "person", type: "actor"
+----- a| 
+----
+create actor "My Actor" as MyActor <<person>>
+----
+|=====
+
 ==== `msg`
 
 Sequence diagram message.

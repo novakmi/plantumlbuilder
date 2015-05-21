@@ -852,5 +852,65 @@ B --> A : Response
                 logger.trace("<== plantSeqAutonumberTest")
         }
 
+        @Test(groups = ["basic"])
+        public void plantSeqCreateTest() {
+                logger.trace("==> plantSeqCreateTest")
+                def builder = new PlantUmlBuilder() // new instance
+                builder.registerPlugin(new PlantUmlBuilderSeqPlugin())
+                builder.plantuml {
+                        create "A"
+                        create "B", stereotype: "part"
+                        create "Cred", stereotype: "part", color: "#red"
+                        create '"My D"', as: "MyD"
+                        ["control", "participant", "actor", "boundary", "entity", "database"].each { p ->
+                                create "${p}A", type: p
+                                create "${p}B", type: p, stereotype: "part"
+                                create "${p}Cred", type: p, stereotype: "part", color: "#red"
+                                create "${p}Dgreen", type: p, color: "#green"
+                                create "\"${p} E blue\"", type: p, color: "#blue"
+                        }
+                }
+                Assert.assertEquals(builder.getText(),
+                        """@startuml
+create A
+create B <<part>>
+create Cred <<part>> #red
+create "My D" as MyD
+create control controlA
+create control controlB <<part>>
+create control controlCred <<part>> #red
+create control controlDgreen #green
+create control "control E blue" #blue
+create participant participantA
+create participant participantB <<part>>
+create participant participantCred <<part>> #red
+create participant participantDgreen #green
+create participant "participant E blue" #blue
+create actor actorA
+create actor actorB <<part>>
+create actor actorCred <<part>> #red
+create actor actorDgreen #green
+create actor "actor E blue" #blue
+create boundary boundaryA
+create boundary boundaryB <<part>>
+create boundary boundaryCred <<part>> #red
+create boundary boundaryDgreen #green
+create boundary "boundary E blue" #blue
+create entity entityA
+create entity entityB <<part>>
+create entity entityCred <<part>> #red
+create entity entityDgreen #green
+create entity "entity E blue" #blue
+create database databaseA
+create database databaseB <<part>>
+create database databaseCred <<part>> #red
+create database databaseDgreen #green
+create database "database E blue" #blue
+@enduml""")
+                PlantUmlBuilderTest.assertPlantFile(builder)
+
+                logger.trace("<== plantSeqCreateTest")
+        }
+
         private static final Logger logger = LoggerFactory.getLogger(PlantUmlBuilderSeqPluginTest.class);
 }
