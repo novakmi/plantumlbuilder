@@ -248,7 +248,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                         }
                                         opaque.printIndent()
                                         opaque.print(node.name)
-                                        opaque.println(" ${node?.attributes.pos ? "${node.attributes.pos} : " : ''}$node.value")
+                                        opaque.println(" ${node?.attributes.pos ? "${node.attributes.pos}${node.attributes?.color ? " #${node.attributes.color}":""} : " : ''}$node.value")
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
                                 break
