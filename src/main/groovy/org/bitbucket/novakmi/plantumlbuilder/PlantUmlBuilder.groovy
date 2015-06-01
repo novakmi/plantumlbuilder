@@ -19,6 +19,29 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
                 super(indent, plugins)
         }
 
+        /**
+         * Helper function to handle multiline print of node value
+         * @param node
+         * @return
+         */
+        public static handleMultilinePrint(opaque, node) {
+                def lines = node.value.readLines()
+                opaque.print(" ${node.attributes.pos ? "${node.attributes.pos}${node.attributes?.color ? " #${node.attributes.color}" : ""}" : ''}")
+                if (lines.size() == 1) {
+                        opaque.print("${node.attributes.pos ? " : " : ""}${lines[0]}")
+                } else {
+                        opaque.println()
+                        lines = TextPluginTreeNodeBuilder.trimAndQuoteLines(lines)
+                        opaque.incrementIndent()
+                        lines.each { l ->
+                                opaque.printIndent()
+                                opaque.println(l)
+                        }
+                        opaque.decrementIndent()
+                        opaque.print("end ${node.name}")
+                }
+        }
+
         @Override
         protected void processNode(BuilderNode node, Object opaque) throws BuilderException {
                 switch (node.name) {
@@ -46,21 +69,7 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
                                 if (node.attributes?.as) {
                                         opaque.print(" $node.value as $node.attributes.as")
                                 } else {
-                                        def lines =  node.value.readLines()
-                                        opaque.print(" ${node.attributes.pos ? "${node.attributes.pos}${node.attributes?.color ? " #${node.attributes.color}" : ""}" : ''}")
-                                        if (lines.size() == 1) {
-                                                opaque.print("${node.attributes.pos?" : ":""}${lines[0]}")
-                                        } else {
-                                                opaque.println()
-                                                lines = TextPluginTreeNodeBuilder.trimAndQuoteLines(lines)
-                                                opaque.incrementIndent()
-                                                lines.each { l ->
-                                                        opaque.printIndent()
-                                                        opaque.println(l)
-                                                }
-                                                opaque.decrementIndent()
-                                                opaque.print("end ${node.name}")
-                                        }
+                                        handleMultilinePrint(opaque, node)
                                 }
                                 opaque.println()
                                 break

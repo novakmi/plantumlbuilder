@@ -249,21 +249,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                 if (!postProcess) {
                                         opaque.printIndent()
                                         opaque.print(node.name)
-                                        def lines =  node.value.readLines()
-                                        opaque.print(" ${node.attributes.pos ? "${node.attributes.pos}${node.attributes?.color ? " #${node.attributes.color}" : ""}" : ''}")
-                                        if (lines.size() == 1) {
-                                                opaque.print("${node.attributes.pos?" : ":""}${lines[0]}")
-                                        } else {
-                                                opaque.println()
-                                                lines = TextPluginTreeNodeBuilder.trimAndQuoteLines(lines)
-                                                opaque.incrementIndent()
-                                                lines.each { l ->
-                                                        opaque.printIndent()
-                                                        opaque.println(l)
-                                                }
-                                                opaque.decrementIndent()
-                                                opaque.print("end ${node.name}")
-                                        }
+                                        PlantUmlBuilder.handleMultilinePrint(opaque, node)
                                         opaque.println()
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
