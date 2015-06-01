@@ -228,18 +228,17 @@ deactivate B
         builder.reset()
         builder.plantuml {
             plant('participant A')
-            plant('note left') // for multiple line note use 'plant' keyword
-            plant('a note')
-            plant('can also be defined')
-            plant('on several lines')
-            plant('end note')
+            note '''a note
+                  can also be defined
+                  on several lines''', pos: "left of A", color: "blue"
+
         }
         Assert.assertEquals(builder.getText(plainPlantUml: true),
             """participant A
-note left
-a note
-can also be defined
-on several lines
+note left of A #blue
+  a note
+  can also be defined
+  on several lines
 end note
 """)
         assertPlantFile(builder)

@@ -164,18 +164,22 @@ builder.plantuml("Notes on messages") {
         msg bob, to: alice, text: "ok", noReturn: true
         msg bob, text: "I am thinking"
         note "this is another note", pos: "right"
-        note "a note\\ncan also be defined\\non several lines", pos: "left" //TODO no block note support yet
+        note '''a note
+                can also be defined
+                on several lines''', pos: "left"
 }
 finalize()
 
 builder.plantuml("Some other notes") {
         participant alice
         participant bob
-        note "This is displayed\\nleft of ${alice}.", pos: "left of ${alice} #aqua" //TODO better color handling
+        note "This is displayed\nleft of ${alice}.", pos: "left of ${alice}", color: "aqua"
         note "This is displayed right of ${alice}.", pos: "right of ${alice}"
         note "This is displayed over ${alice}.", pos: "over ${alice}"
-        note "This is displayed\\n  over ${bob} and ${alice}.", pos: "over ${bob},${alice} #FFAAAA"
-        note "This is yet another\\nexample of\\na long note.", pos: "over ${bob},${alice}"
+        note "This is displayed\\n  over ${bob} and ${alice}.", pos: "over ${bob},${alice}", color: "FFAAAA"
+        note '''This is yet another
+                example of
+                a long note.''', pos: "over ${bob},${alice}"
 }
 finalize()
 
@@ -273,7 +277,7 @@ builder.plantuml("Participants encompass") {
 finalize()
 
 builder.plantuml("Removing Footer") {
-        plant "hide footbox" // use plant //TODO
+        hide "footbox"
         title "Footer removed"
         msg alice, to: bob, text: "Authentication Request", returnText: "Authentication Response"
 }

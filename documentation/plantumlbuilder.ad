@@ -517,9 +517,26 @@ note("MyNote", pos: "right")
 ----
 note right : MyNote
 ----
+a|
+[source,java]
+-----
+ note ('''a note
+            can also be defined
+         on several lines  ''', pos: "left of A", color: "blue")
+----- a| 
+----
+note left of A #blue
+  a note
+  can also be defined
+  on several lines
+end note
+----
 |=====
 
-NOTE: Use `\\n` in the groovy string to format note on the several lines
+NOTE: Use groovy multiline string or `\n` to create multiline notes. Multiline notes are automatically
+      trimmed and indented.
+
+NOTE: Use `\\n` in the groovy string to format one line note on the several lines
 
 == Plugins
 

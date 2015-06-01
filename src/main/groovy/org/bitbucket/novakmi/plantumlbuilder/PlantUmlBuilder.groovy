@@ -27,8 +27,10 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
                                 opaque.println(node.value)
                                 break
                         case 'title':
+                        case 'hide':
+                        case 'show':
                                 opaque.printIndent()
-                                opaque.println("title $node.value")
+                                opaque.println("$node.name $node.value")
                                 break
                         case 'newpage':
                                 opaque.printIndent()
@@ -41,11 +43,26 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
                         case 'note':
                                 opaque.printIndent()
                                 opaque.print(node.name)
-                                if (node.attributes.as) {
-                                        opaque.println(" $node.value as $node.attributes.as")
+                                if (node.attributes?.as) {
+                                        opaque.print(" $node.value as $node.attributes.as")
                                 } else {
-                                        opaque.println(" ${node.attributes.pos ? "${node.attributes.pos} : " : ''}$node.value")
+                                        def lines =  node.value.readLines()
+                                        opaque.print(" ${node.attributes.pos ? "${node.attributes.pos}${node.attributes?.color ? " #${node.attributes.color}" : ""}" : ''}")
+                                        if (lines.size() == 1) {
+                                                opaque.print("${node.attributes.pos?" : ":""}${lines[0]}")
+                                        } else {
+                                                opaque.println()
+                                                lines = TextPluginTreeNodeBuilder.trimAndQuoteLines(lines)
+                                                opaque.incrementIndent()
+                                                lines.each { l ->
+                                                        opaque.printIndent()
+                                                        opaque.println(l)
+                                                }
+                                                opaque.decrementIndent()
+                                                opaque.print("end ${node.name}")
+                                        }
                                 }
+                                opaque.println()
                                 break
                         case 'plantuml':
                                 if (root == node) {
