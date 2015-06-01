@@ -644,6 +644,11 @@ database "Fifth dA" as dA5 <<(D,#ADD1B2) database>> #blue
                         rnote("See diagram A", pos: "over $a")
                         hnote("See\\ndiagram A", pos: "over $a")
                         rnote("See\\ndiagram A", pos: "over $a")
+                        hnote("See\\ndiagram A", pos: "over $a", color: "green")
+                        rnote("See\\ndiagram A", pos: "over $a", color: "green")
+                        hnote('''See multiline
+                                 hnote for diagram A''', pos: "over $a", color: "green")
+                        rnote("See multiline\nrnote for diagram A", pos: "over $a", color: "green")
                 }
                 Assert.assertEquals(builder.getText(),
                         """@startuml
@@ -653,6 +658,16 @@ hnote over A : See diagram A
 rnote over A : See diagram A
 hnote over A : See\\ndiagram A
 rnote over A : See\\ndiagram A
+hnote over A #green : See\\ndiagram A
+rnote over A #green : See\\ndiagram A
+hnote over A #green
+  See multiline
+  hnote for diagram A
+end hnote
+rnote over A #green
+  See multiline
+  rnote for diagram A
+end rnote
 @enduml""")
                 PlantUmlBuilderTest.assertPlantFile(builder)
 

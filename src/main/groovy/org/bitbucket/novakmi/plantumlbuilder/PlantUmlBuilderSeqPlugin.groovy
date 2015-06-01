@@ -7,6 +7,7 @@ import org.bitbucket.novakmi.nodebuilder.BuilderException
 import org.bitbucket.novakmi.nodebuilder.BuilderNode
 import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
 import org.bitbucket.novakmi.nodebuilder.PluginResult
+import org.bitbucket.novakmi.nodebuilder.TextPluginTreeNodeBuilder
 
 class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
 
@@ -242,13 +243,28 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                 break
                         case 'rnote':
                         case 'hnote':
+                                if (!node.attributes.pos) {
+                                        throw new BuilderException("NodeBuilderPlugin: ${BuilderNode.getNodePath(node)} '${node.name}' requires 'pos' attribute")
+                                }
                                 if (!postProcess) {
-                                        if (!node.attributes.pos) {
-                                                throw new BuilderException("NodeBuilderPlugin: ${BuilderNode.getNodePath(node)} '${node.name}' requires 'pos' attribute")
-                                        }
                                         opaque.printIndent()
                                         opaque.print(node.name)
-                                        opaque.println(" ${node?.attributes.pos ? "${node.attributes.pos}${node.attributes?.color ? " #${node.attributes.color}":""} : " : ''}$node.value")
+                                        def lines =  node.value.readLines()
+                                        opaque.print(" ${node.attributes.pos ? "${node.attributes.pos}${node.attributes?.color ? " #${node.attributes.color}" : ""}" : ''}")
+                                        if (lines.size() == 1) {
+                                                opaque.print("${node.attributes.pos?" : ":""}${lines[0]}")
+                                        } else {
+                                                opaque.println()
+                                                lines = TextPluginTreeNodeBuilder.trimAndQuoteLines(lines)
+                                                opaque.incrementIndent()
+                                                lines.each { l ->
+                                                        opaque.printIndent()
+                                                        opaque.println(l)
+                                                }
+                                                opaque.decrementIndent()
+                                                opaque.print("end ${node.name}")
+                                        }
+                                        opaque.println()
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
                                 break

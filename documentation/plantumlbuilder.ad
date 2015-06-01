@@ -1264,6 +1264,7 @@ Hexagon and retangle note for sequence diagrams.
 
 Attribute:
 `pos` (mandatroy)
+`color`
 
 Example(s):
 
@@ -1295,9 +1296,17 @@ hnote("See\\nthis diagram", pos: "over A")
 ----
 rnote over A : See\nthis diagram
 ----
+a|
+[source,java]
+-----
+hnote("See\\nthis diagram", pos: "over A", color: "green")
+----- a| 
+----
+rnote over A #green : See\nthis diagram
+----
 |=====
 
-NOTE: Use `\\n` in the groovy string to format note on the several lines
+NOTE: `hnote` nad `rnote` support multiline handling just like regular `note`
 
 ==== Plantumlbuilder class plugin
 
