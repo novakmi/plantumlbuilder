@@ -196,10 +196,28 @@ builder.plantuml("Changing note shapes") {
 }
 finalize()
 
-// TODO Creole and HTML
+builder.plantuml("Creole and HTML") {
+        participant alice
+        participant "The **Famous** Bob", as: "Bob"
+        msg alice, to: bob, text: "hello --there--", returnText: "ok", {
+                delay "... Some ~~long delay~~ ..."
+        }
+        note '''This is **bold**
+                This is //italics//
+                This is ""monospaced""
+                This is --stroked--
+                This is __underlined__
+                This is ~~waved~~''', pos: "left"
+        msg alice, to: bob, text: "A //well formatted// message", noReturn: true
+        note '''This is <back:cadetblue><size:18>displayed</size></back>
+                __left of__ Alice.''', pos: "right of ${alice}"
+        note '''<u:red>This</u> is <color #118888>displayed</color>
+                **<color purple>left of</color> <s:red>Alice</strike> Bob**.''', pos: "left of Bob"
+        note "<w:#FF33FF>This is hosted</w> by TODO", pos: "over Alice, Bob"
+}
+finalize()
 
 builder.plantuml("Divider") {
-        divider "Initialization"
         msg alice, to: bob, text: "Authentication Request", returnText: "Authentication Response"
         divider "Repetition"
         msg alice, to: bob, text: "Another authentication Request", returnText: "Another authentication Response"
