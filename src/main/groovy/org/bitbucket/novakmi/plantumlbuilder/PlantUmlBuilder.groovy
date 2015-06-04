@@ -101,17 +101,6 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
                                         opaque.println("end ${node.name}")
                                 }
                                 break
-//                        case 'legend':
-//                                opaque.printIndent()
-//                                opaque.print(node.name)
-//                                def lines = node?.value.readLines()
-//                                if (node?.attributes?.pos) {
-//                                        opaque.print(" ${node.attributes.pos}")
-//                                }
-//                                opaque.println()
-//                                handleMultilinePrint(opaque, lines)
-//                                opaque.println("end ${node.name}")
-//                                break
                         case 'plantuml':
                                 if (root == node) {
                                         opaque.setIndentLevel(-1) //do not indent children under 'plantuml' node
