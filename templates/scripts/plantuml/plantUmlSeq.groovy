@@ -21,7 +21,7 @@ fileName = "plant_seq"
 final def alice = 'Alice'
 final def bob = 'Bob'
 final def Foo = 'Foo'
-i = 1
+i = 0
 
 void finalize(imageAndReset = true) {
         println builder.getText() // get and print PlantUML text
@@ -106,7 +106,12 @@ builder.plantuml("Tilte") {
 }
 finalize()
 
-//TODO legend
+builder.plantuml("Legend the diagram") {
+        msg alice, to: bob, text: "Hello", noReturn: true
+        legend '''Short
+                legend''', pos: "right"
+}
+finalize()
 
 builder.plantuml("Splitting diagrams") {
         msg alice, to: bob, text: "message1", noReturn: true

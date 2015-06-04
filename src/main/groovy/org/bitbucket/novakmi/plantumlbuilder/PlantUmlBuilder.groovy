@@ -24,20 +24,30 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
          * @param node
          * @return
          */
-        public static handleMultilinePrint(opaque, node) {
-                def lines = node.value.readLines()
+        public static handleMultilinePrint(opaque, lines) {
+                lines = TextPluginTreeNodeBuilder.trimAndQuoteLines(lines)
+                opaque.incrementIndent()
+                lines.each { l ->
+                        opaque.printIndent()
+                        opaque.println(l)
+                }
+                opaque.decrementIndent()
+        }
+
+        /**
+         * Helper function to handle multiline print of node value
+         * process pos and color
+         * @param node
+         * @return
+         */
+        public static handleMultilinePrintWithPosAndColor(opaque, node) {
+                def lines = node?.value.readLines()
                 opaque.print(" ${node.attributes.pos ? "${node.attributes.pos}${node.attributes?.color ? " #${node.attributes.color}" : ""}" : ''}")
                 if (lines.size() == 1) {
                         opaque.print("${node.attributes.pos ? " : " : ""}${lines[0]}")
                 } else {
                         opaque.println()
-                        lines = TextPluginTreeNodeBuilder.trimAndQuoteLines(lines)
-                        opaque.incrementIndent()
-                        lines.each { l ->
-                                opaque.printIndent()
-                                opaque.println(l)
-                        }
-                        opaque.decrementIndent()
+                        handleMultilinePrint(opaque, lines)
                         opaque.print("end ${node.name}")
                 }
         }
@@ -49,7 +59,6 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
                                 opaque.printIndent()
                                 opaque.println(node.value)
                                 break
-                        case 'title':
                         case 'hide':
                         case 'show':
                                 opaque.printIndent()
@@ -69,10 +78,40 @@ class PlantUmlBuilder extends TextPluginTreeNodeBuilder {
                                 if (node.attributes?.as) {
                                         opaque.print(" $node.value as $node.attributes.as")
                                 } else {
-                                        handleMultilinePrint(opaque, node)
+                                        handleMultilinePrintWithPosAndColor(opaque, node)
                                 }
                                 opaque.println()
                                 break
+                        case 'title':
+                        case 'footer':
+                        case 'header':
+                        case 'legend':
+                                def isLegend = node.name == "legend"
+                                opaque.printIndent()
+                                opaque.print(node.name)
+                                def lines = node?.value.readLines()
+                                if (isLegend && node?.attributes?.pos) {
+                                        opaque.print(" ${node.attributes.pos}")
+                                }
+                                if (lines.size == 1 && !isLegend) {
+                                        opaque.println(" ${node.value}")
+                                } else {
+                                        opaque.println()
+                                        handleMultilinePrint(opaque, lines)
+                                        opaque.println("end ${node.name}")
+                                }
+                                break
+//                        case 'legend':
+//                                opaque.printIndent()
+//                                opaque.print(node.name)
+//                                def lines = node?.value.readLines()
+//                                if (node?.attributes?.pos) {
+//                                        opaque.print(" ${node.attributes.pos}")
+//                                }
+//                                opaque.println()
+//                                handleMultilinePrint(opaque, lines)
+//                                opaque.println("end ${node.name}")
+//                                break
                         case 'plantuml':
                                 if (root == node) {
                                         opaque.setIndentLevel(-1) //do not indent children under 'plantuml' node

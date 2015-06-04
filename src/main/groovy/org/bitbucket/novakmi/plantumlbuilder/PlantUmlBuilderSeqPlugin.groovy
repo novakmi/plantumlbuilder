@@ -7,7 +7,6 @@ import org.bitbucket.novakmi.nodebuilder.BuilderException
 import org.bitbucket.novakmi.nodebuilder.BuilderNode
 import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
 import org.bitbucket.novakmi.nodebuilder.PluginResult
-import org.bitbucket.novakmi.nodebuilder.TextPluginTreeNodeBuilder
 
 class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
 
@@ -249,7 +248,7 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                 if (!postProcess) {
                                         opaque.printIndent()
                                         opaque.print(node.name)
-                                        PlantUmlBuilder.handleMultilinePrint(opaque, node)
+                                        PlantUmlBuilder.handleMultilinePrintWithPosAndColor(opaque, node)
                                         opaque.println()
                                 }
                                 retVal = PluginResult.PROCESSED_FULL

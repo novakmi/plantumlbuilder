@@ -157,9 +157,81 @@ deactivate B
         // test 'title' keyword
         builder.plantuml {
             title('Test title')
+            header('Test header')
+            footer('Test footer')
+            legend('Test legend')
             plant("participant A")
         }
-        Assert.assertEquals(builder.getText(plainPlantUml: true), 'title Test title\nparticipant A\n')
+        Assert.assertEquals(builder.getText(plainPlantUml: true),
+'''title Test title
+header Test header
+footer Test footer
+legend
+  Test legend
+end legend
+participant A
+''')
+        assertPlantFile(builder)
+
+        builder.reset()
+        builder.plantuml {
+            title '''Test title
+                     multiline'''
+            header '''Test header
+                     multiline'''
+            footer '''Test footer
+                     multiline'''
+            legend '''Test legend
+                     multiline'''
+            plant("participant A")
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true),
+                '''title
+  Test title
+  multiline
+end title
+header
+  Test header
+  multiline
+end header
+footer
+  Test footer
+  multiline
+end footer
+legend
+  Test legend
+  multiline
+end legend
+participant A
+''')
+        assertPlantFile(builder)
+
+        builder.reset()
+        builder.plantuml {
+            legend "Test legend", pos: "left"
+            plant("participant A")
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true),
+                '''legend left
+  Test legend
+end legend
+participant A
+''')
+        assertPlantFile(builder)
+
+        builder.reset()
+        builder.plantuml {
+            legend '''Test legend
+                multiline''', pos: "right"
+            plant("participant A")
+        }
+        Assert.assertEquals(builder.getText(plainPlantUml: true),
+                '''legend right
+  Test legend
+  multiline
+end legend
+participant A
+''')
         assertPlantFile(builder)
 
         // test 'actor' keyword

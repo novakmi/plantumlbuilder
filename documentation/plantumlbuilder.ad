@@ -431,7 +431,7 @@ autonumber
 ----
 |=====
 
-==== `title`
+==== `title`, `header` and `footer`
 
 Example(s):
 
@@ -447,7 +447,65 @@ title("My diagram")
 ----
 title My diagram
 ----
+a|
+[source,java]
+-----
+footer('''My footer
+        multiline''')
+----- a| 
+----
+footer
+   My footer
+   multiline
+end footer
+----
 |=====
+
+NOTE: Use groovy multiline string or `\n` to create multiline elements. Multiline elements are automatically
+      trimmed and indented.
+
+NOTE: Use `\\n` in the groovy string to format one line element on the several lines
+
+==== `legend`
+
+Attributes: 
+`pos` (optional) - `left`, `center` and `right`
+
+Example(s):
+
+[options="header"]
+|=====
+|<<plantumlbuilder>> | PlantUML
+
+a|
+[source,java]
+-----
+legend("My legend")
+----- a| 
+----
+legend 
+   My legend
+end legend   
+----
+a|
+[source,java]
+-----
+legend('''My legend
+        multiline''', pos: "right")
+----- a| 
+----
+legend right
+   My legend
+   multiline
+end legend
+----
+|=====
+
+NOTE: Use groovy multiline string or `\n` to create multiline legends. Multiline legends are automatically
+      trimmed and indented.
+
+NOTE: Use `\\n` in the groovy string to format one line legend on the several lines
+
 
 ==== `newpage`
 
