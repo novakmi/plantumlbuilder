@@ -25,25 +25,25 @@ def m2 = 'MobileB'
 def u2 = 'User2'
 
 builder.plantuml("${fileName}") {
-        title('Plantuml builder seq plugin template example with activation colors and boxes')
+        title 'Plantuml builder seq plugin template example with activation colors and boxes'
 
         box {
-                actor(u1)
+                actor u1
         }
-        box("Mobile") {
-                participant(m1)
+        box "Mobile", {
+                participant m1
         }
         box("Mobile", color: "#LightBlue") {
-                participant(m2)
+                participant m2
         }
-        box(color: "#green") {
-                actor(u2)
+        box color: "#green", {
+                actor u2
         }
 
-        msgAd(u1, to: m1, text: "Start Call", returnText: "Call finished") {
-                msg(m1, to: m2, text: "Ring", noReturn: true)
-                msgAd(u2, to: m2, activate: "#FFBBBB", text: "PickUp", returnText: "HangUp") {
-                        msgAd(m2, to: m1, activate: "#yellow", text: "Talk")
+        msgAd u1, to: m1, text: "Start Call", returnText: "Call finished", {
+                msg m1, to: m2, text: "Ring", noReturn: true
+                msgAd u2, to: m2, activate: "#FFBBBB", text: "PickUp", returnText: "HangUp", {
+                        msgAd m2, to: m1, activate: "#yellow", text: "Talk"
                 }
         }
 }

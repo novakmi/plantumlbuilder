@@ -26,21 +26,21 @@ final def C = 'C'
 builder.plantuml("${fileName}") {
         // example of block reuse
         def interact = {a, b ->
-                plant("$a->$b")
-                plant("activate $b")
-                plant("$b-->$a")
-                plant("deactivate $b")
+                plant "$a->$b"
+                plant "activate $b"
+                plant "$b-->$a"
+                plant "deactivate $b"
         }
-        title('Plantuml builder basic template - simple sequence diagram')
-        plant('participant "A node" as A')
-        plant("participant B")
-        plant("participant C")
-        plant("$A->$B")
-        plant("activate $B") {
+        title 'Plantuml builder basic template - simple sequence diagram'
+        plant 'participant "A node" as A'
+        plant "participant B"
+        plant "participant C"
+        plant "$A->$B"
+        plant "activate $B", {
                 interact(B, C) //reuse
         }
-        plant("$B-->$A")
-        plant("deactivate $B")
+        plant "$B-->$A"
+        plant "deactivate $B"
         interact(C, B) //reuse
 }
 
