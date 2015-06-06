@@ -7,6 +7,7 @@ import org.bitbucket.novakmi.nodebuilder.BuilderException
 import org.bitbucket.novakmi.nodebuilder.BuilderNode
 import org.bitbucket.novakmi.nodebuilder.NodeBuilderPlugin
 import org.bitbucket.novakmi.nodebuilder.PluginResult
+import org.bitbucket.novakmi.nodebuilder.TextPluginTreeNodeBuilder
 
 class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
 
@@ -142,7 +143,8 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                 if (!postProcess) {
                                         out.printIndent()
                                         out.print(node.name)
-                                        out.println(" ${node.value}${node?.attributes?.as ? " as ${node.attributes.as}" : ""}"+
+                                        def quotes = TextPluginTreeNodeBuilder.getQuotes(node.value, ['"'], [" "])
+                                        out.println(" ${quotes}${node.value}${quotes}${node?.attributes?.as ? " as ${node.attributes.as}" : ""}"+
                                                     "${node?.attributes?.stereotype ? " <<${node.attributes.stereotype}>>" : ""}${node.attributes.color ? " ${node.attributes.color}" : ""}")
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
@@ -154,7 +156,8 @@ class PlantUmlBuilderSeqPlugin extends NodeBuilderPlugin {
                                         if (node?.attributes?.type) {
                                                 out.print(" ${node?.attributes?.type}")
                                         }
-                                        out.print(" ${node.value}")
+                                        def quotes = TextPluginTreeNodeBuilder.getQuotes(node.value, ['"'], [" "])
+                                        out.print(" ${quotes}${node.value}${quotes}")
                                         if (node?.attributes?.stereotype) {
                                                 out.print(" <<${node.attributes.stereotype}>>")
                                         }

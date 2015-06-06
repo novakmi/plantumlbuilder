@@ -344,7 +344,7 @@ TODO:: See {{{cz.atlas.bubbles.it.test.plantumlbuilder.PlantUmlBuilderTest}}} fo
 private class Node {
     def name = ''   // name of node (e.g. plant('text, at:'attrib') - name is plant)
     def parent = null // parent node (or null if this is root node)
-    def attributes = [:] //attributes (e.g. plant('text, at:'atrib') - attributes.at == 'attrib')
+    def attributes = [:] //attributes (e.g. plant('text, at:'attrib') - attributes.at == 'attrib')
     def value = null //value of node (e.g. plant('text, at:'attrib') - value is text)
     def children = [] //children nodes
 }
@@ -655,11 +655,13 @@ a|
 actor("My Actor", as: "MyActor", stereotype: "person")
 ----- a| 
 ----
-actor My Actor as MyActor <<person>>
+actor "My Actor" as MyActor <<person>>
 ----
 |=====
 
 NOTE: In similar way use `boundary`, `control`, `entity` and `database`
+NOTE: If value contains space character (e.g. `"My actor"`), it is automatically surrounded by the quotes `"`, unless there are surrounding quotes already
+       present in the value (e.g. `'"My actor"'` or `"\"My actor\""`)
 
 ==== `create`
 
@@ -684,7 +686,7 @@ create MyParticipant
 a|
 [source,java]
 -----
-create '"My Participant"', as: "MyParticipant"
+create "My Participant", as: "MyParticipant"
 ----- a| 
 ----
 create "My Participant" as MyParticipant
@@ -692,7 +694,7 @@ create "My Participant" as MyParticipant
 a|
 [source,java]
 -----
-create '"MyParticipant"', type: "control", color: "#red")
+create "MyParticipant", type: "control", color: "#red")
 ----- a| 
 ----
 create control MyParticipant #red
@@ -700,12 +702,14 @@ create control MyParticipant #red
 a|
 [source,java]
 -----
-crreate '"My Actor"', as: "MyActor", stereotype: "person", type: "actor"
+crreate "My Actor", as: "MyActor", stereotype: "person", type: "actor"
 ----- a| 
 ----
 create actor "My Actor" as MyActor <<person>>
 ----
 |=====
+NOTE: If value contains space character (e.g. `"My actor"`), it is automatically surrounded by the quotes `"`, unless there are surrounding quotes already
+       present in the value (e.g. `'"My actor"'` or `"\"My actor\""`)
 
 ==== `msg`
 
@@ -877,7 +881,7 @@ Create message from `A` to `B` with different return arrow type
 
 |=====
 
-NOTE: Incomming and Outcomming messages are also supported with use of `[` and `]`. For example `msg("[", to: "A")` or `msg("]", to: "A", text: "o2")`
+NOTE: Incoming and Outcoming messages are also supported with use of `[` and `]`. For example `msg("[", to: "A")` or `msg("]", to: "A", text: "o2")`
 
 
 ==== msgAd
@@ -1318,10 +1322,10 @@ end box
 
 ==== `hnote` and `rnote`
 
-Hexagon and retangle note for sequence diagrams.
+Hexagon and rectangle note for sequence diagrams.
 
 Attribute:
-`pos` (mandatroy)
+`pos` (mandatory)
 `color`
 
 Example(s):

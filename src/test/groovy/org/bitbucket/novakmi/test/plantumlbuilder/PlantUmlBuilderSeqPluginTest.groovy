@@ -557,39 +557,39 @@ end box
                         participant(_participant + "C", color: "#red")
                         participant("\"Second ${_participant}\"", as: _participant+"2")
                         participant("\"Third ${_participant}\"", as: _participant+"3", stereotype: "database")
-                        participant("\"Fourth ${_participant}\"", as: _participant+"4", stereotype: "database", color: "#green")
-                        participant("\"Fifth ${_participant}\"", as: _participant+"5", stereotype: "(C,#ADD1B2) database", color: "#blue")
+                        participant("Fourth ${_participant}", as: _participant+"4", stereotype: "database", color: "#green")
+                        participant("Fifth ${_participant}", as: _participant+"5", stereotype: "(C,#ADD1B2) database", color: "#blue")
 
                         actor(_actor)
                         actor(_actor + "C", color: "#red")
                         actor("\"Second ${_actor}\"", as: _actor+"2")
                         actor("\"Third ${_actor}\"", as: _actor+"3", stereotype: "actor")
-                        actor("\"Fourth ${_actor}\"", as: _actor+"4", stereotype: "actor", color: "#green")
+                        actor("Fourth ${_actor}", as: _actor+"4", stereotype: "actor", color: "#green")
 
                         boundary(_boundary)
                         boundary(_boundary+"C", color: "#red")
                         boundary("\"Second ${_boundary}\"", as: _boundary+"2")
                         boundary("\"Third ${_boundary}\"", as: _boundary+"3", stereotype: "boundary")
-                        boundary("\"Fourth ${_boundary}\"", as: _boundary+"4", stereotype: "boundary", color: "#green")
+                        boundary("Fourth ${_boundary}", as: _boundary+"4", stereotype: "boundary", color: "#green")
 
                         control(_control)
                         control(_control+"C", color: "#red")
                         control("\"Second ${_control}\"", as: _control+"2")
                         control("\"Third ${_control}\"", as: _control+"3", stereotype: "control")
-                        control("\"Fourth ${_control}\"", as: _control+"4", stereotype: "control", color: "#green")
+                        control("Fourth ${_control}", as: _control+"4", stereotype: "control", color: "#green")
 
                         entity(_entity)
                         entity(_entity+"C", color: "#red")
                         entity("\"Second ${_entity}\"", as: _entity+"2")
                         entity("\"Third ${_entity}\"", as: _entity+"3", stereotype: "entity")
-                        entity("\"Fourth ${_entity}\"", as: _entity+"4", stereotype: "entity", color: "#green")
+                        entity("Fourth ${_entity}", as: _entity+"4", stereotype: "entity", color: "#green")
 
                         database(_database)
                         database(_database+"C", color: "#red")
                         database("\"Second ${_database}\"", as: _database+"2")
                         database("\"Third ${_database}\"", as: _database+"3", stereotype: "database")
-                        database("\"Fourth ${_database}\"", as: _database+"4", stereotype: "database", color: "#green")
-                        database("\"Fifth ${_database}\"", as: _database+"5", stereotype: "(D,#ADD1B2) database", color: "#blue")
+                        database("Fourth ${_database}", as: _database+"4", stereotype: "database", color: "#green")
+                        database("Fifth ${_database}", as: _database+"5", stereotype: "(D,#ADD1B2) database", color: "#blue")
                 }
                 Assert.assertEquals(builder.getText(),
                         """@startuml
@@ -882,7 +882,8 @@ B --> A : Response
                                 create "${p}B", type: p, stereotype: "part"
                                 create "${p}Cred", type: p, stereotype: "part", color: "#red"
                                 create "${p}Dgreen", type: p, color: "#green"
-                                create "\"${p} E blue\"", type: p, color: "#blue"
+                                create "${p} E blue", type: p, color: "#blue"
+                                create "${p} F blue", type: p, color: "#blue", as: "F"
                         }
                 }
                 Assert.assertEquals(builder.getText(),
@@ -896,31 +897,37 @@ create control controlB <<part>>
 create control controlCred <<part>> #red
 create control controlDgreen #green
 create control "control E blue" #blue
+create control "control F blue" as F #blue
 create participant participantA
 create participant participantB <<part>>
 create participant participantCred <<part>> #red
 create participant participantDgreen #green
 create participant "participant E blue" #blue
+create participant "participant F blue" as F #blue
 create actor actorA
 create actor actorB <<part>>
 create actor actorCred <<part>> #red
 create actor actorDgreen #green
 create actor "actor E blue" #blue
+create actor "actor F blue" as F #blue
 create boundary boundaryA
 create boundary boundaryB <<part>>
 create boundary boundaryCred <<part>> #red
 create boundary boundaryDgreen #green
 create boundary "boundary E blue" #blue
+create boundary "boundary F blue" as F #blue
 create entity entityA
 create entity entityB <<part>>
 create entity entityCred <<part>> #red
 create entity entityDgreen #green
 create entity "entity E blue" #blue
+create entity "entity F blue" as F #blue
 create database databaseA
 create database databaseB <<part>>
 create database databaseCred <<part>> #red
 create database databaseDgreen #green
 create database "database E blue" #blue
+create database "database F blue" as F #blue
 @enduml""")
                 PlantUmlBuilderTest.assertPlantFile(builder)
 
