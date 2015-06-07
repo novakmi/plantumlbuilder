@@ -4,8 +4,8 @@
 //This is free software licensed under MIT License, see LICENSE file
 //(https://bitbucket.org/novakmi/plantumlbuilder/src/LICENSE)
 
-//@Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '8024')  //for newer versions, update numbers
-//@Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '0.9.0')
+//@Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '8026')  //for newer versions, update numbers
+//@Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '0.9.1')
 //@Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.4.3')
 
 // Without Internet connection, run as groovy script with jars in the classpath (-cp), comment @Grab ... annotations above
