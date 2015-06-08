@@ -1,7 +1,19 @@
 #Plantumlbuilder change log
 
-* 0.4.4 2015-02-10 preparation
+* 0.4.4 2015-06-10
     * updated dependencies
+    * updated documentation
+    * added example based on `PlantUML` Sequence diagrams page  
+    * support for automated quotes (participants) - `PlantUmlBuilderSeqPlugin`
+    * support for multiline notes - `PlantUmlBuilder`
+    * support for `legend`, `header` and `footer` - `PlantUmlBuilder`
+    * support for `hnote` and `rnote` - `PlantUmlBuilderSeqPlugin`
+    * support for `create` keyword - `PlantUmlBuilderSeqPlugin`
+    * support for `newpage` - `PlantUmlBuilder`
+    * support for  `autonumber`- `PlantUmlBuilderSeqPlugin`
+    * support for in-coming and out-coming messages - `PlantUmlBuilderSeqPlugin`
+    * added support for `color` and `stereotype` attributes - `PlantUmlBuilderSeqPlugin`
+    * added support for `entity`, `control`, `boundary` - `PlantUmlBuilderSeqPlugin`        
 
 * 0.4.3 2013-12-15
     * participant and actor moved to Seq. plugin
