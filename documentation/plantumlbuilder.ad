@@ -3,7 +3,7 @@ plantumlbuilder
 :Author:    Michal Novák
 :Email:     it.novakmi@gmail.com
 :URL:       https://bitbucket.org/novakmi/yangbuilder
-:Date:      2015-06-06
+:Date:      2015-06-21
 :Revision:  0.0.1
 
 This  document describes how to use Groovy builder for the PlantUML language.
@@ -13,8 +13,9 @@ The document is written in http://www.methods.co.nz/asciidoc/[AsciiDoc].
 
 [options="header"]
 |======
-| Version     | Notes                                   | Date        | Author
-| {revision}  | Initial Asciidoc version, updated       | {date}      | {author}
+| Document version     | Notes                                                  | Date        | Author
+| {revision}           | Initial Asciidoc version, updated +
+                         Realated to `platnumlbuilder` version `0.4.4`          | {date}      | {author}
 |======
 
 == References
@@ -1364,9 +1365,9 @@ interface PlantUmlBuilderPluginListener {
 }
 ----
 
-== Plantuml Maven repository ===
+== Plantuml Maven repository
 
 The <<plantumlbuilder>> has been accepted by JCenter and is available in the JCenter Maven repository.
-It can be automatically used with Groovy `@Grab` or in `gradle`. There is no need to download and
+It can be automatically used with Groovy `@Grab` or in the `gradle`. There is no need to download and
 maintain `jar` files.
 
