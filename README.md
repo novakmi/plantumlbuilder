@@ -14,6 +14,9 @@ See `changelog.txt`.
 See/run scripts in the `templates/scripts/plantuml/` directory to generate examples from the `PlantUML` web page.   
 (NOTE: Currently only examples for the sequence diagrams).
 
+HTML documentation is located at:    
+http://bitbucket.org/novakmi/plantumlbuilder/downloads
+
 Michal Novak (<it.novakmi@gmail.com>)
 
 [gradle_id]: http://www.gradle.org/  "Gradle"
