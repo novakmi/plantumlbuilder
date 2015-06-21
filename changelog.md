@@ -1,6 +1,6 @@
 #Plantumlbuilder change log
 
-* 0.4.4 2015-06-10
+* 0.4.4 2015-06-21
     * updated dependencies
     * updated documentation
     * added example based on `PlantUML` Sequence diagrams page  
