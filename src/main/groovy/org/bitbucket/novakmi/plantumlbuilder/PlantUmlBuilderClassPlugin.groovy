@@ -64,9 +64,9 @@ class PlantUmlBuilderClassPlugin extends NodeBuilderPlugin {
                         case 'ppackage':
                                 out.printIndent()
                                 if (!postProcess) {
-                                        out.println("package ${node.value}")
+                                        out.println("package ${node.value} {")
                                 } else {
-                                        out.println("end package")
+                                        out.println("}")
                                 }
                                 retVal = PluginResult.PROCESSED_FULL
                                 break;

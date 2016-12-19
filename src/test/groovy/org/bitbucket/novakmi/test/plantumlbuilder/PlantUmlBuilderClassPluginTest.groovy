@@ -261,10 +261,10 @@ abstract class MyClassAbstract << abstract class >>
         }
         Assert.assertEquals(builder.getText(),
             '''@startuml
-package MyPackage
-end package
+package MyPackage {
+}
 @enduml''')
-        //PlantUmlBuilderTest.assertPlantFile(builder) // TODO when assertion is enabled with -ea, this fails in  CucaDiagramFileMakerSvek2.java:388
+        PlantUmlBuilderTest.assertPlantFile(builder, "ppackage1")
 
         builder.reset()
         builder.plantuml {
@@ -274,11 +274,11 @@ end package
         }
         Assert.assertEquals(builder.getText(),
             '''@startuml
-package MyPackage
+package MyPackage {
   class PackageClass
-end package
+}
 @enduml''')
-        PlantUmlBuilderTest.assertPlantFile(builder)
+        PlantUmlBuilderTest.assertPlantFile(builder, "ppackage2")
 
 
         logger.trace("<== plantPackageTest")
