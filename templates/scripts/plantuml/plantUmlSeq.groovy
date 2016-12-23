@@ -4,8 +4,8 @@
 //This is free software licensed under MIT License, see LICENSE file
 //(https://bitbucket.org/novakmi/plantumlbuilder/src/LICENSE)
 //Run as ordinary groovy script with command 'groovy <scriptName>.groovy' (or as Linux script './<scriptName>.groovy')
-@Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '8026')  //for newer versions, update numbers
-@Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '0.9.1')
+@Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '8052')  //for newer versions, update numbers
+@Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '1.0.0')
 @Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.4.4')
 
 // Without Internet connection, run as groovy script with jars in the classpath (-cp), comment @Grab ... annotations above
@@ -22,6 +22,8 @@ final def alice = 'Alice'
 final def bob = 'Bob'
 final def Foo = 'Foo'
 i = 0
+
+//System.setProperty('PLANTUML_LIMIT_SIZE', "${4096*2}") // use only for large diagram images - set size of image
 
 void finalize(imageAndReset = true) {
         println builder.getText() // get and print PlantUML text
@@ -112,37 +114,6 @@ builder.plantuml("Legend the diagram") {
                 legend''', pos: "right"
 }
 finalize()
-
-builder.plantuml("Splitting diagrams") {
-        msg alice, to: bob, text: "message1", noReturn: true
-        msg alice, to: bob, text: "message1", noReturn: true
-
-        newpage()
-
-        msg alice, to: bob, text: "message2", noReturn: true
-        msg alice, to: bob, text: "message3", noReturn: true
-
-        newpage "A title for the\\nlast page"
-
-        msg alice, to: bob, text: "message4", noReturn: true
-        msg alice, to: bob, text: "message5", noReturn: true
-}
-finalize(false)
-// this is example how to print splitted diagrams into images
-net.sourceforge.plantuml.SourceStringReader s = new net.sourceforge.plantuml.SourceStringReader(builder.getText())
-def cnt = s.getBlocks()[0].getDiagram().getNbImages() // count number of images (in first block) // TODO loop over all blocks?
-def ret = true
-for (int ix = 0; ix < cnt && ret != null; ix++) {
-        FileOutputStream file = new FileOutputStream("./${fileName}_${i}${cnt > 1 ? "_${ix + 1}" : ''}.png")
-        net.sourceforge.plantuml.FileFormatOption format = new net.sourceforge.plantuml.FileFormatOption(net.sourceforge.plantuml.FileFormat.PNG)
-        if (cnt > 1) {
-                ret = s.generateImage(file, ix, format)
-        } else {
-                ret = s.generateImage(file, format)
-        }
-        file.close()
-}
-builder.reset()
 
 builder.plantuml("Grouping message") {
         msg alice, to: bob, text: "Authentication Request", noReturn: true
@@ -299,9 +270,42 @@ builder.plantuml("Participants encompass") {
 }
 finalize()
 
-builder.plantuml("Removing Footer") {
-        hide "footbox"
-        title "Footer removed"
-        msg alice, to: bob, text: "Authentication Request", returnText: "Authentication Response"
+builder << { // build from closure
+        plantuml("Removing Footer") {
+                hide "footbox"
+                title "Footer removed"
+                msg alice, to: bob, text: "Authentication Request", returnText: "Authentication Response"
+        }
 }
 finalize()
+
+builder.plantuml("Splitting diagrams") {
+        msg alice, to: bob, text: "message1", noReturn: true
+        msg alice, to: bob, text: "message1", noReturn: true
+
+        newpage()
+
+        msg alice, to: bob, text: "message2", noReturn: true
+        msg alice, to: bob, text: "message3", noReturn: true
+
+        newpage "A title for the\\nlast page"
+
+        msg alice, to: bob, text: "message4", noReturn: true
+        msg alice, to: bob, text: "message5", noReturn: true
+}
+finalize(false)
+// this is example how to print splitted diagrams into images
+net.sourceforge.plantuml.SourceStringReader s = new net.sourceforge.plantuml.SourceStringReader(builder.getText())
+def cnt = s.getBlocks()[0].getDiagram().getNbImages() // count number of images (in first block) // TODO loop over all blocks?
+def ret = true
+for (int ix = 0; ix < cnt && ret != null; ix++) {
+        FileOutputStream file = new FileOutputStream("./${fileName}_${i}${cnt > 1 ? "_${ix + 1}" : ''}.png")
+        net.sourceforge.plantuml.FileFormatOption format = new net.sourceforge.plantuml.FileFormatOption(net.sourceforge.plantuml.FileFormat.PNG)
+        if (cnt > 1) {
+                ret = s.generateImage(file, ix, format)
+        } else {
+                ret = s.generateImage(file, format)
+        }
+        file.close()
+}
+builder.reset()

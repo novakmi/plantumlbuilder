@@ -4,27 +4,19 @@ import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderSeqPlugin
 
 //This is free software licensed under MIT License, see LICENSE file
 //(https://bitbucket.org/novakmi/plantumlbuilder/src/LICENSE)
-
-import java.util.concurrent.TimeUnit
-
 //If you have Internet connection, use groovy Grab to get dependencies (may take some time for the first time to download jars)
 //Run as ordinary groovy script with command 'groovy <scriptName>.groovy' (or as Linux script './<scriptName>.groovy')
-@Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '8026')  //for newer versions, update numbers
-@Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '0.9.1')
+@Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '8052')  //for newer versions, update numbers
+@Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '1.0.0')
 @Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.4.4')
 
-def builder = new PlantUmlBuilder() // new instance
-builder.registerPlugin(new PlantUmlBuilderSeqPlugin())
+u1 = 'User1'
+m1 = 'MobileA'
+m2 = 'MobileB'
+u2 = 'User2'
 
-final def fileName = "plant_plugin_seq_activate.png"
-
-def u1 = 'User1'
-def m1 = 'MobileA'
-def m2 = 'MobileB'
-def u2 = 'User2'
-
-builder.plantuml("${fileName}") {
-        title 'Plantuml builder seq plugin template example with activation colors and boxes'
+uml = {
+        title "Plantuml builder seq plugin template example with activation colors and boxes"
 
         box {
                 actor u1
@@ -32,7 +24,7 @@ builder.plantuml("${fileName}") {
         box "Mobile", {
                 participant m1
         }
-        box("Mobile", color: "#LightBlue") {
+        box "Mobile", color: "#LightBlue", {
                 participant m2
         }
         box color: "#green", {
@@ -47,6 +39,14 @@ builder.plantuml("${fileName}") {
         }
 }
 
+def builder = new PlantUmlBuilder() // new instance
+builder.registerPlugin(new PlantUmlBuilderSeqPlugin())
+fileName = "plant_plugin_seq_activate.png"
+builder << {
+        plantuml "${fileName}", {
+                delegate << uml // apply uml closure
+        }
+}
 println builder.getText() // get and print PlantUML text
 new net.sourceforge.plantuml.SourceStringReader(builder.getText()).generateImage(new FileOutputStream("./${fileName}")) // create image
 
