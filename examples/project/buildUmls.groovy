@@ -7,7 +7,7 @@
 //Run as ordinary groovy script with command 'groovy <scriptName>.groovy' (or as Linux script './<scriptName>.groovy')
 @Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '8052')  //for newer versions, update numbers
 @Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '1.0.0')
-@Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.4.4')
+@Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '1.0.0')
 
 //due to @Grab limitation in script, we have to have def ... after Grab, in our case we can just create builder
 // see http://groovy.codehaus.org/Grapes+and+grab()

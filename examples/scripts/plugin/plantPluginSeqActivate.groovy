@@ -8,7 +8,7 @@ import org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderSeqPlugin
 //Run as ordinary groovy script with command 'groovy <scriptName>.groovy' (or as Linux script './<scriptName>.groovy')
 @Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '8052')  //for newer versions, update numbers
 @Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '1.0.0')
-@Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '0.4.4')
+@Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '1.0.0')
 
 u1 = 'User1'
 m1 = 'MobileA'
