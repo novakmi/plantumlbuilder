@@ -1,5 +1,10 @@
 #Plantumlbuilder change log
 
+* 1.0.0 2016-12-30
+    * updated dependencies
+    * updated documentation
+    * tested with closure reuse (requires nodebuilder `1.0.0` and later) 
+    
 * 0.4.4 2015-06-21
     * updated dependencies
     * updated documentation

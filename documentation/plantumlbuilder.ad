@@ -3,8 +3,8 @@ plantumlbuilder
 :Author:    Michal Novák
 :Email:     it.novakmi@gmail.com
 :URL:       https://bitbucket.org/novakmi/yangbuilder
-:Date:      2015-06-21
-:Revision:  0.0.1
+:Date:      2016-12-29
+:Revision:  1.0.0
 
 This  document describes how to use Groovy builder for the PlantUML language.
 The document is written in http://www.methods.co.nz/asciidoc/[AsciiDoc].
@@ -14,8 +14,11 @@ The document is written in http://www.methods.co.nz/asciidoc/[AsciiDoc].
 [options="header"]
 |======
 | Document version     | Notes                                                  | Date        | Author
-| {revision}           | Initial Asciidoc version, updated +
-                         Realated to `platnumlbuilder` version `0.4.4`          | {date}      | {author}
+| 0.0.1                | Initial Asciidoc version, updated +
+                         Related to `platnumlbuilder` version `0.4.4`          |  2015-06-21 | Michal Novák
+| {revision}           | updated - example for closure reuse
+                                                                                | {date}      | {author}
+
 |======
 
 == References
@@ -129,34 +132,48 @@ Next script (only <<plantumlbuilder> part shown) produces same diagram picture, 
 
 NOTE: Note you can use `builder.reset()` to clear already existing content of the builder.
 
-Another example with reuse (closure).
+Another example with reuse (closure - requires `nodebuilder` 1.0.0 and newer) and without brackets.
 
 [source, java]
 ----
-builder.reset()
-final def A = 'A'
-final def B = 'B'
-final def C = 'C'
+def A = 'A'
+def B = 'B'
+def C = 'C'
 
-builder.plantuml() {
-        // example of block reuse
-        def interact = {a, b ->
-                plant "$a->$b"
-                plant "activate $b"
-                plant "$b-->$a"
-                plant "deactivate $b"
-        }
-        title 'Plantuml builder basic template - simple sequence diagram'
+def interact = { a, b ->
+    plant "$a->$b"
+    plant "activate $b"
+    plant "$b-->$a"
+    plant "deactivate $b"
+}
+
+def uml = {
+    // example of block reuse
+    def head = { txt ->
+        title txt
         plant 'participant "A node" as A'
         plant "participant B"
         plant "participant C"
-        plant "$A->$B"
-        plant "activate $B", {
-                interact(B, C) //reuse
-        }
-        plant "$B-->$A"
-        plant "deactivate $B"
-        interact(C, B) //reuse
+    }
+    // reuse closure (declared in the block) with params
+    head "Plantuml builder basic example - simple sequence diagram"
+    plant "$A->$B"
+    plant "activate $B", {
+       // reuse closure (declared out of the block) with params (use  curry and delegate)
+       delegate << interact.curry(B, C)
+    }
+    plant "$B-->$A"
+    plant "deactivate $B"
+    delegate << interact.curry(C, B)
+}
+
+// create new builder
+def builder = new org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilder()
+builder.reset()
+builder << {
+    plantuml() {
+        delegate << uml // reuse closure without params
+    }
 }
 ----
 
