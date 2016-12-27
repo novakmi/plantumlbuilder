@@ -46,7 +46,7 @@ include::../LICENSE[]
 
 == Introduction
 
-NOTE: _This document is still work in progress. Please take a look at the examples in the `templates\scripts` directory
+NOTE: _This document is still work in progress. Please take a look at the examples in the `examples\scripts` directory
        and at the tests in the `tests\groovy` directory to see usage of all <<plantumlbuilder>> features._
 
 The <<platnumlbuilder>> represents implementation of <<groovy>> builder for <<PlantUML>> language. 

@@ -11,7 +11,7 @@ apply plugin: 'groovy'
 apply plugin: 'maven' // to use maven repository
 apply plugin: 'idea' // to generate project+module files for Intellij Idea
 
-version = '0.4.4'
+version = '1.0.0'
 sourceCompatibility = '1.6'
 def groupId = "org.bitbucket.novakmi"
 def installDir = file('./install')
@@ -29,13 +29,13 @@ repositories {
 
 // Define dependencies
 dependencies {
-        compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.3'
-        compile group: 'org.bitbucket.novakmi', name: 'nodebuilder', version: '0.9.1'
+        compile localGroovy()
+        compile group: 'org.bitbucket.novakmi', name: 'nodebuilder', version: '1.0.0'
         // dependencies for tests
-        testCompile group: 'net.sourceforge.plantuml', name: 'plantuml', version: '8026'
+        testCompile group: 'net.sourceforge.plantuml', name: 'plantuml', version: '8052'
         testCompile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.9'
-        testCompile group: 'org.testng', name: 'testng', version: '6.9.4'
-        testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.3'
+        testCompile group: 'org.testng', name: 'testng', version: '6.9.9'
+        testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
         //testCompile 'org.uncommons:reportng:1.1.1'
         testCompile group: 'janino', name: 'janino', version: '2.4.3'
 }
@@ -172,11 +172,11 @@ task checkLibVersions << {
         }
 }
 
-def templateDir = "${project.projectDir}/templates"
-def scriptDir = "${templateDir}/scripts"
+def examplesDir = "${project.projectDir}/examples"
+def scriptDir = "${examplesDir}/scripts"
 def scriptDirBasic = "${scriptDir}/basic"
 def scriptDirPlugin = "${scriptDir}/plugin"
-def projectDir = "${templateDir}/project"
+def projectDir = "${examplesDir}/project"
 
 
 private void runCmdInDir(runCmd, dir) {
@@ -194,26 +194,26 @@ private void runCmdInDir(runCmd, dir) {
 }
 
 
-def runTemplateScript(script, dir) {
+def runExampleScript(script, dir) {
         def classPath = sourceSets.main.runtimeClasspath.asPath
         def runCmd = "groovy -cp ${classPath} ${dir}/${script}"
         println runCmd
         runCmdInDir(runCmd, dir)
 }
 
-task buildTemplates << {
+task buildExamples << {
         ["plantClass", "plantSeq"].each {
-                runTemplateScript("${it}.groovy", scriptDirBasic)
+                runExampleScript("${it}.groovy", scriptDirBasic)
         }
 
         ["plantPluginClass", "plantPluginComplexClass", "plantPluginSeqActivate"].each {
-                runTemplateScript("${it}.groovy", scriptDirPlugin)
+                runExampleScript("${it}.groovy", scriptDirPlugin)
         }
 
-        runTemplateScript("buildUmls.groovy", projectDir)
+        runExampleScript("buildUmls.groovy", projectDir)
 }
 
-task cleanTemplates << {
+task cleanExamples << {
         [scriptDirBasic, scriptDirPlugin, projectDir].each {
                 ["png", "txt"].each { e ->
                         def dir = new File(it)

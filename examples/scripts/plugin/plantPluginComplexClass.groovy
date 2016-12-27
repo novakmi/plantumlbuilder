@@ -20,7 +20,7 @@ sim = 'sim'
 number = 'number'
 
 uml = {
-        title "Plantuml builder plugin template"
+        title "Plantuml builder plugin example"
 
         pinterface phone, members: ['+ring()'], stereotype: "telecom"
         pabstract phoneDevice, as: "phone device"  // you can also use paclass(phoneDevice, as: "phone device")
@@ -65,7 +65,7 @@ uml = {
         plant "end note"
 }
 
-// This script template represents example of usage with Class  plugin
+// This script example represents example of usage with Class  plugin
 builder = new org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilder() // create new builder
 builder.registerPlugin(new org.bitbucket.novakmi.plantumlbuilder.PlantUmlBuilderClassPlugin()) // add class diagram plugin support
 fileName = "plant_plugin_complex_class.png" //name of file to generate

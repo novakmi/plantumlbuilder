@@ -10,13 +10,13 @@ of the `PlantUML` structure (e.g. in the sequence diagrams).
 
 Implementation source code is in the `main/src` directory.  
 Test source code is in  the `main/tests` directory.  
-Examples are in the `templates` directory.  
+Examples are in the `examples` directory.  
 Documentation files and source code is in the  `documentation` directory.  
 
 Use [gradle][gradle_id] to build, test and package project.
 Use [groovy][groovy_id] version 2.2.0 and later (recommended is 2.4.0 and later).
 
-See/run scripts in the `templates/scripts/plantuml/` directory to generate examples from the `PlantUML` web page.   
+See/run scripts in the `examples/scripts/plantuml/` directory to generate examples from the `PlantUML` web page.   
 (NOTE: Currently only examples for the sequence diagrams).
 
 HTML documentation is located at:    

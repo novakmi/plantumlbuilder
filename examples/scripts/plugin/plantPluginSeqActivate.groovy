@@ -16,7 +16,7 @@ m2 = 'MobileB'
 u2 = 'User2'
 
 uml = {
-        title "Plantuml builder seq plugin template example with activation colors and boxes"
+        title "Plantuml builder seq plugin example with activation colors and boxes"
 
         box {
                 actor u1

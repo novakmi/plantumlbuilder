@@ -10,7 +10,7 @@
 // Without Internet connection, run as groovy script with jars in the classpath (-cp), comment @Grab ... annotations above
 // 'groovy -cp plantumlbuilder-x.x.x.jar:plantuml-xxxx.jar:nodebuilder-x.x.x.jar  <scriptName>.groovy'
 
-// This script template represents example of usage with Class plugin
+// This script example represents example of usage with Class plugin
 // when variables are used instead of direct strings, one can benefit from IDE auto-completion, refactoring, etc.
 abstractList = 'AbstractList'
 abstractCollection = 'AbstractCollection'
@@ -19,7 +19,7 @@ collection = 'Collection'
 timeUnits = 'TimeUnits'
 
 uml = {
-        title "Plantuml builder plugin template"
+        title "Plantuml builder plugin example"
 
         paclass abstractList
         pabstract abstractCollection

@@ -13,7 +13,7 @@ class UmlClass {
         final static def timeUnits = 'TimeUnits'
 
         static def uml = {
-                title "Plantuml class diagram template example"
+                title "Plantuml class diagram example"
 
                 paclass abstractList
                 pabstract abstractCollection
