@@ -64,7 +64,7 @@ generated `PlantUML`
 ### Usage with `groovy` Grapes in script
 
 ```groovy
-@Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '8052')  //for newer versions, update numbers
+@Grab(group = 'net.sourceforge.plantuml', module = 'plantuml', version = '8053')  //for newer versions, update numbers
 @Grab(group = 'org.bitbucket.novakmi', module = 'nodebuilder', version = '1.0.0')
 @Grab(group = 'org.bitbucket.novakmi', module = 'plantumlbuilder', version = '1.0.0')
 ...
@@ -88,7 +88,7 @@ NOTE: With `groovy` version below `2.3.0` following dependency may also be neede
 ```groovy
 dependencies {
         compile localGroovy()
-        compile group: 'net.sourceforge.plantuml', name: 'plantuml', version: '8052'
+        compile group: 'net.sourceforge.plantuml', name: 'plantuml', version: '8053'
         compile group: 'org.bitbucket.novakmi', name: 'nodebuilder', version: '1.0.0'
         compile group: 'org.bitbucket.novakmi', name: 'plantumlbuilder', version: '1.1.0'
 }
